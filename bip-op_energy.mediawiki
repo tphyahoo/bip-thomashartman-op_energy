@@ -48,7 +48,7 @@ Otherwise, the price goes on the stack. The stack format for price is uint256, s
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
 
-The basic financial instrument is a [https://en.wikipedia.org/wiki/Binary_option cash or nothing binary option] on whether some future OP_ENERGY price exceeds a minimum threshold value. 
+The basic financial instrument is a european [https://en.wikipedia.org/wiki/Binary_option cash or nothing binary call] on whether some future OP_ENERGY price exceeds a minimum threshold value. 
 
 Synthetic versions of garden variety derivatives such as puts, calls, and futures, can be built up out of this primitive.
 
@@ -106,7 +106,7 @@ Todo: can we look at OP_ENERGY price at point in time where first fiat trade occ
 
 Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
 
-===Binary Options===
+===Binary Calls===
 
 
 Binary purchase transactions are written interactively by Alice (the buyer / market taker) and Bob (the seller / market maker), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement value.  When the OP_ENERGY price of the binary is known, the settlement value is spendable by Alice if the price is over the minimum, Bob otherwise. 
@@ -115,7 +115,20 @@ OP_LESSTHAN can be used to perform the comparison in script.
 
 (Todo: give details given on how purchase transaction is created interactively.)
 
-By Black Scholes, the price of the binary is the negative of the strike delta, ie the derivative of the vanilla call price with respect to strike 
+By Black Scholes, the price of the binary is 
+
+<pre>
+T = time to maturity
+q = dividend rate (todo, remove?)
+r = risk interest rate (todo, remove?)
+d1 = ( ln(S/K) + (r - q + square(sigma) / 2 ) * T) ) 
+       / (sigma * sqrt(T)) 
+d2 = d1 - sigma * sqrt(T)
+phi = cumulative distribution function of normal distribution
+binary call price = e ^ (- r * T) * phi (d2)
+</pre>
+
+Equivalently, it is the negative of what I will term the strike delta, the derivative of the vanilla call price with respect to strike 
 
 <pre>
 Cv = vanilla call price
@@ -123,9 +136,11 @@ K = strike
 
 strike delta = dCv/dK
 binary call price = - strike dalta 
+
+Note: Strike delta is distinct from the usual option greek delta, which is the derivative with respect to spot, as opposed to strike.
 </pre>
 
-This means that one can fairly price on-chain binaries, by looking at the strike delta for related vanilla calls.
+This means that one can price on-chain binaries, by looking at related vanilla calls.
 
 For standardization reasons, we assume henceforth all binary contracts pay 10,000 sat, so price is 10,000 * (- strike delta). 
 
@@ -145,7 +160,7 @@ Predicted OP_ENERGY price adjustment, from block times: -4.3%
 PRICE_645_646 = OP_ENERGY 645,136 646,136 = TODO, give real number (price of last 1000 blocks, which is known)
 </pre> 
 
-Since energy currently trades against fiat, to get a market feel Bob looks at what fiat option prices are available, expiring around September 7. 
+Since energy currently trades against fiat, to get a market feel Bob looks at what fiat call prices are available, expiring around September 7. 
 
 <pre>
 Block 647,136: around September 7, 2020
@@ -181,7 +196,7 @@ I believe this to be a reasonable pricing model, for demonstration purposes. If 
 
 If Bob can match buyers and sellers for say, a 1 month lock-up period, this is equivalent to earning 1% a month market risk free, and exit-scam risk free, on his bitcoin. So there is a huge incentive to market-make. 
 
-If custodial exchanges offered OP_ENERGY compatible options, strike deltas on these options could be used directly rather than having to impute them from fiat price. There is a reason for such exchanges to do so. Custodial derivative exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the strike deltas on their own platform, giving them an edge. Given this profit motive, it is reasonable to hope that a compatible market will emerge on custodial exchanges to complement trades happening on chain. 
+If custodial exchanges offered OP_ENERGY compatible instruments, strike deltas on OP_ENERGY calls could be used for pricing the binaries directly, rather than translating from strike deltas on fiat calls. There is a profit incentive for custodial exchanges to offer such instruments. Custodial derivative exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the strike deltas on their own platform. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
 
 ===Synthetic Call===
 
