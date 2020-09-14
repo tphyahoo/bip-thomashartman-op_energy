@@ -144,7 +144,7 @@ normalized premium = phi ( sample_point )
 
 todo, write code for above and sanity check that it matches estimatated strikeD
 
-===Real World Pricing Example===
+===Real World Binary Pricing Example===
 
 todo: fix this so it is using strikeD instead of regular delta. 
 
