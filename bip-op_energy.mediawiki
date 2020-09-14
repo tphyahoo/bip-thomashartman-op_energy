@@ -108,7 +108,7 @@ Todo: can we look at OP_ENERGY price at point in time where first fiat trade occ
 
 Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
 
-===Binary Call Purchase and Settlement Transactions===
+===Purchase and Settlement Transactions===
 
 Binary purchase transactions are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary price. Alice + Bob's combined deposit is the settlement value.  
 
@@ -116,9 +116,9 @@ When the OP_ENERGY price of the binary is known, the settlement value is spendab
 
 OP_LESSTHAN can be used to perform the comparison in script.
 
-===Black Scholes Pricing===
+The normalized premium is a premium value corresponding to unit payout. The actual price of a call is settlement value * normalized premium. All binary call examples henceforth will have settlement value of 10,000 sat, so premium can be assumed to be 10,000 sat * normalized premium. 
 
-The normalized premium is a fair premium value corresponding to unit payout. The actual price of a call is settlement value * normalized premium. All binary call examples henceforth will have settlement value of 10,000 sat, so premium can be assumed to be 10,000 sat * normalized premium. 
+===Black Scholes Pricing===
 
 By Black Scholes, the normalized premium of the binary is the is the negative of a greek-like value I will term strikeD, for strike delta, which is the derivative of the vanilla european call price with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot, rather than strike.)
 
@@ -146,7 +146,7 @@ normalized premium = phi ( sample_point )
 
 todo, write code for above and sanity check that it matches estimatated strikeD
 
-===Real World Binary Call Pricing Example===
+===Real World Pricing Example===
 
 todo: fix this so it is using strikeD instead of regular delta. 
 
