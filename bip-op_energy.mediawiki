@@ -137,11 +137,9 @@ Equivalently, normalized premium can be derived as follows
 <pre>
 S = spot price
 K = strike price
-
-T = time to settlement
 phi = cumulative distribution function of normal distribution
 
-time_discont = volatility * sqrt(T) 
+time_discont = volatility * sqrt( time to settlement ) 
 sample_point = ( ln(S/K) / time_discount ) - time_discount / 2
 normalized premium = phi ( sample_point ) 
 </pre>
