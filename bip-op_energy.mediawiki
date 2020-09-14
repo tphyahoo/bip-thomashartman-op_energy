@@ -48,7 +48,7 @@ Otherwise, the price goes on the stack. The stack format for price is uint256, s
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
 
-The basic financial instrument is a european cash or nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds a minimum threshold value. 
+The basic financial instrument is a european cash or nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds some strike price. 
 
 todo: use footnote instead of link to wikipedia article on binary options, and footnote as appropriately in other sections
 
@@ -110,9 +110,9 @@ Todo: chart 500 block OP_ENERGY price for first 500,000 blocks.
 
 ===Sale and Settlement Bitcoin Transactions===
 
-Sale: Binary call sales are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary. Alice + Bob's combined deposit is the settlement value.  
+Sale: Binary sales are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary. Alice + Bob's combined deposit is the settlement value.  
 
-Settlement: When the OP_ENERGY price of the binary is known, the settlement value is spendable by Alice if the price is over the minimum, Bob otherwise. OP_LESSTHAN is used to perform the comparison in script.
+Settlement: After the settlement block is reached, the settlement value is spendable by Alice if the OP_ENERGY price is over the strike, Bob otherwise. OP_LESSTHAN is used to perform the comparison in script.
 
 ===Black Scholes Pricing===
 
@@ -148,7 +148,7 @@ todo, write code for above and sanity check that it matches estimatated strikeD
 
 todo: fix this so it is using strikeD instead of regular delta. 
 
-Bob wants to make a market on the price from blocks 647,136 to 648,136, which is 1000 blocks in the future. To do this, he needs to pick a predicted minimum price, and determine a strikeD for it. 
+Bob wants to make a market on the price from blocks 647,136 to 648,136, which is 1000 blocks in the future. To do this, he needs to pick a strike price, and determine a strikeD for it. 
 
 <pre>
 Current date: August 29, 2020 
