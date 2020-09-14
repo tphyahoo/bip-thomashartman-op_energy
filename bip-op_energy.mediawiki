@@ -108,11 +108,11 @@ Todo: can we look at OP_ENERGY price at point in time where first fiat trade occ
 
 Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
 
-===Sale and Settlement Bitcoin Transactions===
+===New Types of Bitcoin Transactions Enabled===
 
-Sale: Binary sales are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement.  (Note: for concreteness, all contracts discussed in this bip have settlement value of 10,000 sat.)
+Binary sale: Alice (the buyer) and Bob (the seller) agree on terms of a binary call contract: OP_ENERGY block span, settlement value, and sale price. A sale transaction enforcing these terms is then written interactively by Alice  and Bob, who need not trust each other. In broad outline, Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement.  (Note: for concreteness, all contracts discussed in this bip have settlement value of 10,000 sat.)
 
-Settlement: After the settlement block is reached, the settlement is spendable by Alice if the OP_ENERGY price is over the strike, Bob otherwise. OP_LESSTHAN is used to perform the comparison in script.
+Binary Settlement: After the settlement block is reached, the settlement is spendable by Alice if the OP_ENERGY price is over the strike, Bob otherwise. OP_LESSTHAN is used to perform the comparison in script.
 
 ===Black Scholes Pricing===
 
