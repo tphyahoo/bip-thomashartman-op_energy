@@ -144,6 +144,8 @@ sample_point = ( ln(S/K) / time_discount ) - time_discount / 2
 normalized premium = phi ( sample_point ) 
 </pre>
 
+todo, write haskell code for above and sanity check that it matches estimatated strikeD
+
 ===Real World Binary Call Pricing Example===
 
 todo: fix this so it is using strikeD instead of regular delta. 
