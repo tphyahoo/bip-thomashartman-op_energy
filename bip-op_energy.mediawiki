@@ -142,12 +142,9 @@ T = time to settlement
 phi = cumulative distribution function of normal distribution
 
 time_discont = volatility * sqrt(T) 
-normal_x = ( ln(S/K) / time_discount ) - time_discount / 2
-normalized premium = phi ( normal_x ) 
+sample_point = ( ln(S/K) / time_discount ) - time_discount / 2
+normalized premium = phi ( sample_point ) 
 </pre>
-
-todo, grok forex example from binary options wikipedia, and if appropriate incorporate this understanding.
-
 
 ===Real World Binary Call Pricing Example===
 
