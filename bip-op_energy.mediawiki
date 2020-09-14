@@ -108,23 +108,23 @@ Todo: can we look at OP_ENERGY price at point in time where first fiat trade occ
 
 Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
 
-===Purchase and Settlement Transactions===
+===Binary Transactions===
 
-Binary purchase transactions are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary price. Alice + Bob's combined deposit is the settlement value.  
+Binary call purchase transactions are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary. Alice + Bob's combined deposit is the settlement value.  
 
 When the OP_ENERGY price of the binary is known, the settlement value is spendable by Alice if the price is over the minimum, Bob otherwise. 
 
 OP_LESSTHAN can be used to perform the comparison in script.
 
-The normalized premium is a premium value corresponding to unit payout. The actual price of a call is settlement value * normalized premium. All binary call examples henceforth will have settlement value of 10,000 sat, so premium can be assumed to be 10,000 sat * normalized premium. 
-
 ===Black Scholes Pricing===
 
-By Black Scholes, the normalized premium of the binary is the is the negative of a greek-like value I will term strikeD, for strike delta, which is the derivative of the vanilla european call price with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot, rather than strike.)
+Normalized premium is a probability-like number between 0 and 1, corresponding to unit settlement value.  
+
+By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the traditional call with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot.)
 
 <pre>
-Cv = vanilla european call price
-K = strike
+Cv = vanilla call price
+K = strike price
 
 strikeD = dCv/dK
 normalized premium = - strikeD
@@ -202,13 +202,13 @@ If custodial exchanges offered OP_ENERGY compatible instruments, strikeD on OP_E
 
 ===Synthetic Call===
 
-Synthetic versions of derivative instruments such as puts, calls, and futures can be composed from primitive cash-or-nothing atoms. 
+Synthetic versions of traditional derivative instruments such as vanilla puts and calls, futures, and the like, can be composed from primitive cash-or-nothing atoms. 
 
-To give an example, I will show how to build a synthetic call, starting out from the binary pricing example given above. 
+To give an example, I will show how to build a synthetic vanilla call, starting out from the binary pricing example given above. 
 
-The payoff of this call is capped. And it pays off in granular ticks. So the synthetic call is different from the vanilla call, which pays off smoothly and is not capped. However, by expanding the max price higher and adding more ticks, the synthetic call can mock the real call to any desired level of precision. The more "realistic" the synthetic call, the longer the definition in bitcoin script and hence the higher the transaction fee. However as we see later, the instruments can avoid block fees by using lightning. So, very rich and vanilla feeling derivatives can be built affordably. 
+The payoff of this call is capped. And it pays off in granular ticks. So the non-custodied synthetic is different from the custodied organic, which pays off smoothly and is not capped. However, by expanding the max price higher and adding more ticks, the synthetic can mock the organic to any desired level of fidelity. The more realistic, the longer the definition in bitcoin script and hence the higher the transaction fee. Fortunately though, synthetics can avoid mining fees by using lightning. So, very rich and organic feeling derivatives can be built affordably. 
 
-Now the call. It has a maximum settlement value of 100,000 sat. It is composed of ten atoms, each 10,000 sat, as in the previous example. The atoms have strikes at MINPRICE96 (see above), MINPRICE96+1%, etc, up to MINPRICE96+9%. The synthetic call has expected payoff less than a vanilla call if the underlying OP_ENERGY price increases by more than 9%. 
+Now the call. It has a maximum settlement value of 100,000 sat. It is composed of ten atoms, each 10,000 sat, as in the previous example. The atoms have strikes at MINPRICE96 (see above), MINPRICE96+1%, etc, up to MINPRICE96+9%. The synthetic vanilla call has expected payoff less than the organic vanilla call if the underlying OP_ENERGY price increases by more than 9%. 
 
 If the measured price is under MINPRICE96, Bob sweeps all 100,000 sats. If it is higher than the MINPRICE96*1.09 cap, Alice gets everything. If the price settles somewhere between, Bob and Alice split the 100,000 sats, with each binary atom acting like a price tick that decides who should get the settlement coins. So it acts very similarly to a call.
 
