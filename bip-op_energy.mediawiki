@@ -110,11 +110,9 @@ Todo: chart 500 block OP_ENERGY price for first 500,000 blocks.
 
 ===Binary Transactions===
 
-Binary call purchase transactions are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary. Alice + Bob's combined deposit is the settlement value.  
+Sale: Binary call sales are written interactively by Alice (the buyer) and Bob (the seller), who need not trust each other. Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium, or binary. Alice + Bob's combined deposit is the settlement value.  
 
-When the OP_ENERGY price of the binary is known, the settlement value is spendable by Alice if the price is over the minimum, Bob otherwise. 
-
-OP_LESSTHAN can be used to perform the comparison in script.
+Settlement: When the OP_ENERGY price of the binary is known, the settlement value is spendable by Alice if the price is over the minimum, Bob otherwise. OP_LESSTHAN is used to perform the comparison in script.
 
 ===Black Scholes Pricing===
 
