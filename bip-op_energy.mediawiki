@@ -72,7 +72,7 @@ Example use case 1: In a fiat centric world, if fiat can buy more bitcoin via ha
 
 Todo: more examples? Hash rental scenario? Power purchase agreements between miners and utilities? 
 
-===Comparison to Prior Art===
+===Comparison to Similar Proposals===
 
 Existing powswap and OP_DIFFICULTY proposals on dev-bitcoin would allow to speculate on future hashrate. Powswap does not require a protocol change. However, powswap does not measure the true miner price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. 
 
