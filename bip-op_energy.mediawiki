@@ -58,13 +58,13 @@ As fiat prices roughly track energy prices, fiat trading volume can thus be move
 
 Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer systems such as lightning. 
 
-OP_ENERGY trading is a potentially rich source of miner fee income, securing bitcoin as miners are weaned off block rewards. This would also drive lightning adoption. And there may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
+OP_ENERGY trading is a potentially rich source of miner fee income, securing bitcoin as miners are weaned off block rewards. This would also drive lightning adoption. There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
 
 ===Intuition===
 
-OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, unlike difficulty, OP_ENERGY is aware of speed of block discovery (as is hashrate). And unlike hashrate, OP_ENERGY also factors in miner revenue, including fees. 
+OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, unlike difficulty, OP_ENERGY is aware of speed of block discovery (as is hashrate). Unlike hashrate, OP_ENERGY also factors in miner revenue, including fees. 
 
-To a lesser but still significant degree, OP_ENERGY prices track dollar prices, because energy is priced in dollars. If the OP_ENERGY price increases by 100x between two block spans, it costs 100x as much energy to mine, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price. But, there is correlation enough to be useful for fiat hedging. 
+To a lesser but still significant degree, OP_ENERGY prices track dollar prices, because energy is priced in dollars. If the OP_ENERGY price increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY is not perfectly correlated to fiat, but there is correlation enough to be useful for hedging. 
 
 (Todo: make some charts of (OP_ENERGY price) from blockchain, vs usd price from fiat exchanges, using real data, to support this.)
 
