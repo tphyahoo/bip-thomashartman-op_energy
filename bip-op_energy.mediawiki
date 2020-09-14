@@ -285,7 +285,7 @@ Todo:
 Todo
 
 look at cost of ops (starting with other ops). Is there such a thing?
-What should be cost of OP_ENERGY? The greater the span of blkocks the more computation, so should this be accounted for? Or is this clipping coupons, and better not to even try.
+What should be cost of OP_ENERGY? The greater the span of blocks the more computation, so should this be accounted for? Or is this clipping coupons, and better not to even try. Note that with taproot, there might be no way to know if a transaction contains an OP_ENERGY contract. 
 
 Model a scenario where there is a full 1mb block full of maximally expensive OP_ENERGY price derivate settlements. Is there a DOS attack here?
 
