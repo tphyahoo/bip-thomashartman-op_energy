@@ -48,7 +48,7 @@ Otherwise, the price goes on the stack. The stack format for price is uint256, s
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
 
-The basic financial instrument is a european cash or nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds a minimum threshold value. (This wikipedia article is the onl)
+The basic financial instrument is a european cash or nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds a minimum threshold value. 
 
 todo: use footnote instead of link to wikipedia article on binary options, and footnote as appropriately in other sections
 
