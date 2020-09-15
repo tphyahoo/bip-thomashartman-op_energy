@@ -210,9 +210,9 @@ With compound contracts, we can create synthetic versions of derivative instrume
 
 Let us create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
 
-Now the call. It has a maximum settlement value of 100,000 sat. It is composed of ten atoms, each 10,000 sat, as in the previous example. The atoms have strikes at STRIKE_ALICE_BOB (see above), STRIKE_ALICE_BOB+1%, etc, up to STRIKE_ALICE_BOB+9%. The synthetic vanilla call has expected payoff less than the organic vanilla call if the underlying OP_ENERGY price increases by more than 9%. 
+Our vanilla call is composed of ten binary calls, each 10,000 sat, as in the previous example. The binaries have strikes at STRIKE_ALICE_BOB (see above), STRIKE_ALICE_BOB+1%, etc, up to STRIKE_ALICE_BOB+9%. The synthetic vanilla call has expected payoff less than the organic vanilla call if the underlying OP_ENERGY price increases by more than 9%.
 
-If the measured price is under STRIKE_ALICE_BOB, Bob sweeps all 100,000 sats. If it is higher than the STRIKE_ALICE_BOB*1.09 cap, Alice gets everything. If the price settles somewhere between, Bob and Alice split the 100,000 sats, with each binary atom acting like a price tick that decides who should get the settlement coins. So it acts very similarly to a call.
+This vanilla has a maximum settlement value of 100,000 sat. If the measured price is under STRIKE_ALICE_BOB, Bob sweeps all 100,000 sats. If it is higher than the STRIKE_ALICE_BOB*1.09 cap, Alice gets everything. If the price settles somewhere between, Bob and Alice split the 100,000 sats, with each binary acting like a price tick that decides who should get the settlement coins. So it acts very similarly, but not identically, to an organic call.
 
 Pricing for the synthetic call can be worked out by pricing the component binary calls, as in the previous example, and then adding up all the prices.
 
