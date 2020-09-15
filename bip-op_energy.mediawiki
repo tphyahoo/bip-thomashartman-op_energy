@@ -45,7 +45,7 @@ When executed, if any of the following conditions are true, the script interpret
 Otherwise, the price goes on the stack. The stack format for price is uint256, same as target. 
 
 1 As an alternative (or enhancement), vbytes of an OP_ENERGY transaction could potentially be made to depend on block distance. 
-  todo: determine if vbytes mechanism is in fact possible. 
+todo: determine if vbytes mechanism is in fact possible. 
 
 ==Motivation==
 
