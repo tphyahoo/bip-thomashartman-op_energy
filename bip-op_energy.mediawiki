@@ -40,11 +40,12 @@ When executed, if any of the following conditions are true, the script interpret
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * second block number is less than or equal to first block number
 * second block is in the future
-* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd)1 
+* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd).  this is to limit compute cost to nodes 1.
 
 Otherwise, the price goes on the stack. The stack format for price is uint256, same as target. 
 
-1 As an alternative (or enhancement) to the block distance restriction, vbytes of an OP_ENERGY transaction could be made to depend on block distance. 
+1 As an alternative (or enhancement), vbytes of an OP_ENERGY transaction could potentially be made to depend on block distance. 
+  todo: determine if vbytes mechanism is in fact possible. 
 
 ==Motivation==
 
