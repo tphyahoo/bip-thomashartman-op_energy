@@ -58,9 +58,11 @@ Synthetic versions of derivatives such as vanilla puts, calls, and futures, can 
 
 As fiat prices roughly track energy prices, fiat trading volume can thus be moved off custodial exchanges, making markets more efficient, private, and secure.
 
-Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer systems such as lightning. So high frequency trading is feasible, and affordable.
+OP_ENERGY trading is a potentially rich source of miner income, securing bitcoin as miners are weaned off block rewards.
 
-OP_ENERGY trading is a potentially rich source of miner fee income, securing bitcoin as miners are weaned off block rewards. This would also drive lightning adoption. There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
+Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer systems such as lightning. So high frequency trading is feasible, and affordable. OP_ENERGY lighthing market makers would be running lightning nodes, earning lightning fees, and presumably also routing non-OP_ENERGY lightning transactions for additional fee income. 
+
+There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
 
 ===Intuition===
 
