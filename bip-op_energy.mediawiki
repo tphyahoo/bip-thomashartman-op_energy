@@ -228,7 +228,7 @@ From a bitcoin script point of view, there are a few basic techniques for compos
 ** Cheaper in block space thabn multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear. 
 * Multiple utxos, single if/then clause for each utxo, many makers and takers (similar feel to coinjoin)
 ** More flexible
-* Mix and match: Many utxos, many if/then clauses, many market and takers
+* Mix and match: Many utxos, many if/then clauses, many makers and takers
 ** Most flexible
 ** Also most difficult to negotiate and coordinate
 
