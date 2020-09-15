@@ -204,17 +204,11 @@ The simplest OP_ENERGY contract is the binary call. From Bob's point of view, th
 
 Two binary calls or puts can be composed and the result is another contract. In fact any two contracts can be composed, yielding a rich structure of possible contracts which can be created and settled as individual units. 
 
-todo: how to buy compound binaries as a single all-or-nothing transaction. straightforward with multiple if-then cases in single transaction. can we group multiple calls from different sellers in a single transaction? Sure, I think so.  
-
-===Synthetic Call===
-
 With compound contracts, we can create synthetic versions of derivative instruments such as vanilla puts and calls, futures, and the like.
 
+===Synthetic Call Example===
 
-
-To give an example, I will show how to create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
-
-The payoff of this call is capped. And it pays off in granular ticks. So the non-custodied synthetic is different from the custodied organic, which pays off smoothly and is not capped. However, by expanding the max price higher and adding more ticks, the synthetic can mock the organic to any desired level of fidelity. The more realistic, the longer the definition in bitcoin script and hence the higher the transaction fee. Fortunately though, synthetics can avoid mining fees by using lightning. So, very rich and organic feeling derivatives can be built affordably. 
+Let us create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
 
 Now the call. It has a maximum settlement value of 100,000 sat. It is composed of ten atoms, each 10,000 sat, as in the previous example. The atoms have strikes at STRIKE_ALICE_BOB (see above), STRIKE_ALICE_BOB+1%, etc, up to STRIKE_ALICE_BOB+9%. The synthetic vanilla call has expected payoff less than the organic vanilla call if the underlying OP_ENERGY price increases by more than 9%. 
 
@@ -222,11 +216,12 @@ If the measured price is under STRIKE_ALICE_BOB, Bob sweeps all 100,000 sats. If
 
 Pricing for the synthetic call can be worked out by pricing the component binary calls, as in the previous example, and then adding up all the prices.
 
+The payoff of this call is capped. And it pays off in granular ticks. So the non-custodied synthetic is different from the custodied organic, which pays off smoothly and is not capped. However, by expanding the max price higher and adding more ticks, the synthetic can mock the organic to any desired level of fidelity. The more realistic, the longer the definition in bitcoin script and hence the higher the transaction fee. Fortunately, synthetics can avoid mining fees by using lightning. So, very rich and organic feeling derivatives can be built affordably. 
+
 ===Compound Contract Construction=== 
 
 From a bitcoin script point of view, there are a few basic techniques for composing binaries into compound contracts.
 
-<pre>
 * Multiple if/then clauses, one utxo, one maker, one taker
 ** Easiest to negotiate and coordinate
 ** Works well with lightning
@@ -236,7 +231,6 @@ From a bitcoin script point of view, there are a few basic techniques for compos
 * Mix and match: Many utxos, many if/then clauses, many market and takers
 ** Most flexible
 ** Also most difficult to negotiate and coordinate
-</pre>
 
 All of these techniques create contracts via a single bitcoin transaction. This guarantees alice a set price for the contract. 
 
