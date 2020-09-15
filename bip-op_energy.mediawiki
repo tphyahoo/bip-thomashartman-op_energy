@@ -40,19 +40,21 @@ When executed, if any of the following conditions are true, the script interpret
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * second block number is less than or equal to first block number
 * second block is in the future
-* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd), to limit compute cost on nodes 
+* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd)1 
 
 Otherwise, the price goes on the stack. The stack format for price is uint256, same as target. 
+
+1 As an alternative (or enhancement) to the block distance restriction, vbytes of an OP_ENERGY transaction could be made to depend on block distance. 
 
 ==Motivation==
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
 
-The basic financial instrument is a european cash-or-nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds some strike. 
+The basic contract is a european cash-or-nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds some strike. 
 
 todo: use footnote instead of link to wikipedia article on binary options, and footnote as appropriately in other sections
 
-Synthetic versions of derivative instruments such as vanilla puts, calls, and futures, can be built up out of this primitive.
+Synthetic versions of derivative contracts such as vanilla puts, calls, and futures, can be built up out of the binary call primitive.
 
 As fiat prices roughly track energy prices, fiat trading volume can thus be moved off custodial exchanges, making markets more efficient, private, and secure.
 
@@ -196,7 +198,7 @@ I believe this to be a reasonable pricing model, for demonstration purposes. If 
 
 If Bob can match buyers and sellers for say, a 1 month lock-up period, this is equivalent to earning 1% a month market risk free, and exit-scam risk free, on his bitcoin. So there is a huge incentive to market-make. 
 
-If custodial exchanges offered OP_ENERGY compatible instruments, strikeD on vanilla OP_ENERGY calls could be used for pricing the binaries directly, rather than translating from strikeD on vanilla fiat calls. There is a profit incentive for custodial exchanges to offer such instruments. Custodial derivative exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the strikeD on their own platform. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
+If custodial exchanges offered OP_ENERGY vanilla calls, strikeD on these could be used for pricing the binaries directly, rather than translating from strikeD on vanilla fiat calls. There is a profit incentive for custodial exchanges to do so. Custodial derivative exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the strikeD on their own platform. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
 
 ===Compound Contracts===
 
@@ -204,7 +206,7 @@ The simplest OP_ENERGY contract is the binary call. From Bob's point of view, th
 
 Two binary calls or puts can be composed and the result is another contract. In fact any two contracts can be composed, yielding a rich structure of possible contracts which can be created and settled as individual units. 
 
-With compound contracts, we can create synthetic versions of derivative instruments such as vanilla puts and calls, futures, and the like.
+With compound contracts, we can create synthetic versions of derivatives such as vanilla puts and calls, futures, and the like.
 
 ===Synthetic Call Example===
 
