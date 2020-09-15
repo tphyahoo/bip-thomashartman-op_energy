@@ -13,7 +13,7 @@
 
 ==Abstract==
  
-This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin in hashes between two blocks, thus enabling energy derivative trading in bitcoin. 
+This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin in hashes between two blocks, thus enabling trading of energy derivatives in bitcoin. 
 
 ==Summary==
 
