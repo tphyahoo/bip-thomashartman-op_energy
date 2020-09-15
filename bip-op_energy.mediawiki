@@ -226,7 +226,7 @@ From a bitcoin script point of view, there are a few basic techniques for compos
 ** one maker, one taker
 ** easiest to negotiate and coordinate
 ** works well with 2-party lightning
-** cheaper in block space thabn multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear. 
+** cheaper in block space than multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear. 
 * Multiple utxos, single if/then clause for each utxo
 ** many makers and takers (similar feel to coinjoin)
 ** could work with multi party lightning
