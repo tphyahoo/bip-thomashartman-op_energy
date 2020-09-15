@@ -198,7 +198,7 @@ If Bob can match buyers and sellers for say, a 1 month lock-up period, this is e
 
 If custodial exchanges offered OP_ENERGY compatible instruments, strikeD on vanilla OP_ENERGY calls could be used for pricing the binaries directly, rather than translating from strikeD on vanilla fiat calls. There is a profit incentive for custodial exchanges to offer such instruments. Custodial derivative exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the strikeD on their own platform. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
 
-==Compound Contracts==
+===Compound Contracts===
 
 The simplest OP_ENERGY contract is the binary call. From Bob's point of view, this is a binary put. 
 
