@@ -48,11 +48,11 @@ Otherwise, the price goes on the stack. The stack format for price is uint256, s
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
 
-The basic financial instrument is a european cash or nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds some strike. 
+The basic financial instrument is a european cash-or-nothing [https://en.wikipedia.org/wiki/Binary_option binary call] on whether some future OP_ENERGY price exceeds some strike. 
 
 todo: use footnote instead of link to wikipedia article on binary options, and footnote as appropriately in other sections
 
-Synthetic versions of widely traded traditional derivatives, such as vanilla puts, calls, and futures, can be built up out of this primitive.
+Synthetic versions of derivative instruments such as vanilla puts, calls, and futures, can be built up out of this primitive.
 
 As fiat prices roughly track energy prices, fiat trading volume can thus be moved off custodial exchanges, making markets more efficient, private, and secure.
 
@@ -108,7 +108,7 @@ Todo: can we look at OP_ENERGY price at point in time where first fiat trade occ
 
 Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
 
-===New Types of Bitcoin Transactions Enabled===
+===Bitcoin Transactions For Selling and Settling OP_ENERGY Binary Calls===
 
 Binary sale: Alice (the buyer) and Bob (the seller) agree on terms of a binary call contract: OP_ENERGY block span, settlement, and premium. A sale transaction enforcing these terms is then written interactively by Alice  and Bob, who need not trust each other. In broad outline, Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement.  (Note: for concreteness, all contracts discussed in this bip have settlement of 10,000 sat.)
 
@@ -118,7 +118,7 @@ Binary Settlement: After the settlement block is reached, the settlement is spen
 
 Normalized premium is a probability-like number between 0 and 1, corresponding to unit settlement value.  
 
-By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the traditional call with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot.)
+By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot.)
 
 <pre>
 Cv = vanilla call price
@@ -198,11 +198,21 @@ If Bob can match buyers and sellers for say, a 1 month lock-up period, this is e
 
 If custodial exchanges offered OP_ENERGY compatible instruments, strikeD on vanilla OP_ENERGY calls could be used for pricing the binaries directly, rather than translating from strikeD on vanilla fiat calls. There is a profit incentive for custodial exchanges to offer such instruments. Custodial derivative exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the strikeD on their own platform. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
 
+==Compound Contracts==
+
+The simplest OP_ENERGY contract is the binary call. From Bob's point of view, this is a binary put. 
+
+Two binary calls or puts can be composed and the result is another contract. In fact any two contracts can be composed, yielding a rich structure of possible contracts which can be created and settled as individual units. 
+
+todo: how to buy compound binaries as a single all-or-nothing transaction. straightforward with multiple if-then cases in single transaction. can we group multiple calls from different sellers in a single transaction? Sure, I think so.  
+
 ===Synthetic Call===
 
-Synthetic versions of traditional derivative instruments such as vanilla puts and calls, futures, and the like, can be composed from primitive cash-or-nothing atoms. 
+With compound contracts, we can create synthetic versions of derivative instruments such as vanilla puts and calls, futures, and the like.
 
-To give an example, I will show how to build a synthetic vanilla call, starting out from the binary pricing example given above. 
+
+
+To give an example, I will show how to create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
 
 The payoff of this call is capped. And it pays off in granular ticks. So the non-custodied synthetic is different from the custodied organic, which pays off smoothly and is not capped. However, by expanding the max price higher and adding more ticks, the synthetic can mock the organic to any desired level of fidelity. The more realistic, the longer the definition in bitcoin script and hence the higher the transaction fee. Fortunately though, synthetics can avoid mining fees by using lightning. So, very rich and organic feeling derivatives can be built affordably. 
 
@@ -210,23 +220,27 @@ Now the call. It has a maximum settlement value of 100,000 sat. It is composed o
 
 If the measured price is under STRIKE_ALICE_BOB, Bob sweeps all 100,000 sats. If it is higher than the STRIKE_ALICE_BOB*1.09 cap, Alice gets everything. If the price settles somewhere between, Bob and Alice split the 100,000 sats, with each binary atom acting like a price tick that decides who should get the settlement coins. So it acts very similarly to a call.
 
-Pricing for this compound instrument can be worked out by pricing the simpler binaries, as in the previous example, and then adding up all the prices.
+Pricing for the synthetic call can be worked out by pricing the component binary calls, as in the previous example, and then adding up all the prices.
 
-===Compound Instrument Construction=== 
+===Compound Contract Construction=== 
 
-There are two ways to create a compound instruments, such as the call described above.
+From a bitcoin script point of view, there are a few basic techniques for composing binaries into compound contracts.
 
 <pre>
-1) Multiple atomic binary utxos, each potentially in its own transaction, each potentially from a separate market maker. 
-2) Multiple if/then clauses in a single utxo, from a single market maker.
+* Multiple if/then clauses, one utxo, one maker, one taker
+** Easiest to negotiate and coordinate
+** Works well with lightning
+** Cheaper in block space thabn multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear. 
+* Multiple utxos, single if/then clause for each utxo, many makers and takers (similar feel to coinjoin)
+** More flexible
+* Mix and match: Many utxos, many if/then clauses, many market and takers
+** Most flexible
+** Also most difficult to negotiate and coordinate
 </pre>
 
+All of these techniques create contracts via a single bitcoin transaction. This guarantees alice a set price for the contract. 
 
-The first technique is more flexible. For instance, Alice could construct such a synthetic call from multiple binary vendors in a single multi-party transaction, similar to how joinmarket works. Or she could build up such an instrument over time with multiple transactions, shopping for advantageous prices. Multiple outputs are more expensive in transaction fees. But this can be mitigated with lightning. 
-
-In the second technique, Bob sells Alice the call in a single transaction, with 10 if-then clauses. This is cheaper in block space. If adopted, taproot would make the transaction fee logarithmic in number of ticks rather than linear. 
-
-The two techniques can be mixed.   
+Alternatively, Alice may compromise and split the contract she desires into multiple transactions. She loses the single transaction price guarantee, but by shopping around for advantageous prices over a longer period of time she gains flexibility and may ultimately be more profitable. In so doing, Alice shifts from taker into maker role.
 
 === Buying and Selling Binaries with Lightning (direct channel) === 
 
