@@ -222,11 +222,13 @@ The payoff of this call is capped. And it pays off in granular ticks. So the non
 
 From a bitcoin script point of view, there are a few basic techniques for composing binaries into compound contracts.
 
-* Multiple if/then clauses, one utxo, one maker, one taker
+* Multiple if/then clauses, one utxo
+** one maker, one taker
 ** Easiest to negotiate and coordinate
 ** Works well with lightning
 ** Cheaper in block space thabn multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear. 
-* Multiple utxos, single if/then clause for each utxo, many makers and takers (similar feel to coinjoin)
+* Multiple utxos, single if/then clause for each utxo
+** many makers and takers (similar feel to coinjoin)
 ** More flexible
 * Mix and match: Many utxos, many if/then clauses, many makers and takers
 ** Most flexible
