@@ -80,7 +80,9 @@ Example use case 3: Hash rental scenario. Power purchase agreements between mine
 
 ===Comparison to Similar Proposals===
 
-Existing powswap and OP_DIFFICULTY proposals on dev-bitcoin would allow to speculate on future hashrate. Powswap does not require a protocol change. However, powswap does not measure the true miner price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. (Additionally, there is currently no public specification of powswap.)
+POWSWAP: Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not of price, which requires a denominator in bitcoin. (That being said, I think it would be great to see powswap brought online asap.)
+
+OP_DIFFICULTY: the initial inspiration for this bip. Alas, Tamas Blummer passed away before he could produce a concrete specification.(OP_DIFFICULTY would only measure difficulty, whereas powswap could measure hashrate.)
 
 ===Example OP_ENERGY Prices===
 
