@@ -2,6 +2,20 @@ import Numeric
 
 main = putStrLn ("hello world")
 
+
+tsd10000_10250 = strikeDelta (10000, 380, 416) (10250, 210, 241)
+tsd10250_10500 = strikeDelta (10250, 210, 236) (10500, 108, 123)
+
+
+strikeDelta (strike1, bid1, ask1) (strike2, bid2, ask2) = 
+  let callprice1 = ( bid1 + ask1 ) / 2
+      callprice2 = ( bid2 + ask2 ) / 2
+      dCv = callprice2 - callprice1
+      dK  = strike2 - strike1
+      dCv_dK = dCv / dK
+  in  dCv_dK
+
+
 decToHex x = Numeric.showHex x ""
 
 

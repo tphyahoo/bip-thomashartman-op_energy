@@ -17,7 +17,7 @@ This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin 
 
 ==Summary==
 
-OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments.
+OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments. 
 
 The price of a single block span, that is, OP_ENERGY n (n+1) is: 
 
@@ -67,15 +67,16 @@ There may be privacy benefits as well, such as multiparty trades done in mix poo
 
 ===Intuition===
 
-OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, unlike difficulty, OP_ENERGY is aware of speed of block discovery (as is hashrate). Unlike hashrate, OP_ENERGY also factors in miner revenue, including fees. 
+OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, unlike difficulty, OP_ENERGY price is aware of speed of block discovery (as is hashrate). Unlike hashrate, OP_ENERGY price also factors in miner revenue, including fees. 
 
-To a lesser but still significant degree, OP_ENERGY price tracks dollar price, because electricity and mining equipment -- both linked to energy --are priced in dollars. If the OP_ENERGY price increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY is not perfectly correlated to fiat, but there is correlation enough to be useful for hedging. 
+To a lesser but still significant degree, OP_ENERGY price tracks dollar price, because electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements (which will eventually hit diminishing returns) if the OP_ENERGY price increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price, but there is correlation enough to be useful for hedging. 
 
-(Todo: make charts of OP_ENERGY vs usd, using real data, to support this.)
+(Todo: make charts of OP_ENERGY price vs usd price, using real data, to support this.)
 
 Example use case 1: In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them. 
 
-Todo: more examples? Hash rental scenario? Power purchase agreements between miners and utilities? 
+Example use case 2: direct energy hedging, for energy suppliers
+Example use case 3: Hash rental scenario. Power purchase agreements between miners and utilities. 
 
 ===Comparison to Similar Proposals===
 
@@ -115,7 +116,7 @@ Todo: chart 500 block OP_ENERGY price for first 500,000 blocks.
 
 ===Bitcoin Transactions For Writing and Settling OP_ENERGY Binary Calls===
 
-Writing (Buy/Sell): Alice (the buyer) and Bob (the seller) agree on terms of a binary call contract: OP_ENERGY block span, settlement, and premium. A sale transaction enforcing these terms is then written interactively by Alice  and Bob, who need not trust each other. In broad outline, Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement.  (Note: for concreteness, all contracts discussed in this bip have settlement of 10,000 sat.)
+Writing (Buy/Sell): Alice (the buyer) and Bob (the seller) agree on terms of an OP_ENERGY binary call contract: block span, settlement, and premium. A sale transaction enforcing these terms is then written interactively by Alice  and Bob, who need not trust each other. In broad outline, Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address, which is locked until settlement. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement.  (For concreteness, all examples of binary contracts in this bip have settlement of 10,000 sat.)
 
 Settling (Resolution): After the settlement block is reached, the settlement is spendable by Alice if the OP_ENERGY price is over the strike, Bob otherwise. OP_LESSTHAN is used to perform the comparison in script.
 
@@ -205,7 +206,7 @@ If custodial exchanges offered vanilla OP_ENERGY calls, strikeD on these could b
 
 ===Compound Contracts===
 
-The simplest OP_ENERGY contract is the binary call. From Bob's point of view, this is a binary put. 
+We have already seen the binary call contract. From Bob's point of view, this is a binary put. 
 
 Two binary calls or puts can be composed and the result is another contract. In fact any two contracts can be composed, yielding a rich structure of possible contracts which can be created and settled as individual units. 
 

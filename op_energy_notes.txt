@@ -1,14 +1,8 @@
-elevator pitch
-  Taking the hedging risk off exchanges.
-  Cutting out the middle man. Making it cheaper and more efficient and safer. 
+TODO:
 
 
 
 
-
-As long as miner revenue is dominated by subsidy, powswap style pure hashrate contracts are a good protocol-centric measure of the energy of the energy cost of bitcoin. 
-However, as transaction fees replace block reward over time, hashrate is less useful, particularly if fees vary significantly. 
-I have proposed a protocol change that is future proof in this regard. 
 
 
 
@@ -29,7 +23,6 @@ Hashrate is difficulty target * time delta
   The lower it is, the higher the hashrate.
   Need to make sure there are no overflows. 
   Need floating point multiplication. 
-
 
 
 
