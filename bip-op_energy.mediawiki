@@ -28,6 +28,9 @@ hashes  = ( 2 ^ 256 / target (n) ) * ( 600 / blocktime )
 price = hashes / satoshis
 </pre>
 
+todo:  it seems like you could also get hashes from a to b by subtracting chainwork(b) - chainwork(a)
+  compare and contrast, which is better?
+
 For a multi block span, the price is sum(hashes)/sum(satoshis), summing over the single block spans.
 
 The calculation is done on uint256 integers (same as target).  
@@ -40,7 +43,7 @@ When executed, if any of the following conditions are true, the script interpret
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * second block number is less than or equal to first block number
 * second block is in the future
-* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd).  this is to limit compute cost to nodes 1.
+* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd).  This is to limit compute cost to nodes 1.
 
 Otherwise, the price goes on the stack. The stack format for price is uint256, same as target. 
 
@@ -80,7 +83,9 @@ Example use case 3: Hash rental scenario. Power purchase agreements between mine
 
 ===Comparison to Similar Proposals===
 
-Existing powswap and OP_DIFFICULTY proposals on dev-bitcoin would allow to speculate on future hashrate. Powswap does not require a protocol change. However, powswap does not measure the true miner price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. (Additionally, there is currently no public specification of powswap.)
+POWSWAP: Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
+
+OP_DIFFICULTY: the initial inspiration for this bip. Alas, Tamas Blummer passed away before he could produce a concrete specification.(OP_DIFFICULTY would only measure difficulty, whereas powswap could measure hashrate.)
 
 ===Example OP_ENERGY Prices===
 
@@ -141,7 +146,7 @@ S = spot price
 K = strike price
 phi = cumulative distribution function of normal distribution
 
-time_discont = volatility * sqrt( time to settlement ) 
+time_discont = volatility(S) * sqrt( time to settlement ) 
 sample_point = ( ln(S/K) / time_discount ) - time_discount / 2
 normalized premium = phi ( sample_point ) 
 </pre>
