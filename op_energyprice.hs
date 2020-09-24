@@ -1,7 +1,90 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 import Numeric
+import Text.Parsec
+import Text.Parsec.String (Parser)
+import Safe
+
 
 main = putStrLn ("hello world")
 
+
+numLineP :: Parser Integer
+numLineP = do
+        numS <- manyTill anyChar (char '\n')
+        case (readMay numS) of
+            Nothing -> error $ "numLineP, bad numS: " ++ numS
+            Just num -> return num 
+
+hexLineP :: Parser Integer
+hexLineP = do
+        _ <- char '"'
+        hashS  <- (  ("0x" ++) ) `fmap` ( manyTill anyChar (char '"') ) 
+        -- _ <- char '"'
+        _ <- char '\n'
+        case (readMay hashS) of
+            Nothing -> error $ "hashLineP, bad hashS: " ++ hashS
+            Just num -> return num
+
+
+floatLineP :: Parser Float
+floatLineP = do
+        floatS <- manyTill anyChar (char '\n') 
+        case (readMay floatS) of
+            Nothing -> error $ "floatLineP, bad floatS: " ++ floatS
+            Just num -> return num
+
+hashesP :: Parsec String () [(Integer,Integer)]
+hashesP = do
+  many $ do 
+    blockNum <- numLineP
+    blockHash <- hexLineP
+    return (blockNum,blockHash)
+
+bitsP :: Parsec String () [(Integer,Integer,Integer,Float,Integer)]
+bitsP = do
+  many $ do
+    blockNum <- numLineP
+    blockHash <- hexLineP
+    blockTarget <- hexLineP
+    blockDiff <- floatLineP
+    blockWork <- hexLineP
+    return (blockNum, blockHash, blockTarget, blockDiff, blockWork)
+
+statsP :: Parsec String () [(Integer,Integer,Integer,Integer,Integer,Integer)]
+statsP = do
+  many $ do
+    blockNum <- numLineP
+    blockHash <- hexLineP
+    blockSubsidy <- numLineP
+    blockFees <- numLineP
+    blockTime <- numLineP
+    blockMedianTime <- numLineP
+    return (blockNum, blockHash, blockSubsidy, blockFees, blockTime, blockMedianTime)
+  
+getHashes = parseFile hashesP "/Users/flipper/op_energy_prices/blockhashes.txt"
+
+tgetStats = return . (take 10) =<< getStats
+getStats = parseFile statsP "/Users/flipper/op_energy_prices/blockstats.txt"
+
+tgetBits = return . (take 10) =<< getBits
+getBits = parseFile bitsP "/Users/flipper/op_energy_prices/blockbits.txt"
+
+parseFile parserP f  = do
+  input <- readFile f
+  return $ case ( parse parserP f input ) 
+             of Left e -> error $ "getHashes: " ++ f ++", " ++ show e
+                Right r -> r
+
+
+
+
+
+{-
+  return $ do (h :: Either ParseError [String]) <- parse linesP hashes input
+              case h of 
+                 Left e -> error . show $ e
+                 Right r -> r
+-}
 
 tsd10000_10250 = strikeDelta (10000, 380, 416) (10250, 210, 241)
 tsd10250_10500 = strikeDelta (10250, 210, 236) (10500, 108, 123)

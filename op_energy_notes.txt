@@ -1,10 +1,58 @@
 TODO:
 
+black scholes an approximatin
+  assumptions
+    increments are independent (not true) (?)
+
+binary call on difficulty might be easier
+
+maybe take more financial pricing out of bip, move it into whitepaper
 
 
 
 
+need to understand chainwork better. Can OP_ENERGY be more simply expressed in terms of chainwork? 
+  Although it's exposed in jsonrpc interface, it's hard to find good documentation on this. 
+  So it seems like you could also get hashes from a to b by subtracting chainwork(b) - chainwork(a)
 
+https://github.com/bitcoin/bitcoin/blob/4326515f01d7938bb448e7a9338dcc9c98497847/src/chain.h
+    //! (memory only) Total amount of work (expected number of hashes) in the chain up to and including this block
+    arith_uint256 nChainWork{};
+
+https://github.com/bitcoin/bitcoin/blob/4326515f01d7938bb448e7a9338dcc9c98497847/src/chain.cpp
+"arith_uint256 GetBlockProof(const CBlockIndex& block)
+{
+    arith_uint256 bnTarget;
+    bool fNegative;
+    bool fOverflow;
+    bnTarget.SetCompact(block.nBits, &fNegative, &fOverflow);
+    if (fNegative || fOverflow || bnTarget == 0)
+        return 0;
+    // We need to compute 2**256 / (bnTarget+1), but we can't represent 2**256
+    // as it's too large for an arith_uint256. However, as 2**256 is at least as large
+    // as bnTarget+1, it is equal to ((2**256 - bnTarget - 1) / (bnTarget+1)) + 1,
+    // or ~bnTarget / (bnTarget+1) + 1.
+    return (~bnTarget / (bnTarget + 1)) + 1;
+}"
+"int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params& params)
+{
+    arith_uint256 r;
+    int sign = 1;
+    if (to.nChainWork > from.nChainWork) {
+        r = to.nChainWork - from.nChainWork;
+    } else {
+        r = from.nChainWork - to.nChainWork;
+        sign = -1;
+    }
+    r = r * arith_uint256(params.nPowTargetSpacing) / GetBlockProof(tip);
+    if (r.bits() > 63) {
+        return sign * std::numeric_limits<int64_t>::max();
+    }
+    return sign * r.GetLow64();
+}"
+https://github.com/bitcoin/bitcoin/search?q=nChainWork
+
+https://github.com/bitcoin/bitcoin/search?q=GetBlockProofEquivalentTime
 
 
 
