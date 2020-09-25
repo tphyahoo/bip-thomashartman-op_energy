@@ -1,86 +1,22 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 import Numeric
-import Text.Parsec
-import Text.Parsec.String (Parser)
-import Safe
 
+import Data.List (tails)
+import Control.Applicative (ZipList(..))
+import Op_Energy_Parsing
 
 main = putStrLn ("hello world")
 
 
-numLineP :: Parser Integer
-numLineP = do
-        numS <- manyTill anyChar (char '\n')
-        case (readMay numS) of
-            Nothing -> error $ "numLineP, bad numS: " ++ numS
-            Just num -> return num 
-
-hexLineP :: Parser Int256
-hexLineP = do
-        _ <- char '"'
-        hashS  <- manyTill anyChar (char '"') 
-        -- _ <- char '"'
-        _ <- char '\n'
-        case (readMay $ "0x" ++ hashS) of
-            Nothing -> error $ "hashLineP, bad hashS: " ++ hashS
-            Just num -> return $ Int256 num
-
-packedbitsLineP :: Parser PackedBits
-packedbitsLineP = do
-        _ <- char '"'
-        packedS  <- ( manyTill anyChar (char '"') ) 
-        _ <- char '\n'
-        {- case (readMay ("0x" ++ packedS :: Int32) of -- sanity check, it can be read as a 32 bit int
-            Nothing -> error $ "hashLineP, bad packedS, not an Int32: " ++ packedS
-            Just _ -> do -}
-        case packedS of 
-            [a,b,c,d,e,f,g,h] -> 
-                let exponent = case (readMay $ "0x" ++ [a,b] ) of
-                        Nothing -> error $ "packedbitsLineP, bad exponent: " ++ [a,b]
-                        Just x -> x
-                    mantissa = case (readMay $ "0x" ++ [c,d,e,f,g,h] ) of
-                        Nothing -> error $ "packedbitsLineP, bad mantissa: " ++ [c,d,e,f,g,h]
-                        Just x -> x
-                 in return $ PackedBits exponent mantissa
-            _ -> error $ "hashLineP, bac packedS, not 8 characters: " ++ packedS
+-- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
+windows :: Int -> [a] -> [[a]]
+windows m = transpose' . take m . tails
+  where 
+    transpose' :: [[a]] -> [[a]]
+    transpose' = getZipList . sequenceA . map ZipList
 
 
-floatLineP :: Parser Float
-floatLineP = do
-        floatS <- manyTill anyChar (char '\n') 
-        case (readMay floatS) of
-            Nothing -> error $ "floatLineP, bad floatS: " ++ floatS
-            Just num -> return num
 
--- hashesP :: Parsec String () [(Integer,Int256)]
-hashesP = do
-  many $ do 
-    blockNum <- numLineP
-    blockHash <- hexLineP
-    return (blockNum,blockHash)
-
-blocksP :: Parsec String () [(Integer,Int256,PackedBits,Float,Int256)]
-blocksP = do
-  many $ do
-    blockNum <- numLineP
-    blockHash <- hexLineP
-    blockTarget <- packedbitsLineP 
-    blockDiff <- floatLineP
-    blockWork <- hexLineP
-    return (blockNum, blockHash, blockTarget, blockDiff, blockWork)
-
-statsP :: Parsec String () [(Integer,Int256, Satoshis,Seconds,Seconds)]
-statsP = do
-  many $ do
-    blockNum <- numLineP
-    blockHash <- hexLineP
-    blockTotalReward <- do
-      blockSubsidy <- numLineP
-      blockFees <- numLineP
-      return $ Satoshis $ blockSubsidy + blockFees
-    blockTime <- Seconds `fmap` numLineP
-    blockMedianTime <- Seconds `fmap` numLineP
-    return (blockNum, blockHash, blockTotalReward, blockTime, blockMedianTime)
   
 tgetHashes = return . (take 10) =<< getHashes 
 getHashes = parseFile hashesP "/Users/flipper/op_energy_prices/blockhashes.txt"
@@ -106,22 +42,11 @@ writePrices = do
 -}
 
 
-parseFile :: Parsec String () b -> FilePath -> IO b
-parseFile parserP f  = do
-  input <- readFile f
-  return $ case ( parse parserP f input ) 
-             of Left e -> error $ "parseFile: " ++ f ++", " ++ show e
-                Right r -> r
+
 
 
 -- getPrices = do
 
-newtype Satoshis = Satoshis { unwrap_satoshis :: Integer }
-  deriving (Read,Show)
-newtype Seconds = Seconds { unwrap_seconds :: Integer }
-  deriving (Read,Show)
-newtype Int256 = Int256 { unwrap_int256 :: Integer }
-  deriving (Read,Show)
 {-
   return $ do (h :: Either ParseError [String]) <- parse linesP hashes input
               case h of 
@@ -129,6 +54,62 @@ newtype Int256 = Int256 { unwrap_int256 :: Integer }
                  Right r -> r
 -}
 
+
+
+unpack_bits :: PackedBits -> Double
+unpack_bits x = (fromIntegral . packedbits_mantissa $ x) * ( 2**(8*( (fromIntegral . packedbits_exponent $ x) - 3)) )
+
+
+
+
+-- next thing to do is to start dumping blocks
+data OP_ENERGY_Block = OP_ENERGY_Block { block_number :: Int,
+                                         hashes_from_target :: Int256, 
+                                         hashes_from_totalwork :: Int256,
+                                         total_reward :: Satoshis
+                                   }
+  deriving ( Read, Show )
+
+data OP_ENERGY_BLOCK_HELPER = OP_ENERGY_BLOCK_HELPER { oeh_blocknumber :: Int,
+                                                       oeh_target :: PackedBits,
+                                                       oeh_median_time :: Seconds,
+                                                       oeh_totalwork :: Int256,
+                                                       oeh_total_reward :: Satoshis
+                                                     }
+  deriving (Read, Show)                                                     
+
+hashes_from_target_and_elapsed_time :: PackedBits -> Seconds -> Int256
+hashes_from_target_and_elapsed_time target elapsed_time =  
+    let x = ( (2 ** 256) / ( unpack_bits target  ) ) 
+               * 
+               ( 600 / (fromIntegral . unwrap_seconds $ elapsed_time) ) 
+     in Int256 . floor $ x
+
+
+
+hashprice_from_target blocks = sum (map ( fromIntegral . unwrap_int256 . hashes_from_target  ) blocks) 
+                                   / 
+                                   sum (map ( fromIntegral . unwrap_satoshis . total_reward ) blocks)
+
+-- get the OP_ENERGY block data from two neighboring blocks
+openergyblock_from_delta :: OP_ENERGY_BLOCK_HELPER -> OP_ENERGY_BLOCK_HELPER -> OP_ENERGY_Block
+openergyblock_from_delta x y = 
+    let total_work_hashes = Int256 $ ( unwrap_int256 . oeh_totalwork $ x ) - ( unwrap_int256 . oeh_totalwork $ y )
+        elapsed = Seconds $ (unwrap_seconds . oeh_median_time $ x) - (unwrap_seconds . oeh_median_time $ y) 
+        hashes_target = hashes_from_target_and_elapsed_time (oeh_target x) elapsed 
+    in  OP_ENERGY_Block
+            (oeh_blocknumber x)
+            hashes_target
+            total_work_hashes
+            (oeh_total_reward x)                            
+
+
+-- Options stuff, / black scholes for binary options maybe can be removed or moved to a more pricing specific model
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
 tsd10000_10250 = strikeDelta (10000, 380, 416) (10250, 210, 241)
 tsd10250_10500 = strikeDelta (10250, 210, 236) (10500, 108, 123)
 
@@ -144,28 +125,12 @@ strikeDelta (strike1, bid1, ask1) (strike2, bid2, ask2) =
 
 decToHex x = Numeric.showHex x ""
 
-unpack_bits :: PackedBits -> Double
-unpack_bits x = (fromIntegral . packedbits_mantissa $ x) * ( 2**(8*( (fromIntegral . packedbits_exponent $ x) - 3)) )
-
-
-
-data PackedBits = PackedBits { packedbits_exponent :: Int
-                               , packedbits_mantissa :: Int
-                               }
-  deriving ( Read, Show )
-
--- next thing to do is to start dumping blocks
-data OP_ENERGY_Block = OP_ENERGY_Block { block_number :: Int,
-                                         hashes_from_target :: Int256, 
-                                         hashes_from_totalwork :: Int256,
-                                         total_reward :: Satoshis
-                                   }
-  deriving ( Read, Show )
-
-
-
-
-
+-- Test Data
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
 block_genesis = 
     let hashes_target = hashes_from_target_and_elapsed_time bits_genesis (Seconds $ timestamp_2 - timestamp_1 )
     in OP_ENERGY_Block
@@ -208,19 +173,6 @@ price_second_halving = hashprice_from_target [ block ]
             (Int256 $ error "block_second_halving, fixme")
             (Satoshis $ (125*10^7) + 57569681 )    
 
-
-
-
-
-
-hashes_from_target_and_elapsed_time :: PackedBits -> Seconds -> Int256
-hashes_from_target_and_elapsed_time target elapsed_time =  
-    let x = ( (2 ** 256) / ( unpack_bits target  ) ) 
-               * 
-               ( 600 / (fromIntegral . unwrap_seconds $ elapsed_time) ) 
-     in Int256 . floor $ x
-
-
 -- hashes_from_totalwork :: OP_ENERGY_Block -> Double
 -- hashes_from_totalwork block =  error "hashes_from_totalwork, todo" 
 
@@ -241,21 +193,6 @@ workaccum_3 = 0x0000000000000000000000000000000000000000000000000000000400040004
 price_1_2 = hashprice_from_target [ block_genesis ]
 price_1_3 = hashprice_from_target [ block_genesis, block_2 ]
 
-
-
-
-
-
-hashprice_from_target blocks = sum (map ( fromIntegral . unwrap_int256 . hashes_from_target  ) blocks) 
-                                   / 
-                                   sum (map ( fromIntegral . unwrap_satoshis . total_reward ) blocks)
-
-
-
-
-
-
-  
 
 {-
 https://blockchair.com/bitcoin/block/645996           bits 386926570       171007ea
