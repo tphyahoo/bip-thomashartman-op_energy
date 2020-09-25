@@ -52,15 +52,15 @@ floatLineP = do
             Nothing -> error $ "floatLineP, bad floatS: " ++ floatS
             Just num -> return num
 
-hashesP :: Parsec String () [(Integer,Int256)]
+-- hashesP :: Parsec String () [(Integer,Int256)]
 hashesP = do
   many $ do 
     blockNum <- numLineP
     blockHash <- hexLineP
     return (blockNum,blockHash)
 
-bitsP :: Parsec String () [(Integer,Int256,PackedBits,Float,Int256)]
-bitsP = do
+blocksP :: Parsec String () [(Integer,Int256,PackedBits,Float,Int256)]
+blocksP = do
   many $ do
     blockNum <- numLineP
     blockHash <- hexLineP
@@ -82,14 +82,31 @@ statsP = do
     blockMedianTime <- Seconds `fmap` numLineP
     return (blockNum, blockHash, blockTotalReward, blockTime, blockMedianTime)
   
+tgetHashes = return . (take 10) =<< getHashes 
 getHashes = parseFile hashesP "/Users/flipper/op_energy_prices/blockhashes.txt"
 
 tgetStats = return . (take 10) =<< getStats
 getStats = parseFile statsP "/Users/flipper/op_energy_prices/blockstats.txt"
 
-tgetBits = return . (take 10) =<< getBits
-getBits = parseFile bitsP "/Users/flipper/op_energy_prices/blockbits.txt"
+tgetBlocks = return . (take 10) =<< getBlocks
+getBlocks = parseFile blocksP "/Users/flipper/op_energy_prices/blockbits.txt"
 
+{-}
+get_op_energy x y = do
+	blocks <- getBlocks
+	foldM combine [] blocks
+
+
+writePrices :: IO ()
+writePrices = do
+    s <- getStats
+    b <- getBits
+    print . last $ s
+    print . last $ b
+-}
+
+
+parseFile :: Parsec String () b -> FilePath -> IO b
 parseFile parserP f  = do
   input <- readFile f
   return $ case ( parse parserP f input ) 
@@ -99,11 +116,11 @@ parseFile parserP f  = do
 
 -- getPrices = do
 
-newtype Satoshis = Satoshis Integer 
+newtype Satoshis = Satoshis { unwrap_satoshis :: Integer }
   deriving (Read,Show)
-newtype Seconds = Seconds Integer
+newtype Seconds = Seconds { unwrap_seconds :: Integer }
   deriving (Read,Show)
-newtype Int256 = Int256 Integer
+newtype Int256 = Int256 { unwrap_int256 :: Integer }
   deriving (Read,Show)
 {-
   return $ do (h :: Either ParseError [String]) <- parse linesP hashes input
@@ -127,12 +144,6 @@ strikeDelta (strike1, bid1, ask1) (strike2, bid2, ask2) =
 
 decToHex x = Numeric.showHex x ""
 
-
--- bitsToDiff mantissa exponent =  target_genesis / ( unpack_bits mantissa exponent )
-
--- t1 = bitsToDiff 0x17 == 0x1007ea
--- t2 = bitsToDiff 0x17 == 0x109bac
-
 unpack_bits :: PackedBits -> Double
 unpack_bits x = (fromIntegral . packedbits_mantissa $ x) * ( 2**(8*( (fromIntegral . packedbits_exponent $ x) - 3)) )
 
@@ -144,25 +155,76 @@ data PackedBits = PackedBits { packedbits_exponent :: Int
   deriving ( Read, Show )
 
 -- next thing to do is to start dumping blocks
-data Block = Block { target :: PackedBits, 
-                                   seconds :: Int,
-                                   subsidy_satoshis :: Int,
-                                   fee_satoshis :: Int
+data OP_ENERGY_Block = OP_ENERGY_Block { block_number :: Int,
+                                         hashes_from_target :: Int256, 
+                                         hashes_from_totalwork :: Int256,
+                                         total_reward :: Satoshis
                                    }
   deriving ( Read, Show )
 
 
 
--- todo, use real blockchain median seconds instead of vanilla timestamp, if possible. 
--- Not sure if it is possible for genesis block actually. 
 
-price_1_2 = hashprice [ block_genesis ]
-price_1_3 = hashprice [ block_genesis, block_2 ]
 
-block_genesis = Block bits_genesis (timestamp_2 - timestamp_1 ) (50*10^8) 0
-block_2 = Block bits_genesis (timestamp_3 - timestamp_2 ) (50*10^8) 0
+block_genesis = 
+    let hashes_target = hashes_from_target_and_elapsed_time bits_genesis (Seconds $ timestamp_2 - timestamp_1 )
+    in OP_ENERGY_Block
+        1 
+        hashes_target
+        (Int256 $ workaccum_1)
+        (Satoshis $ (50*10^8) + 0 )
+
+block_2 =       
+   let hashes_target = hashes_from_target_and_elapsed_time bits_genesis (Seconds $ timestamp_3 - timestamp_2 )
+   in OP_ENERGY_Block 
+        2
+        hashes_target
+        (Int256 $ workaccum_2 - workaccum_1)
+        (Satoshis $ (50*10^8) + 0 )
+
 bits_genesis = PackedBits 0x1d 0x00ffff   -- decToHex 486604799 => "1d00ffff"
  
+
+price_first_halving = hashprice_from_target [ block ]
+  where 
+    block = 
+       let bits = PackedBits 0x1a 0x04e0ea   -- decToHex 436527338 => "1a04e0ea"
+           hashes_target = hashes_from_target_and_elapsed_time bits (Seconds 600)
+       in OP_ENERGY_Block 
+            210000
+            hashes_target
+            (Int256 $ error "block_first_halving, fixme")
+            (Satoshis $ (25*10^8) + 1356295554)
+
+
+price_second_halving = hashprice_from_target [ block ]
+  where 
+    block = 
+       let bits = PackedBits 0x18 0x0526fd  -- decToHex 402990845 => "180526fd"
+           hashes_target = hashes_from_target_and_elapsed_time bits (Seconds 600)
+       in OP_ENERGY_Block 
+            420000
+            hashes_target
+            (Int256 $ error "block_second_halving, fixme")
+            (Satoshis $ (125*10^7) + 57569681 )    
+
+
+
+
+
+
+hashes_from_target_and_elapsed_time :: PackedBits -> Seconds -> Int256
+hashes_from_target_and_elapsed_time target elapsed_time =  
+    let x = ( (2 ** 256) / ( unpack_bits target  ) ) 
+               * 
+               ( 600 / (fromIntegral . unwrap_seconds $ elapsed_time) ) 
+     in Int256 . floor $ x
+
+
+-- hashes_from_totalwork :: OP_ENERGY_Block -> Double
+-- hashes_from_totalwork block =  error "hashes_from_totalwork, todo" 
+
+
 
 
 timestamp_1 = 1231469665
@@ -170,38 +232,28 @@ timestamp_2 = 1231469744
 timestamp_3 = 1231470173
 
 
-
-{-
-
-
-
+workaccum_1 = 0x0000000000000000000000000000000000000000000000000000000200020002
+workaccum_2 = 0x0000000000000000000000000000000000000000000000000000000300030003
+workaccum_3 = 0x0000000000000000000000000000000000000000000000000000000400040004
 
 
 
-
-price_first_halving = hashprice block_first_halving
-  where block_first_halving = Block bits_first_halving 600 (25*10^8) 1356295554
-        bits_first_halving = PackedBits 0x1a 0x04e0ea   -- decToHex 436527338 => "1a04e0ea"
-
-
-price_second_halving = hashprice block_second_halving
-  where block_second_halving = Block bits_second_halving 600 (125*10^7) 57569681 
-        bits_second_halving = PackedBits 0x18 0x0526fd  -- decToHex 402990845 => "180526fd"
-
--}
-
-
-hashprice blocks = sum (map hashes blocks) / sum (map revenue blocks)
+price_1_2 = hashprice_from_target [ block_genesis ]
+price_1_3 = hashprice_from_target [ block_genesis, block_2 ]
 
 
 
 
-hashes :: Block -> Double
-hashes block =  ( (2 ** 256) / ( unpack_bits . target $ block ) ) 
-                           * ( 600 / (fromIntegral . seconds $ block) ) 
 
 
-revenue block = ( (fromIntegral . subsidy_satoshis $ block) + (fromIntegral . fee_satoshis $ block))
+hashprice_from_target blocks = sum (map ( fromIntegral . unwrap_int256 . hashes_from_target  ) blocks) 
+                                   / 
+                                   sum (map ( fromIntegral . unwrap_satoshis . total_reward ) blocks)
+
+
+
+
+
 
   
 
@@ -228,10 +280,4 @@ Prelude> 0x1d00ffff    => 486604799
 
 
 
-Probably don't need this but just as a breadcrumb, other ways of gathering this data are in 
-  https://bitcoin.stackexchange.com/questions/73186/csv-file-of-every-block-timestamp-in-btc-history
-
 -}
-
--- target_genesis :: Double
--- target_genesis = unpack_bits genesis_bits
