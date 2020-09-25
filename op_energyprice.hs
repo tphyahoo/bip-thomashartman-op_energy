@@ -15,15 +15,34 @@ numLineP = do
             Nothing -> error $ "numLineP, bad numS: " ++ numS
             Just num -> return num 
 
-hexLineP :: Parser Integer
+hexLineP :: Parser Int256
 hexLineP = do
         _ <- char '"'
-        hashS  <- (  ("0x" ++) ) `fmap` ( manyTill anyChar (char '"') ) 
+        hashS  <- manyTill anyChar (char '"') 
         -- _ <- char '"'
         _ <- char '\n'
-        case (readMay hashS) of
+        case (readMay $ "0x" ++ hashS) of
             Nothing -> error $ "hashLineP, bad hashS: " ++ hashS
-            Just num -> return num
+            Just num -> return $ Int256 num
+
+packedbitsLineP :: Parser PackedBits
+packedbitsLineP = do
+        _ <- char '"'
+        packedS  <- ( manyTill anyChar (char '"') ) 
+        _ <- char '\n'
+        {- case (readMay ("0x" ++ packedS :: Int32) of -- sanity check, it can be read as a 32 bit int
+            Nothing -> error $ "hashLineP, bad packedS, not an Int32: " ++ packedS
+            Just _ -> do -}
+        case packedS of 
+            [a,b,c,d,e,f,g,h] -> 
+                let exponent = case (readMay $ "0x" ++ [a,b] ) of
+                        Nothing -> error $ "packedbitsLineP, bad exponent: " ++ [a,b]
+                        Just x -> x
+                    mantissa = case (readMay $ "0x" ++ [c,d,e,f,g,h] ) of
+                        Nothing -> error $ "packedbitsLineP, bad mantissa: " ++ [c,d,e,f,g,h]
+                        Just x -> x
+                 in return $ PackedBits exponent mantissa
+            _ -> error $ "hashLineP, bac packedS, not 8 characters: " ++ packedS
 
 
 floatLineP :: Parser Float
@@ -33,33 +52,35 @@ floatLineP = do
             Nothing -> error $ "floatLineP, bad floatS: " ++ floatS
             Just num -> return num
 
-hashesP :: Parsec String () [(Integer,Integer)]
+hashesP :: Parsec String () [(Integer,Int256)]
 hashesP = do
   many $ do 
     blockNum <- numLineP
     blockHash <- hexLineP
     return (blockNum,blockHash)
 
-bitsP :: Parsec String () [(Integer,Integer,Integer,Float,Integer)]
+bitsP :: Parsec String () [(Integer,Int256,PackedBits,Float,Int256)]
 bitsP = do
   many $ do
     blockNum <- numLineP
     blockHash <- hexLineP
-    blockTarget <- hexLineP
+    blockTarget <- packedbitsLineP 
     blockDiff <- floatLineP
     blockWork <- hexLineP
     return (blockNum, blockHash, blockTarget, blockDiff, blockWork)
 
-statsP :: Parsec String () [(Integer,Integer,Integer,Integer,Integer,Integer)]
+statsP :: Parsec String () [(Integer,Int256, Satoshis,Seconds,Seconds)]
 statsP = do
   many $ do
     blockNum <- numLineP
     blockHash <- hexLineP
-    blockSubsidy <- numLineP
-    blockFees <- numLineP
-    blockTime <- numLineP
-    blockMedianTime <- numLineP
-    return (blockNum, blockHash, blockSubsidy, blockFees, blockTime, blockMedianTime)
+    blockTotalReward <- do
+      blockSubsidy <- numLineP
+      blockFees <- numLineP
+      return $ Satoshis $ blockSubsidy + blockFees
+    blockTime <- Seconds `fmap` numLineP
+    blockMedianTime <- Seconds `fmap` numLineP
+    return (blockNum, blockHash, blockTotalReward, blockTime, blockMedianTime)
   
 getHashes = parseFile hashesP "/Users/flipper/op_energy_prices/blockhashes.txt"
 
@@ -72,13 +93,18 @@ getBits = parseFile bitsP "/Users/flipper/op_energy_prices/blockbits.txt"
 parseFile parserP f  = do
   input <- readFile f
   return $ case ( parse parserP f input ) 
-             of Left e -> error $ "getHashes: " ++ f ++", " ++ show e
+             of Left e -> error $ "parseFile: " ++ f ++", " ++ show e
                 Right r -> r
 
 
+-- getPrices = do
 
-
-
+newtype Satoshis = Satoshis Integer 
+  deriving (Read,Show)
+newtype Seconds = Seconds Integer
+  deriving (Read,Show)
+newtype Int256 = Int256 Integer
+  deriving (Read,Show)
 {-
   return $ do (h :: Either ParseError [String]) <- parse linesP hashes input
               case h of 
@@ -117,6 +143,7 @@ data PackedBits = PackedBits { packedbits_exponent :: Int
                                }
   deriving ( Read, Show )
 
+-- next thing to do is to start dumping blocks
 data Block = Block { target :: PackedBits, 
                                    seconds :: Int,
                                    subsidy_satoshis :: Int,
