@@ -29,7 +29,8 @@ price = hashes / satoshis
 </pre>
 
 todo:  it seems like you could also get hashes from a to b by subtracting chainwork(b) - chainwork(a)
-  compare and contrast, which is better?
+compare and contrast, which is better?
+also look at getnetworkhashps bitcoin-cli call
 
 For a multi block span, the price is sum(hashes)/sum(satoshis), summing over the single block spans.
 
