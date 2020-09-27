@@ -19,24 +19,24 @@ This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin 
 
 OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments. 
 
-The price of a single block span, that is, OP_ENERGY n (n+1) is: 
+OP_ENERGY x y is: 
 
 <pre>
-satoshis = subsidy (n) + fee (n)
-blocktime = timestamp (n+1) - timestamp (n)
-hashes  = ( 2 ^ 256 / target (n) ) * ( 600 / blocktime )
-price = hashes / satoshis
+dividedBy = integer division done on uin5256 integers, same as target, and throwing out remainder
+/ = dividedBy
+
+price = hashes / satoshis 
+  where 
+    satoshis = sum(totalreward(x), totalreward(x+1)... totalreward(y-1)
+      where 
+        totalreward(block) = subsidy(block) + fee(block) 
+    hashes = baseHashes * ( expectedTime / time )
+      where
+        baseHashes = chainwork (y) - chainwork (x)
+        time = mediantime (y) - mediantime (x)
+        expectedtime = 600 * blocks 
+        blocks = y - x 
 </pre>
-
-todo:  it seems like you could also get hashes from a to b by subtracting chainwork(b) - chainwork(a)
-compare and contrast, which is better?
-also look at getnetworkhashps bitcoin-cli call
-
-For a multi block span, the price is sum(hashes)/sum(satoshis), summing over the single block spans.
-
-The calculation is done on uint256 integers (same as target).  
-
-Bip113 mediantime is used for timestamps, to guarantee time is always increasing. 
 
 When executed, if any of the following conditions are true, the script interpreter will terminate with an error:
 
@@ -44,9 +44,8 @@ When executed, if any of the following conditions are true, the script interpret
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * second block number is less than or equal to first block number
 * second block is in the future
-* block distance is greater than sampling limit of 2016 blocks (or some reasonable limit tbd).  This is to limit compute cost to nodes 1.
 
-Otherwise, the price goes on the stack. The stack format for price is uint256, same as target. 
+Otherwise, the price goes on the stack. The stack format for price is 4 byte uint256, same as target.
 
 1 As an alternative (or enhancement), vbytes of an OP_ENERGY transaction could potentially be made to depend on block distance. 
 todo: is this in fact pragmatic / possible? get an opinion on actual cost to nodes.  
@@ -165,9 +164,8 @@ Bob wants to make a market on OP_ENERGY from blocks 647,136 to 648,136, which is
 <pre>
 Current date: August 29, 2020 
 Current block: 646,136
-Next target adjustment: 647,136
+Next difficulty adjustment block: 647,136
 Predicted difficulty adjustment, from block times: -4.3%
-Predicted target adjustment, from block times: +4.3%
 Predicted OP_ENERGY price adjustment, from block times: -4.3%
 PRICE_645_646 = OP_ENERGY 645,136 646,136 = TODO, give real number (price of last 1000 blocks, which is known)
 </pre> 
@@ -194,7 +192,9 @@ So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136,
 </pre>
 
 
-Note that if target was unchanged but blocks startied coming in 4% faster after 647136, the trade would resolve the same. Which is good, since the real world energy price would be the same. 
+Note that difficulty was unchanged but blocks startied coming in 4% faster after 647136, the trade would resolve the same. Which is good, since the real world energy price would be the same. 
+
+TODO: double check that this claim is true
 
 Alice, the buyer, is paid the 10,000 sat if 
 
@@ -261,14 +261,14 @@ We start with Alice having a 40,000 sat dual funded channel with Bob. Each of th
 Alice <- 20,000 20,000 -> Bob
 </pre>
 
-We use the pricing example from before, so Alice buys a binary for 7,336 sat. In return, Bob has to lock up 10,000 sat until the target block is mined. 
+We use the pricing example from before, so Alice buys a binary for 7,336 sat. In return, Bob has to lock up 10,000 sat until the second block is mined. 
 
 <pre>
 Alice <- (20000 - 7336) ( 10,000 locked settlement ) ( 20,000 + 7,336 - 10,000 ) -> Bob
 => Alice <- 12664 (10,000 locked settlement) 17336 -> Bob
 </pre>
 
-Alice still has 12,664 sats of liquidity that she can use to make lightning purchases on this channel. Bob has 17,336 sats of liquidity he can spend through Alice. And 10,000 sats are locked up until the target block is reached. 
+Alice still has 12,664 sats of liquidity that she can use to make lightning purchases on this channel. Bob has 17,336 sats of liquidity he can spend through Alice. And 10,000 sats are locked up until the second block is reached. 
 
 Blocks start coming in more slowly, and Alice starts to worry about her position. So she tries to sell the binary back to Bob. Bob agrees to buy the contract back from Alice, for 7263 sat. Since Bob originated the contract in the first places, this erases the contract. The channel how looks like
 
@@ -301,6 +301,20 @@ Todo:
 * binary call sale transaction, lightning 
 * settlement transactions
 
+<pre>
+looks like implementation could start with 
+
+https://github.com/bitcoin/bitcoin/blob/89a8299a14af68c1f96ca1650cbfd4fc2952e77b/src/rpc/mining.cpp
+static UniValue GetNetworkHashPS(int lookup, int height) {
+  ......
+arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
+    int64_t timeDiff = maxTime - minTime;
+
+    return workDiff.getdouble() / timeDiff;
+}
+
+add a coouple functions that do the OP_ENERGY math and I think this would do what we need.
+<pre>
 ==Economic Considerations==
 
 Todo
