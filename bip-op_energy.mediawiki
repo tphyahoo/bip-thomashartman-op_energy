@@ -22,8 +22,7 @@ OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments
 OP_ENERGY x y is: 
 
 <pre>
-dividedBy = integer division done on uin5256 integers, same as target, and throwing out remainder
-/ = dividedBy
+
 
 price = hashes / satoshis 
   where 
@@ -36,6 +35,7 @@ price = hashes / satoshis
         time = mediantime (y) - mediantime (x)
         expectedtime = 600 * blocks 
         blocks = y - x 
+        / = integer division done on uin5256 integers, same as target, and throwing out remainder
 </pre>
 
 When executed, if any of the following conditions are true, the script interpreter will terminate with an error:
