@@ -47,8 +47,11 @@ When executed, if any of the following conditions are true, the script interpret
 
 Otherwise, the price goes on the stack. The stack format for price is 4 byte uint256, same as target.
 
-1 As an alternative (or enhancement), vbytes of an OP_ENERGY transaction could potentially be made to depend on block distance. 
-todo: is this in fact pragmatic / possible? get an opinion on actual cost to nodes.  
+Calculating the price requires that validating nodes save mediantime (4 bytes?), total reward (8 bytes?), and chainwork (32 bytes?) information for all blocks, to perform this calculation. I think it should be possible to index and read this quickly into memory, even for raspberry pi type nodes.
+
+todo, 
+  check number of bytes per field that needs to be saved.
+  is there any overflow risk or other issues, performing the calculation? 
 
 ==Motivation==
 
