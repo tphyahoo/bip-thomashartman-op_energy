@@ -311,7 +311,8 @@ arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
 }
 
 add a coouple functions that do the OP_ENERGY math and I think this would do what we need.
-<pre>
+</pre>
+
 ==Economic Considerations==
 
 Todo
