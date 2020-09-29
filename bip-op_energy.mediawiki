@@ -53,7 +53,8 @@ todo,
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
 
-The basic contract is a european cash-or-nothing binary call <ref>binary option page, wikipedia</ref> on whether some future OP_ENERGY price exceeds some strike. 
+The basic contract is a european cash-or-nothing binary call <ref>binary option page, wikipedia</ref>
+on whether some future OP_ENERGY price exceeds some strike. 
 
 Synthetic versions of derivatives such as vanilla puts, calls, and futures, can be built up out of the binary call primitive.
 
