@@ -12,7 +12,6 @@
 </pre>
 
 ==Abstract==
- 
 This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin in hashes between two blocks, thus enabling non-custodial energy derivatives trading in bitcoin. Since for an individual miner the probability of finding a block is higher if competing total-network hashrate is slower than expected, or lower if faster, the price in hashes is adjusted accordingly. 
 
 ==Summary==
