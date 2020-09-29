@@ -126,7 +126,7 @@ Settling (Resolution): After the settlement block is reached, the settlement is 
 
 Normalized premium is a probability-like number between 0 and 1, corresponding to unit settlement value.  
 
-By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot.) <ref>https://en.wikipedia.org/wiki/Binary_option</ref> 
+By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot.<ref>https://en.wikipedia.org/wiki/Binary_option</ref> 
 
 <pre>
 Cv = vanilla call price
