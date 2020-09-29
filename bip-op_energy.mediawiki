@@ -13,23 +13,21 @@
 
 ==Abstract==
  
-This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin in hashes between two blocks, thus enabling non-custodial energy derivatives trading in bitcoin. 
+This BIP describes the new opcode OP_ENERGY which measures the price of bitcoin in hashes between two blocks, thus enabling non-custodial energy derivatives trading in bitcoin. Since for an individual miner the probability of finding a block is higher if competing total-network hashrate is slower than expected, or lower if faster, the price in hashes is adjusted accordingly. 
 
 ==Summary==
 
 OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments. 
 
-OP_ENERGY x y is: 
-
 <pre>
-price = hashes / satoshis 
+OP_ENERGY x y = hashes / satoshis 
   where 
-      hashes = baseHashes * ( expectedTime / time )
+      hashes = expectedHashes * ( expectedTime / time )
             where
-              baseHashes = chainwork (y) - chainwork (x)
+              blocks = y - x
+              expectedtime = 600 * blocks
               time = mediantime (y) - mediantime (x)
-              expectedtime = 600 * blocks 
-              blocks = y - x 
+              expectedHashes = chainwork (y) - chainwork (x)
       satoshis = sum(totalreward(x), totalreward(x+1)... totalreward(y-1)
             where 
               totalreward(block) = subsidy(block) + fee(block) 
