@@ -1,12 +1,9 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 import Numeric
 
-import Data.List (tails)
+import Data.List (tails, intersperse)
 import Control.Applicative (ZipList(..))
 import Op_Energy_Parsing
-
-main = putStrLn ("hello world")
-
 
 -- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
 windows :: Int -> [a] -> [[a]]
@@ -15,31 +12,21 @@ windows m = transpose' . take m . tails
     transpose' :: [[a]] -> [[a]]
     transpose' = getZipList . sequenceA . map ZipList
 
+-- todo, needs fixing 
+t = take 10 `fmap` blockTotals
 
-
-  
-tgetHashes = return . (take 10) =<< getHashes 
-getHashes = parseFile hashesP "/Users/flipper/op_energy_prices/blockhashes.txt"
-
-tgetStats = return . (take 10) =<< getStats
-getStats = parseFile statsP "/Users/flipper/op_energy_prices/blockstats.txt"
-
-tgetBlocks = return . (take 10) =<< getBlocks
-getBlocks = parseFile blocksP "/Users/flipper/op_energy_prices/blockbits.txt"
-
-{-}
-get_op_energy x y = do
-	blocks <- getBlocks
-	foldM combine [] blocks
-
-
-writePrices :: IO ()
-writePrices = do
-    s <- getStats
-    b <- getBits
-    print . last $ s
-    print . last $ b
--}
+blockTotals     = blockTotals' ("/Users/flipper/op_energy_prices/blockbits.txt", 
+                                "/Users/flipper/op_energy_prices/blockstats.txt")
+blockTotalsTest = blockTotals' ("/Users/flipper/op_energy_prices/blockbitsTest.txt",
+                                "/Users/flipper/op_energy_prices/blockstatsTest.txt")
+blockTotals' :: (FilePath, FilePath) -> IO [OP_ENERGY_TOTALS]
+blockTotals' (bits, stats)= do
+    b <- parseFile blocksP bits --  
+    s <- parseFile statsP stats -- 
+    let z = OP_ENERGY_TOTALS 0 (Seconds 0) (Int256 0) (Satoshis 0)
+        blocktotals :: [OP_ENERGY_TOTALS]
+        blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
+    return blocktotals
 
 
 
@@ -63,45 +50,14 @@ unpack_bits x = (fromIntegral . packedbits_mantissa $ x) * ( 2**(8*( (fromIntegr
 
 
 -- next thing to do is to start dumping blocks
-data OP_ENERGY_Block = OP_ENERGY_Block { block_number :: Int,
+data OP_ENERGY_Block = OP_ENERGY_Block { block_number :: Integer,
                                          hashes_from_target :: Int256, 
                                          hashes_from_totalwork :: Int256,
                                          total_reward :: Satoshis
                                    }
   deriving ( Read, Show )
 
-data OP_ENERGY_BLOCK_HELPER = OP_ENERGY_BLOCK_HELPER { oeh_blocknumber :: Int,
-                                                       oeh_target :: PackedBits,
-                                                       oeh_median_time :: Seconds,
-                                                       oeh_totalwork :: Int256,
-                                                       oeh_total_reward :: Satoshis
-                                                     }
-  deriving (Read, Show)                                                     
-
-hashes_from_target_and_elapsed_time :: PackedBits -> Seconds -> Int256
-hashes_from_target_and_elapsed_time target elapsed_time =  
-    let x = ( (2 ** 256) / ( unpack_bits target  ) ) 
-               * 
-               ( 600 / (fromIntegral . unwrap_seconds $ elapsed_time) ) 
-     in Int256 . floor $ x
-
-
-
-hashprice_from_target blocks = sum (map ( fromIntegral . unwrap_int256 . hashes_from_target  ) blocks) 
-                                   / 
-                                   sum (map ( fromIntegral . unwrap_satoshis . total_reward ) blocks)
-
--- get the OP_ENERGY block data from two neighboring blocks
-openergyblock_from_delta :: OP_ENERGY_BLOCK_HELPER -> OP_ENERGY_BLOCK_HELPER -> OP_ENERGY_Block
-openergyblock_from_delta x y = 
-    let total_work_hashes = Int256 $ ( unwrap_int256 . oeh_totalwork $ x ) - ( unwrap_int256 . oeh_totalwork $ y )
-        elapsed = Seconds $ (unwrap_seconds . oeh_median_time $ x) - (unwrap_seconds . oeh_median_time $ y) 
-        hashes_target = hashes_from_target_and_elapsed_time (oeh_target x) elapsed 
-    in  OP_ENERGY_Block
-            (oeh_blocknumber x)
-            hashes_target
-            total_work_hashes
-            (oeh_total_reward x)                            
+                                                     
 
 
 -- Options stuff, / black scholes for binary options maybe can be removed or moved to a more pricing specific model
@@ -125,56 +81,7 @@ strikeDelta (strike1, bid1, ask1) (strike2, bid2, ask2) =
 
 decToHex x = Numeric.showHex x ""
 
--- Test Data
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-block_genesis = 
-    let hashes_target = hashes_from_target_and_elapsed_time bits_genesis (Seconds $ timestamp_2 - timestamp_1 )
-    in OP_ENERGY_Block
-        1 
-        hashes_target
-        (Int256 $ workaccum_1)
-        (Satoshis $ (50*10^8) + 0 )
 
-block_2 =       
-   let hashes_target = hashes_from_target_and_elapsed_time bits_genesis (Seconds $ timestamp_3 - timestamp_2 )
-   in OP_ENERGY_Block 
-        2
-        hashes_target
-        (Int256 $ workaccum_2 - workaccum_1)
-        (Satoshis $ (50*10^8) + 0 )
-
-bits_genesis = PackedBits 0x1d 0x00ffff   -- decToHex 486604799 => "1d00ffff"
- 
-
-price_first_halving = hashprice_from_target [ block ]
-  where 
-    block = 
-       let bits = PackedBits 0x1a 0x04e0ea   -- decToHex 436527338 => "1a04e0ea"
-           hashes_target = hashes_from_target_and_elapsed_time bits (Seconds 600)
-       in OP_ENERGY_Block 
-            210000
-            hashes_target
-            (Int256 $ error "block_first_halving, fixme")
-            (Satoshis $ (25*10^8) + 1356295554)
-
-
-price_second_halving = hashprice_from_target [ block ]
-  where 
-    block = 
-       let bits = PackedBits 0x18 0x0526fd  -- decToHex 402990845 => "180526fd"
-           hashes_target = hashes_from_target_and_elapsed_time bits (Seconds 600)
-       in OP_ENERGY_Block 
-            420000
-            hashes_target
-            (Int256 $ error "block_second_halving, fixme")
-            (Satoshis $ (125*10^7) + 57569681 )    
-
--- hashes_from_totalwork :: OP_ENERGY_Block -> Double
--- hashes_from_totalwork block =  error "hashes_from_totalwork, todo" 
 
 
 
@@ -188,10 +95,66 @@ workaccum_1 = 0x0000000000000000000000000000000000000000000000000000000200020002
 workaccum_2 = 0x0000000000000000000000000000000000000000000000000000000300030003
 workaccum_3 = 0x0000000000000000000000000000000000000000000000000000000400040004
 
+sanityCheck = do
+    totals <- blockTotals
+    let op_energy' x y = op_energy (totals !! (x-1)) (totals !! (y-1))
+    putStrLn $ "OP_ENERGY 1 2: " ++ ( show $ op_energy' 1 2)
+    putStrLn $ "OP_ENERGY 1 3: " ++ ( show $ op_energy' 1 3)
+    putStrLn $ "OP_ENERGY 210000 210001: " ++ ( show $ op_energy' 210000 210001)
+    putStrLn $ "OP_ENERGY 420000 420001: " ++ ( show $ op_energy' 420000 420001)
+    putStrLn $ "OP_ENERGY 630000 630001: " ++ ( show $ op_energy' 630000 630001)
+
+    putStrLn $ "first 500 blocks, OP_ENERGY 1 500): " ++ ( show $ op_energy' 1 500)
+    putStrLn $ "first 1000 blocks, OP_ENERGY 1 1000): " ++ ( show $ op_energy' 1 1000)
+    putStrLn $ "first 10,000 blocks, OP_ENERGY 1 10000): " ++ ( show $ op_energy' 1 10000)
+    putStrLn $ "first 100,000 blocks, OP_ENERGY 1 100,000): " ++ ( show $ op_energy' 1 100000)    
+    putStrLn $ "before first halving, OP_ENERGY 209499 209999): " ++ ( show $ op_energy' 209499 209999)
+    putStrLn $ "around first halving, OP_ENERGY 209750 210250): " ++ ( show $ op_energy' 209750 210250)
+    putStrLn $ "after first halving (OP_ENERGY 210000 210500): " ++ ( show $ op_energy' 210000 210500)
+    putStrLn $ "before second halving (OP_ENERGY 419499 419999): " ++ ( show $ op_energy' 419499 419999)
+    putStrLn $ "around second halving (OP_ENERGY 419750 420250): " ++ ( show $ op_energy' 419750 420250)
+    putStrLn $ "after second halving (OP_ENERGY 420000 420500): " ++ ( show $ op_energy' 420000 420500)
+    putStrLn $ "before third halving (OP_ENERGY 629499 629999): " ++ ( show $ op_energy' 629499 629999)
+    putStrLn $ "around third halving (OP_ENERGY 629750 630250): " ++ ( show $ op_energy' 629750 630250)
+    putStrLn $ "after third halving (OP_ENERGY 430000 430500): " ++ ( show $ op_energy' 430000 430500)
 
 
-price_1_2 = hashprice_from_target [ block_genesis ]
-price_1_3 = hashprice_from_target [ block_genesis, block_2 ]
+mainTest = op_energy_report_test 3
+main = op_energy_report 500
+
+
+op_energy_report_test = op_energy_report' blockTotalsTest
+op_energy_report = op_energy_report' blockTotals
+op_energy_report' blockTotals' span = do
+    totals <- blockTotals'
+    let csvheader = concat . intersperse "," $ ["start","finish","OP_ENERGY price"]
+        csvline xs = 
+            let startBlock = head xs
+                finishBlock = last xs
+                start = oeh_blocknumber startBlock
+                finish = oeh_blocknumber finishBlock
+                price = op_energy startBlock finishBlock
+            in  concat . intersperse "," $ [show start,show finish, show price]
+        csvlines = map csvline . windows span $ totals
+        csv :: String
+        csv = concat . intersperse "\n" $ csvheader : csvlines
+    putStrLn csv 
+
+
+
+op_energy :: OP_ENERGY_TOTALS -> OP_ENERGY_TOTALS -> Integer
+op_energy fromBlock toBlock = floor $ hashes / satoshis
+  where 
+    hashes :: Float
+    hashes = fromIntegral expectedHashes * ( fromIntegral expectedTime / fromIntegral time )
+            where
+              numBlocks = (oeh_blocknumber toBlock) - (oeh_blocknumber fromBlock)
+              expectedTime = 600 * numBlocks
+              time = (unwrap_seconds . oeh_median_time $ toBlock) - (unwrap_seconds . oeh_median_time $ fromBlock)
+              expectedHashes = (unwrap_int256 . oeh_chainwork $ toBlock) - (unwrap_int256. oeh_chainwork $ fromBlock)
+    satoshis :: Float
+    satoshis = fromIntegral $ ( unwrap_satoshis . oeh_chainreward $ toBlock ) - ( unwrap_satoshis . oeh_chainreward $ fromBlock)
+
 
 
 {-
