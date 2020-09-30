@@ -9,12 +9,58 @@ newtype Satoshis = Satoshis { unwrap_satoshis :: Integer }
 newtype Seconds = Seconds { unwrap_seconds :: Integer }
   deriving (Read,Show)
 newtype Int256 = Int256 { unwrap_int256 :: Integer }
-  deriving (Read,Show)
+  deriving (Read,Show,Eq)
 
 data PackedBits = PackedBits { packedbits_exponent :: Int
                                , packedbits_mantissa :: Int
                                }
   deriving ( Read, Show )
+
+
+data OP_ENERGY_TOTALS = OP_ENERGY_TOTALS { oeh_blocknumber :: Integer,
+                                                       oeh_median_time :: Seconds,
+                                                       oeh_chainwork :: Int256,
+                                                       oeh_chainreward :: Satoshis
+                                                     }
+  deriving (Read, Show)
+
+
+make_next_helper_record :: ((Integer, Int256, PackedBits, Float, Int256),(Integer, Int256, Satoshis, Seconds, Seconds)) 
+                             -> OP_ENERGY_TOTALS 
+                             -> OP_ENERGY_TOTALS
+make_next_helper_record ( block_record@(br_num,br_hash,_,_,chainwork), stats_record@(sr_num,sr_hash,reward@(Satoshis sr_reward),_,mediantime) ) 
+                        oeh@(OP_ENERGY_TOTALS _ _ _ (Satoshis oeh_cr)) = 
+    if ( br_num == sr_num && br_hash == sr_hash )
+        then OP_ENERGY_TOTALS br_num
+                                    mediantime
+                                    chainwork
+                                    (Satoshis $ oeh_cr + sr_reward)
+        else error $ "make_helper_record" ++ show (br_num == sr_num , br_hash == sr_hash)
+   
+
+
+blocksP :: Parsec String () [(Integer,Int256,PackedBits,Float,Int256)]
+blocksP = do
+  many $ do
+    blockNum <- numLineP
+    blockHash <- hexLineP
+    blockTarget <- packedbitsLineP 
+    blockDiff <- floatLineP
+    blockWork <- hexLineP
+    return (blockNum, blockHash, blockTarget, blockDiff, blockWork)
+
+statsP :: Parsec String () [(Integer,Int256, Satoshis,Seconds,Seconds)]
+statsP = do
+  many $ do
+    blockNum <- numLineP
+    blockHash <- hexLineP
+    blockTotalReward <- do
+      blockSubsidy <- numLineP
+      blockFees <- numLineP
+      return $ Satoshis $ blockSubsidy + blockFees
+    blockTime <- Seconds `fmap` numLineP
+    blockMedianTime <- Seconds `fmap` numLineP
+    return (blockNum, blockHash, blockTotalReward, blockTime, blockMedianTime)
 
 
 
@@ -77,25 +123,6 @@ hashesP = do
     blockHash <- hexLineP
     return (blockNum,blockHash)
 
-blocksP :: Parsec String () [(Integer,Int256,PackedBits,Float,Int256)]
-blocksP = do
-  many $ do
-    blockNum <- numLineP
-    blockHash <- hexLineP
-    blockTarget <- packedbitsLineP 
-    blockDiff <- floatLineP
-    blockWork <- hexLineP
-    return (blockNum, blockHash, blockTarget, blockDiff, blockWork)
 
-statsP :: Parsec String () [(Integer,Int256, Satoshis,Seconds,Seconds)]
-statsP = do
-  many $ do
-    blockNum <- numLineP
-    blockHash <- hexLineP
-    blockTotalReward <- do
-      blockSubsidy <- numLineP
-      blockFees <- numLineP
-      return $ Satoshis $ blockSubsidy + blockFees
-    blockTime <- Seconds `fmap` numLineP
-    blockMedianTime <- Seconds `fmap` numLineP
-    return (blockNum, blockHash, blockTotalReward, blockTime, blockMedianTime)
+
+
