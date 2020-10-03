@@ -21,11 +21,11 @@ OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments
 <pre>
 OP_ENERGY x y = hashes / satoshis 
   where 
-      hashes = expectedHashes * ( expectedTime / time )
+      hashes = expectedHashes * ( expectedSeconds / seconds )
             where
               blocks = y - x
-              expectedtime = 600 * blocks
-              time = mediantime (y) - mediantime (x)
+              expectedSeconds = 600 * blocks
+              seconds = mediantime (y) - mediantime (x)
               expectedHashes = chainwork (y) - chainwork (x)
       satoshis = chainRevenue(y) - chainRevenue(x)
             where chainRevenue(block) = sum of all miner rewards (subsidy + fees) up to this block
@@ -36,7 +36,7 @@ When executed, if any of the following conditions are true, the script interpret
 
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
-* second block number is less than or equal to first block number
+* first block number is not less than second block number
 * second block is in the future
 
 Otherwise, the price goes on the stack. The stack format for price is 4 byte uint256, same as target.
@@ -89,9 +89,10 @@ Give packed uint256 as well as decimal representation.
 
 Single block spans: 
 
-* genesis block                 (OP_ENERGY 1 2): 7
-* first block of first halving  (OP_ENERGY 210,000 210,001): 3,830,159 
-* first block of second halving (OP_ENERGY 420,000 420,001): 700,961,030,332
+* genesis block                 (OP_ENERGY 1 2): 6
+* first two blocks              (OP_ENERGY 1 3): 13
+* first block of first halving  (OP_ENERGY 210,000 210,001): 8,078,338 -- 320,069,304,320 -- seems suspicious?
+* first block of second halving (OP_ENERGY 420,000 420,001): 700,961,030,332 -- 80,732,483,485,696 -- suspicious?
 
 The 6 order of magnitude change from genesis to first halving reflects the transition to asics, which was a one time event. The 2 order of magnitude change from first to second halving shows hashes more closely tracking energy (and hence fiat) prices. (todo: work on this paragraph, express it more clearly)
 
