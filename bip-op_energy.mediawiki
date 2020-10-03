@@ -36,8 +36,8 @@ When executed, if any of the following conditions are true, the script interpret
 
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
-* first block number is not less than second block number
-* second block is in the future
+* not (x < y)
+* y is in the future
 
 Otherwise, the price goes on the stack. The stack format for price is 4 byte uint256, same as target.
 
