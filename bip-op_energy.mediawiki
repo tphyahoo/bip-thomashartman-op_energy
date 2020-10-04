@@ -36,7 +36,7 @@ When executed, if any of the following conditions are true, the script interpret
 
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
-* not (x < y)
+* y <= x
 * y is in the future
 
 Otherwise, the price goes on the stack. The stack format for price is 4 byte uint256, same as target.
@@ -73,9 +73,11 @@ Example use case 3: Hash rental scenario. Power purchase agreements between mine
 
 ===Comparison to Similar Proposals===
 
-POWSWAP: Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
+POWSWAP: Enables on-chain speculation in hashrate. <ref>https:powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
 
-OP_DIFFICULTY: the initial inspiration for this bip. Alas, Tamas Blummer passed away before he could produce a concrete specification.(OP_DIFFICULTY would only measure difficulty, whereas powswap could measure hashrate.)
+OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016952.html</ref> Alas, Tamas Blummer passed away before he could produce a concrete specification. OP_DIFFICULTY would only measure difficulty, whereas powswap could measure hashrate, and OP_ENERGY actually measures a price per mined satoshi in hashes.
+
+Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not only in energy derivatives but in any asset.<ref>https://dci.mit.edu/smart-contracts</ref> No protocol change is required. However, trust in an oracle is required, which makes DLC inferior to OP_ENERGY for energy derivatives. That being said, I very much favor DLC for every other type of trading that cannot be trustlessly pegged to hashing, and hope it sees wide adoption soon. 
 
 ===Example OP_ENERGY Prices===
 
@@ -120,7 +122,7 @@ Settling (Resolution): After the settlement block is reached, the settlement is 
 
 Normalized premium is a probability-like number between 0 and 1, corresponding to unit settlement value.  
 
-By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. (strikeD is distinct from traditional delta, which is the derivative with respect to spot.<ref>https://en.wikipedia.org/wiki/Binary_option#Skew</ref> 
+By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. <ref>https://en.wikipedia.org/wiki/Binary_option#Skew</ref> (StrikeD is distinct from traditional delta, which is the derivative with respect to spot.)
 
 <pre>
 Cv = vanilla call price
