@@ -12,40 +12,38 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcodes OP_ENERGY and OP_ENERGYADJUSTMENT which measure the mining cost of a satoshi in hashes between two blocks. This measure can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
+This BIP describes the new opcode OP_ENERGY, which measures mining costs between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
 
 ==Summary==
 
-OP_ENERGY (NOP_TBD1) takes two block numbers as arguments, and measures the simple mining cost in hashes per satoshi for this span of blocks. Higher difficulty makes bitcoin more expensive, while higher transaction fees makes it cheaper. 
+OP_ENERGY (NOP_TBD) measures hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
 
 <pre>
-OP_ENERGY x y = hashes / satoshis 
+OP_ENERGY x y = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
   where 
-      hashes = chainwork (y) - chainwork (x)
+      hashes = chainwork (y) - chainwork (x) 
+      chainwork x = expected number of hashes required to produce block x
+      <ref>as defined by bitcoin-cli getblockheader: 
+        https://chainquery.com/bitcoin-cli/getblockheader</ref>
       satoshis = chainRevenue(y) - chainRevenue(x)
             where chainRevenue(block) = sum of all miner rewards (subsidy + fees) up to this block
-</pre>
-
-OP_ENERGYADJUSTMENT (NOP_TBD2) is similar to OP_ENERGY, but adds an adjustment factor for hashrate. Blocks that are recorded as being found more quickly than expected are treated as more expensive. 
-
-<pre>
-OP_ENERGYADJUSTMENT x y = ( OP_ENERGY x y ) * expectedSeconds / seconds
-  where 
       blocks = y - x
       expectedSeconds = 600 * blocks
       seconds = mediantime (y) - mediantime (x)
 </pre>
 
-All values are translated into uint5256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is integer arithmetic, throwing out remainder.
+All values are translated into uint5256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
 
-For both opcodes, if any of the following conditions are true, the script interpreter will terminate with an error:
+If any of the following conditions are true, the script interpreter will terminate with an error:
 
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * y <= x
 * y is in the future
 
-Otherwise, the measured price goes on the stack. The stack format for price is 4 byte uint256, same as target.
+Otherwise, the 4 byte uint256 price goes on the stack. 
+
+todo: review remainder of document, and make sure that all usages of the above are consistent with definition, after recent changes.
 
 ==Motivation==
 
@@ -64,26 +62,66 @@ Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer s
 
 There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
 
-=== OP_ENERGYADJUSTMENT
-
-The rationale for the hashrate-adjusted price is that faster blocks suggest hashrate is increasing, ie bitcoin is becoming more precious. If the expectation is that the price will rise in the future, this should be reflected by some increase in the spot price. The game theory of mining bears this out. If a large difficulty adjustment is expected, a rational miner with a fixed energy budget would prefer to turn on more miners pre-adjustment, and then turn them off post. IE, he values bitcoin in hashes more highly towards the end of a difficulty regime with an expected large future adjustment.   
-
-Another way of looking at it: every hash is a lottery ticket that has an equal chance of winning some block. However, if the goal is to mine a specific block (or span of blocks), a working miner is more likely to achieve this if competing total-network hashrate during the span period is lower than expected, and less likely if hashrate is higher. 
-
-Hashrate measurements over a short span of blocks are not very meaningful, but this is not disallowed by the proposed mechanism. Longer spans allow more accurate measurement of hashrate trends, shorter spans more granularity in trading. Traders are free to take positions as they wish, or gamble in the case of very short spans. 
-
 ===Intuition===
 
-OP_ENERGY price charts look similar to charts of difficulty. OP_ENERGYADJUSTMENT charts look like hashrate. However, these are prices in hashes. So miner revenue is also factored in. 
+OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, these are prices, in hashes. So miner revenue is also factored in. 
 
-To a lesser but still significant degree, these instruments track dollar price. Bcause electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements (which will eventually hit diminishing returns) if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price, but there is correlation enough to be useful for hedging. 
+To a lesser but still consequential degree, OP_ENERGY price tracks dollar price. Bcause electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there is correlation enough to be useful for hedging. 
 
-(Todo: make charts of OP_ENERGY/OP_ENERGYADJUSTMENT price vs usd price, using real data, to support this.)
+(Todo: make charts of OP_ENERGY price vs usd price, using real data, to support this.)
 
 Example use case 1: In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them. 
 
 Example use case 2: direct energy hedging, for energy suppliers
 Example use case 3: Hash rental scenario. Power purchase agreements between miners and utilities. 
+
+===Alternative Approaches===
+
+====Provide Additional Measures====
+
+There are other possible measures. For instance, one might wish to allow contracts on txfee rate in a range of blocks, or hashes / block (ignoring transaction fewes, or ovarious other things. These could all be added with their own OP measuring code. Or...
+
+====Just Supply Primitives====
+
+Rather than supply opcodes for each measurement, another approach would be to supply primitives and let traders use these a la carte. So, rather than OP_ENERGY as defined above, one might provide the following opcodes
+
+<pre>
+OP_HASHES block
+OP_MEDIANTIME block
+OP_REVENUE block
+OP_UINT256SUBTRACT uint1 uint2
+OP_UINT256MULTIPLY uint1 uint2
+
+hashes / satoshis > threshold is equivalent to 
+  => hashes > threshold * satoshis 
+  So for this approach, we don't need division, only multiplication. 
+</pre>
+
+====Pros and Cons===
+
+todo, flesh this out, and perhaps merge with "comparison to similar proposals"
+
+OP_ENERGY is preferred as it is a reasonable schelling point to bootstrap a market. The more flexible approaches a) require more opcodes b) fragment the market.
+
+Is there opcode scarcity? 
+
+Could just do OP_DIFFICULTY
+POWSWAP, along with uint256 arithmetic and OP_REVENUE: would this allow for alternative implementation of OP_ENERGY? 
+
+todo
+
+hashes / block
+adjusted hashes / block
+hashes / sat (no adjustment)
+
+another approach would be to define uint256 arithmetic (subtraction and multiplication) as their own opcodes, along with opcodes for hashes, mediantime, and revenue between two blocks, and then allow trading scripts to use these measures a la carte.
+
+eg
+
+hashes / satoshis > threshold 
+  => hashes > threshold * satoshis 
+  So we don't need division, only multiplication. 
+  does the integer math lead to any gotchas here though?
 
 ===Comparison to Similar Proposals===
 
@@ -350,7 +388,8 @@ Todo, needs work:
 
 Price manipulation scenarios: 
 
-* transaction fees 
+* transaction fees  
+** miner with high hash rate can mine unbroadcasted transactions to manipulate OP_ENERGY price. However, this is not risk free. Block could be orphaned, and then mined by another miner. Also, nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase risk to miners. (Maybe this should be its own bip. Penalize manipulation of tx fee rate by miners. As part of OP_ENERGY suite of bips.)
 * hashrate
 
 Chain split scenario
