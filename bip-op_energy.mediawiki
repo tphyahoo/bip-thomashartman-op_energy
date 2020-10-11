@@ -12,7 +12,7 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which measures mining costs between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
+This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
 
 ==Summary==
 
@@ -22,7 +22,7 @@ OP_ENERGY (NOP_TBD) measures hashes per satoshi between two blocks. Higher diffi
 OP_ENERGY x y = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
   where 
       hashes = chainwork (y) - chainwork (x) 
-      chainwork x = expected number of hashes required to produce block x
+          where chainwork x = expected number of hashes required to produce block x
       <ref>as defined by bitcoin-cli getblockheader: 
         https://chainquery.com/bitcoin-cli/getblockheader</ref>
       satoshis = chainRevenue(y) - chainRevenue(x)
@@ -42,8 +42,6 @@ If any of the following conditions are true, the script interpreter will termina
 * y is in the future
 
 Otherwise, the 4 byte uint256 price goes on the stack. 
-
-todo: review remainder of document, and make sure that all usages of the above are consistent with definition, after recent changes.
 
 ==Motivation==
 
@@ -83,7 +81,14 @@ There are other possible measures. For instance, one might wish to allow contrac
 
 ====Just Supply Primitives====
 
-Rather than supply opcodes for each measurement, another approach would be to supply primitives and let traders use these a la carte. So, rather than OP_ENERGY as defined above, one might provide the following opcodes
+Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example, OP_ENERGY as defined above is equivalent to
+
+<pre>
+hashes / satoshis > strike is equivalent to 
+  => hashes > strike * satoshis 
+</pre>
+
+To do this with the "a la carte primitives" approach would require the following opcodes
 
 <pre>
 OP_HASHES block
@@ -91,39 +96,17 @@ OP_MEDIANTIME block
 OP_REVENUE block
 OP_UINT256SUBTRACT uint1 uint2
 OP_UINT256MULTIPLY uint1 uint2
-
-hashes / satoshis > threshold is equivalent to 
-  => hashes > threshold * satoshis 
-  So for this approach, we don't need division, only multiplication. 
 </pre>
 
-====Pros and Cons===
+====Pros and Cons====
 
 todo, flesh this out, and perhaps merge with "comparison to similar proposals"
 
 OP_ENERGY is preferred as it is a reasonable schelling point to bootstrap a market. The more flexible approaches a) require more opcodes b) fragment the market.
 
-Is there opcode scarcity? 
+Is there another alternative implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? (would be good  to understand powswap better)
 
-Could just do OP_DIFFICULTY
-POWSWAP, along with uint256 arithmetic and OP_REVENUE: would this allow for alternative implementation of OP_ENERGY? 
-
-todo
-
-hashes / block
-adjusted hashes / block
-hashes / sat (no adjustment)
-
-another approach would be to define uint256 arithmetic (subtraction and multiplication) as their own opcodes, along with opcodes for hashes, mediantime, and revenue between two blocks, and then allow trading scripts to use these measures a la carte.
-
-eg
-
-hashes / satoshis > threshold 
-  => hashes > threshold * satoshis 
-  So we don't need division, only multiplication. 
-  does the integer math lead to any gotchas here though?
-
-===Comparison to Similar Proposals===
+====Comparison to Similar Proposals====
 
 POWSWAP: Enables on-chain speculation in hashrate.<ref>https:powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
 
