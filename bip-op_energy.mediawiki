@@ -75,47 +75,6 @@ Example use case 1: In a fiat centric world, if fiat can buy less bitcoin via di
 Example use case 2: direct energy hedging, for energy suppliers
 Example use case 3: Hash rental scenario. Power purchase agreements between miners and utilities. 
 
-===Alternative Approaches===
-
-====Provide Additional Measures====
-
-There are other possible measures. For instance, one might wish to allow contracts on txfee rate in a range of blocks, or hashes / block (ignoring transaction fewes, or ovarious other things. These could all be added with their own OP measuring code. Or...
-
-====Just Supply Primitives====
-
-Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example, OP_ENERGY as defined above is equivalent to
-
-<pre>
-hashes / satoshis > strike is equivalent to 
-  => hashes > strike * satoshis 
-</pre>
-
-To do this with the "a la carte primitives" approach would require the following opcodes
-
-<pre>
-OP_HASHES block
-OP_MEDIANTIME block
-OP_REVENUE block
-OP_UINT256SUBTRACT uint1 uint2
-OP_UINT256MULTIPLY uint1 uint2
-</pre>
-
-====Pros and Cons====
-
-todo, flesh this out, and perhaps merge with "comparison to similar proposals"
-
-OP_ENERGY is preferred as it is a reasonable schelling point to bootstrap a market. The more flexible approaches a) require more opcodes b) fragment the market.
-
-Is there another alternative implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? (would be good  to understand powswap better)
-
-====Comparison to Similar Proposals====
-
-POWSWAP: Enables on-chain speculation in hashrate.<ref>https:powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
-
-OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016952.html</ref> Alas, Tamas Blummer passed away before he could produce a concrete specification. 
-
-Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not only in energy derivatives but in any asset.<ref>https://dci.mit.edu/smart-contracts</ref> No protocol change is required. However, trust in an oracle is required, which makes DLC inferior to OP_ENERGY for energy derivatives. That being said, I very much favor DLC for every other type of trading that cannot be trustlessly pegged to hashing, and hope it is developed successfully and sees wide adoption soon. 
-
 ===Example OP_ENERGY Prices===
 
 <pre>
@@ -402,6 +361,47 @@ Todo.
 ==Deployment==
 
 Soft fork. 
+
+==Alternative Approaches==
+
+===Provide Additional Measures===
+
+There are other possible measures. For instance, one might wish to allow contracts on txfee rate in a range of blocks, or hashes / block (ignoring transaction fewes, or ovarious other things. These could all be added with their own OP measuring code. Or...
+
+===Just Supply Primitives===
+
+Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example, OP_ENERGY as defined above is equivalent to
+
+<pre>
+hashes / satoshis > strike is equivalent to 
+  => hashes > strike * satoshis 
+</pre>
+
+To do this with the "a la carte primitives" approach would require the following opcodes
+
+<pre>
+OP_HASHES block
+OP_MEDIANTIME block
+OP_REVENUE block
+OP_UINT256SUBTRACT uint1 uint2
+OP_UINT256MULTIPLY uint1 uint2
+</pre>
+
+===Pros and Cons===
+
+todo, flesh this out, and perhaps merge with "comparison to similar proposals"
+
+OP_ENERGY is preferred as it is a reasonable schelling point to bootstrap a market. The more flexible approaches a) require more opcodes b) fragment the market.
+
+Is there another alternative implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? (would be good  to understand powswap better)
+
+===Comparison to Similar Proposals===
+
+POWSWAP: Enables on-chain speculation in hashrate.<ref>https:powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
+
+OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016952.html</ref> Alas, Tamas Blummer passed away before he could produce a concrete specification. 
+
+Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not only in energy derivatives but in any asset.<ref>https://dci.mit.edu/smart-contracts</ref> No protocol change is required. However, trust in an oracle is required, which makes DLC inferior to OP_ENERGY for energy derivatives. That being said, I very much favor DLC for every other type of trading that cannot be trustlessly pegged to hashing, and hope it is developed successfully and sees wide adoption soon. 
 
 == Footnotes ==
 
