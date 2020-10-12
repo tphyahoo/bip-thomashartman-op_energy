@@ -146,7 +146,7 @@ This means that one can price on-chain binaries by looking at price and volatili
 
 todo: fix this so it is using strikeD instead of regular delta. 
 
-Bob wants to make a market on OP_ENERGY from blocks 647,136 to 648,136, which is 1000 blocks in the future. To do this, he needs to pick a strike, and determine a strikeD for it. 
+Bob wants to make a market on OP_ENERGY from blocks 647,136 to 648,136, which is 1000-2000 blocks in the future. To do this, he needs to pick a strike, and determine a strikeD for it. 
 
 <pre>
 Current date: August 29, 2020 
@@ -179,9 +179,7 @@ So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136,
 </pre>
 
 
-Note that difficulty was unchanged but blocks startied coming in 4% faster after 647136, the trade would resolve the same. Which is good, since the real world energy price would be the same. 
-
-TODO: double check that this claim is true
+Note that difficulty was unchanged but blocks started coming in 4% faster after 647136, the trade would resolve the same. 
 
 Alice, the buyer, is paid the 10,000 sat if 
 
