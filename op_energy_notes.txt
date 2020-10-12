@@ -1,5 +1,39 @@
 TODO:
 
+***************************
+review old definition:
+OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments, and prices the cost in hashes to mine this span of blocks. A working miner is more likely to find a block within a given span if competing total-network hashrate during the span period is lower than expected, and less likely if hashrate is higher. So the price in hashes is adjusted accordingly. Longer spans allow more accurate measurements, shorter spans more granularity in trading. 
+
+<pre>
+OP_ENERGY x y = hashes / satoshis 
+  where 
+      hashes = expectedHashes * ( expectedSeconds / seconds )
+            where
+              blocks = y - x
+              expectedSeconds = 600 * blocks
+              seconds = mediantime (y) - mediantime (x)
+              expectedHashes = chainwork (y) - chainwork (x)
+      satoshis = chainRevenue(y) - chainRevenue(x)
+            where chainRevenue(block) = sum of all miner rewards (subsidy + fees) up to this block
+/ = integer division done on uin5256 integers, same as target, and throwing out remainder
+</pre>
+can anything here be salvaged?
+
+
+
+
+Increasing hashrate implies more expensive (in hashes) future bitcoin, and an efficient market should discount this to make present bitcoin more expensive as well. Indeed, 
+todo(much of this should go in motivation section)
+
+
+
+
+
+ this suggests higher demand for new blocks, and a higher probability of an upward difficulty adjustment in future. An efficient market should translate more expensive future bitcoin into higher prices in the present. 
+***************************
+
+
+
 black scholes an approximatin
   assumptions
     increments are independent (not true) (?)
@@ -9,15 +43,28 @@ binary call on difficulty might be easier
 maybe take more financial pricing out of bip, move it into whitepaper
 
 
+earlier definition
+<pre>
+satoshis = subsidy (n) + fee (n)
+blocktime = mediantime (n+1) - mediantime (n)
+hashes  = ( 2 ^ 256 / target (n) ) * ( 600 / blocktime )
+price = hashes / satoshis
+</pre>
 
 
 need to understand chainwork better. Can OP_ENERGY be more simply expressed in terms of chainwork? 
   Although it's exposed in jsonrpc interface, it's hard to find good documentation on this. 
   So it seems like you could also get hashes from a to b by subtracting chainwork(b) - chainwork(a)
+   https://bitcoin.stackexchange.com/questions/26869/what-is-chainwork
+
 
 https://github.com/bitcoin/bitcoin/blob/4326515f01d7938bb448e7a9338dcc9c98497847/src/chain.h
     //! (memory only) Total amount of work (expected number of hashes) in the chain up to and including this block
     arith_uint256 nChainWork{};
+
+/** Return the time it would take to redo the work difference between from and to, assuming the current hashrate corresponds to the difficulty at tip, in seconds. */
+int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params&);
+
 
 https://github.com/bitcoin/bitcoin/blob/4326515f01d7938bb448e7a9338dcc9c98497847/src/chain.cpp
 "arith_uint256 GetBlockProof(const CBlockIndex& block)
@@ -53,6 +100,9 @@ https://github.com/bitcoin/bitcoin/blob/4326515f01d7938bb448e7a9338dcc9c98497847
 https://github.com/bitcoin/bitcoin/search?q=nChainWork
 
 https://github.com/bitcoin/bitcoin/search?q=GetBlockProofEquivalentTime
+
+"This answer doesn't precisely define "work". The work of a block is actually defined as floor(2^256 / (target + 1)), where 'target' is the target threshold converted from the 'nBits' field of the block header. (See the GetBlockProof function in src/pow.cpp.) – Daira Hopwood Feb 4 '17 at 4:45"
+https://bitcoin.stackexchange.com/questions/29742/strongest-vs-longest-chain-and-orphaned-blocks
 
 
 
@@ -336,6 +386,106 @@ Genesis target: 0x1d00ffff
 
 
 
+data visualization:
+
+    could try gnuplot
+    https://riptutorial.com/gnuplot/example/12382/plot-a-single-data-file
+
+    d3
+    https://www.freecodecamp.org/news/how-to-build-historical-price-charts-with-d3-js-72214aaf6ba3/
+
+    make csv files first
+    make upwork job posting for data viz guy. ask for ability to zoom in. 
+
+    maybe make a research task for getting btcusd historical data from one or more sources
+
+Pipes.Attoparsec
+Pipes.Tutorial
+
+
+unshelve and retrieve notes
+
+
+average block reward during subsidy epoch is 3 btc -- (21e6 * 1e8) / ( (2140 - 2009) * (365 * 24 * 6) ) 
+assume that miner fee revenue is 10x average block reward, to be safe -- this seems unrealistically high.
+So total revenue < 33 btc / block. Is 64 bits safe? 
+100,000 years, seems safe enough -- ( 2^^64 / (33e8) ) / (365 * 24 * 6)  => 106353.16
+
+
+existing hash markets
+    hashrate futures at ftx
+    nicehash
+        https://www.nicehash.com/my/marketplace/SHA256
+        https://www.nicehash.com/support/hash-power-marketplace/general-help/how-to-start-as-a-buyer-of-hash-power
+        https://static.nicehash.com/marketing%2FBuying%20Guide_En.pdf
+    peernova used to do it, see if johnny dilley can make an intro
+    try to connect to local miners or former miners in san juan / rincon
+
+    https://medium.com/@ethansanchez7/tips-and-tricks-on-what-to-take-into-account-when-you-are-own-of-large-asic-farms-2581f5e3747c
+    https://www.youtube.com/watch?v=1uqohzL_iDM&t=2s    How to connect ASICs to Hive OS | How to Install and Setup Hive OS| ASIC mining
+
+    mining and hashrate regulation (minerupdate.com)
+    btc/usd prices at instruments.kaiko.com
+
+speeding thigs up (maybe not needed)
+  https://hackage.haskell.org/package/text-1.2.3.1/docs/Data-Text-Lazy.html#g:5
+  https://hackage.haskell.org/package/parsec-3.1.14.0/docs/Text-Parsec-Text-Lazy.html
+
+analyzing weaknesses, risks
+  bitcoin wiki confirmation 
+    pdf, analysis of hashrate based couble spending
+  wikipedia, poisson distribution
+  upwork, find a statistician (or ask kevin, or rob z)
+  icepac, power tools for epidemiologists
+    from google poisson distribution sample size (ie how many blocks, maybe put a minimum on op_energy measurements)
+  look at code for getmininginfo, gettxoutsetinfo bitcoin-cli rpc call, how does bitcoin measure hashrate
+    I'm assuming this changes with every new block, if it chsanges more often, might be good to know that
+    or does it only work if you're mining?
+
+price feeds
+  https://www.kaggle.com/mczielinski/bitcoin-historical-data
+
+
+i believe op_energy is more useful to miners than hashrate
+  (can i convince a miner of this)
+
+get audience more segmented
+  bip
+  whitepaper
+  nontechnical (blogs)
+
+
+
+
+
+https://twitter.com/BitOoda_Crypto
+http://bitooda.io/
+https://medium.com/efficient-frontier/the-new-financial-tools-for-bitcoins-mining-industry-15801e9a0db1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===OP_EXPECTEDENERGY===
+
+The rationale for the hashrate-adjusted price is that faster blocks suggest hashrate is increasing, ie bitcoin is becoming more precious. If the expectation is that the price will rise in the future, this should be reflected by some increase in the spot price. The game theory of mining bears this out. If a large difficulty adjustment is expected, a rational miner with a fixed energy budget would prefer to turn on more miners pre-adjustment, and then turn them off post. IE, he values bitcoin in hashes more highly towards the end of a difficulty regime with an expected large future adjustment.   
+
+Another way of looking at it: every hash is a lottery ticket that has an equal chance of winning some block. However, if the goal is to mine a specific block (or span of blocks), a working miner is more likely to achieve this if competing total-network hashrate during the span period is lower than expected, and less likely if hashrate is higher. 
+
+Hashrate measurements over a short span of blocks are not very meaningful, but this is not disallowed by the proposed mechanism. Longer spans allow more accurate measurement of hashrate trends, shorter spans more granularity in trading. Traders are free to take positions as they wish, or gamble in the case of very short spans. 
 
 
 

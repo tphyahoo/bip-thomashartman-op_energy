@@ -16,7 +16,9 @@ This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a s
 
 ==Summary==
 
-OP_ENERGY (NOP_TBD) measures hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
+OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
+
+The measurement is defined as follows.
 
 <pre>
 OP_ENERGY x y = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
@@ -32,7 +34,7 @@ OP_ENERGY x y = ( hashes / satoshis ) * ( expectedSeconds / seconds )
       seconds = mediantime (y) - mediantime (x)
 </pre>
 
-All values are translated into uint5256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
+All values are translated into uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
 
 If any of the following conditions are true, the script interpreter will terminate with an error:
 
