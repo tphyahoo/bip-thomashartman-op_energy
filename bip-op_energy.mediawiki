@@ -350,6 +350,12 @@ add a coouple functions that do the OP_ENERGY math and I think this would do wha
 
 ==Risks==
 
+===Protocol Inconsistency===
+
+uint256 specification needs to be very simple and clear, to minimize risk of inconsistent implementation between clients
+
+other issues?
+
 ===Cost to Nodes / DOS Attack ===
 
 Todo
@@ -367,28 +373,27 @@ double check number of bytes per field that needs to be saved.
 
 Model a scenario where there is a full 1mb block full of maximally expensive OP_ENERGY transactions, ie writes and settlements. Is there a DOS attack here?
 
-==== Price manipulation ====
+=== Price manipulation ===
 
 Todo, needs work: 
 
-Price manipulation scenarios: 
+====Transaction Fee Manipulation====
 
-* transaction fees  
-** miner with high hash rate can mine unbroadcasted transactions to manipulate OP_ENERGY price. However, this is not risk free. Block could be orphaned, and then mined by another miner. Also, nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase risk to miners. (Maybe this should be its own bip. Penalize manipulation of tx fee rate by miners. As part of OP_ENERGY suite of bips.)
-* hashrate
+Miners can mine their own transactions without broadcasting them, thus griefing OP_ENERGY. 
 
-Chain split scenario
+A miner with high hash rate can mine unbroadcasted transactions to manipulate OP_ENERGY price. However, this is not risk free. Block could be orphaned, and then mined by another miner. Also, nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase risk to miners. (Maybe this should be its own bip. Penalize manipulation of tx fee rate by miners. As part of OP_ENERGY suite of bips.)
 
-Look for OP_ENERGY scenarios where miners are more incentivized to hoard unpublished blocks and/or split the chain, beyond what already exists. I can't think of any, but if I am wrong this would be a reason to abandon OP_ENERGY. 
+==== Difficulty Manipulation ====
 
-* A starting point could be a low probability, high profit OP_ENERGY trade between a large miner and a speculator, where the miner bets on an unlikely OP_ENERGY measurement and then manipulates hash and/or transaction fees to win the bet. While manipulation is undesirable, I don't see why this would lead to chain splits or other misbehavior to non OP_ENERGY transactions however. 
+This is more difficult. Todo, think it through anyway.
 
-* Miners can mine their own transactions without broadcasting them, thus griefing OP_ENERGY. 
+====Does Price Manipulation Pose Increased Risk of Chain Split?====
 
+Is there a problem?
 
-Protocol
-* uint256 specification needs to be very simple and clear, to minimize risk of inconsistent implementation between clients
-* other issues?
+Look for OP_ENERGY scenarios where miners are more incentivized to hoard unpublished blocks and/or split the chain, beyond what already exists. I can't think of any, but if I am wrong this could be a reason to abandon OP_ENERGY. 
+
+A starting point could be a low probability, high profit OP_ENERGY trade between a large miner and a speculator, where the miner bets on an unlikely OP_ENERGY measurement and then manipulates hash and/or transaction fees to win the bet. While manipulation is undesirable, I don't see why this would lead to chain splits or other misbehavior to non OP_ENERGY transactions however. 
 
 ==Test Vectors and Reference Code==
 
