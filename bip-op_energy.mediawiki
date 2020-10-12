@@ -397,7 +397,7 @@ Is there another alternative implementation of OP_ENERGY, using POWSWAP, along w
 
 ===Comparison to Similar Proposals===
 
-POWSWAP: Enables on-chain speculation in hashrate.<ref>https:powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
+POWSWAP: Enables on-chain speculation in hashrate.<ref>https://powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
 
 OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016952.html</ref> Alas, Tamas Blummer passed away before he could produce a concrete specification. 
 
