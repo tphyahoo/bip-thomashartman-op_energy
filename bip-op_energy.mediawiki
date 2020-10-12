@@ -178,14 +178,13 @@ So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136,
  STRIKE_ALICE_BOB = PRICE_645_646 * 0.96 = (todo, give real number)
 </pre>
 
-
-If difficulty was unchanged but blocks started coming in 4% faster from 647,136 to 648,136, the trade would resolve the same. 
-
 Alice, the buyer, is paid the 10,000 sat if 
 
 <pre>
 STRIKE_ALICE_BOB < OP_ENERGY 647,136 648,136 
 </pre>
+
+Bob, the seller, is paid if difficulty drops more than 4%, and then stabilizes within 647,136-648,136. Equivalently, Bob could also win if difficulty is unchanged but then blocks start coming in more than 4% slower from 647,136-648. (Or any other condition that results in OP_ENERGY falling more than 4%.)
 
 Bob would like to earn 1% as a market maker. So he would buy at 0.5% less (7263 sat) and sell at 0.5% more (7336 sat).
 
