@@ -25,15 +25,15 @@ OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi be
 The measurement is defined as follows.
 
 <pre>
-OP_ENERGY x y = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
+OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
   where 
-      hashes = chainwork (y) - chainwork (x) 
+      hashes = chainwork (block2) - chainwork (block1) 
           where chainwork (block) = expected number of hashes required to produce the block. as defined by bitcoin-cli getblockheader 
-      satoshis = chainRevenue(y) - chainRevenue(x)
+      satoshis = chainRevenue(block2) - chainRevenue(block1)
             where chainRevenue(block) = sum of all miner rewards (subsidy + fees) up to this block
-      blocks = y - x
+      blocks = block2 - block1
       expectedSeconds = 600 * blocks
-      seconds = mediantime (y) - mediantime (x)
+      seconds = mediantime (block2) - mediantime (block1)
 </pre>
 
 All values are translated into uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
