@@ -384,7 +384,7 @@ hashes / satoshis > strike is equivalent to
   => hashes > strike * satoshis 
 </pre>
 
-To do this with the "a la carte primitives" approach would require the following opcodes
+To do OP_ENERGY with the "a la carte primitives" approach would require the following opcodes
 
 <pre>
 OP_HASHES block
@@ -393,6 +393,8 @@ OP_REVENUE block
 OP_UINT256SUBTRACT uint1 uint2
 OP_UINT256MULTIPLY uint1 uint2
 </pre>
+
+OP_REVENUE could be further decomposed into OP_FEES and OP_SUBSIDY. This is not strictly necessary for OP_ENERGY, but could be useful for other contracts. Adding OP_BYTES and OP_VBYTES might also be desirable. These measures would enable speculation on transaction fee rates. 
 
 ===Pros and Cons===
 
