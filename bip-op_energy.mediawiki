@@ -14,6 +14,10 @@
 ==Abstract==
 This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
 
+For best results, OP_ENERGY should be adopted in conjunction with bip "Prevent Manipulation of Transaction Fee rate by Miners."
+
+Todo: write bip "Prevent Manipulation of Transaction Fee Rate by Miners".
+
 ==Summary==
 
 OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
@@ -333,9 +337,17 @@ Todo, needs work:
 
 ====Transaction Fee Manipulation====
 
-Miners can mine their own transactions without broadcasting them, thus griefing OP_ENERGY. 
+Miners can mine their own transactions without broadcasting them first, to raise the OP_ENERGY for a block span to any desired level, thus griefing OP_ENERGY. The more hash rate the miner controls, the more confidence in the attack. 
 
-A miner with high hash rate can mine unbroadcasted transactions to manipulate OP_ENERGY price. However, this is not risk free. Block could be orphaned, and then mined by another miner. Also, nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase risk to miners. (Maybe this should be its own bip. Penalize manipulation of tx fee rate by miners. As part of OP_ENERGY suite of bips.)
+We will disregard 51% attack capable miners as out of scope for this bip, since there are bigger problems in that case, and focus our worries on high but less than 51% miners.
+
+In the latter casse, this is not risk free. Because the block with the high transaction fee could be orphaned, and then mined by another miner. 
+
+Further mitigating this attack is that nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase this risk.  See bip "Prevent Manipulation of Transaction Fee Rate by Miners.
+
+Another attack would be to lower fxfee rate by excluding transactions, or in the extreme just mining empty blocks. This attack is not as bad, because it is more expensive to miners than the raising fee attack, and it cannot lower txfee rate arbitrarily within a single block, whereas the fee raising attack can raise fees arbitrarily with a single transaction. So it is believed that already existing penalties are sufficient to stop OP_ENERGY manipulation by lowering transaction fees. 
+
+Alternatively, on chain energy derivatives could use a different measure, such as hashes / block instead of hashes / sat, and only observe hashrate. This can already be done with powswap, without a protocol change. However, perhaps there are advantages of the OP_ENERGY approach over powswap. (todo: think about this more.)
 
 ==== Difficulty Manipulation ====
 
