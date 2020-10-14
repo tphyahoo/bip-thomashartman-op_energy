@@ -54,8 +54,8 @@ If any of the following conditions are true, the script interpreter will termina
 
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
-* y <= x
-* y is in the future
+* block2 <= block1
+* block2 is in the future
 
 Otherwise, the 4 byte uint256 hash/sat price goes on the stack. 
 
