@@ -22,7 +22,9 @@ Todo: write bip "Prevent Manipulation of Transaction Fee Rate by Miners".
 
 OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
 
-The measurement is defined as follows.
+To preface this, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This information is a consensus measure that all nodes can access and all nodes agree on. So, the average number of hashes expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1). The chainwork delta for a single block is a mathematical function of the difficulty.  This delta changes every two weeks, along with the difficulty adjustment.
+
+With that out of the way, OP_ENERGY is defined as follows.
 
 <pre>
 OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
@@ -45,11 +47,11 @@ If any of the following conditions are true, the script interpreter will termina
 * y <= x
 * y is in the future
 
-Otherwise, the 4 byte uint256 price goes on the stack. 
+Otherwise, the 4 byte uint256 hash/sat price goes on the stack. 
 
 ==Motivation==
 
-As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel.
+As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel. Rather than price financial instruments in dollars, or bitcoin, OP_ENERGY prices are given in hashes.
 
 The basic contract is a european cash-or-nothing binary call <ref>https://en.wikipedia.org/wiki/Binary_option#Cash-or-nothing_call</ref>
 on whether some future OP_ENERGY price exceeds some strike. 
@@ -66,16 +68,26 @@ There may be privacy benefits as well, such as multiparty trades done in mix poo
 
 ===Intuition===
 
-OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, these are prices, in hashes. So miner revenue is also factored in. 
+OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, these are prices of bitcoin in hashes. So miner revenue is also factored in. 
 
 To a lesser but still consequential degree, OP_ENERGY price tracks dollar price. Bcause electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there is correlation enough to be useful for hedging. 
 
-(Todo: make charts of OP_ENERGY price vs usd price, using real data, to support this.)
+(Todo: do r squared regression analysis on OP_ENERGY vs BTCUSD prices, for various lenghts of OP_ENERGY block spans. And make charts of OP_ENERGY price vs usd price, using real data, to support this assertion that OP_ENERGY derivatives would be a useful instrument to hedge BTCUSD.)
 
-Example use case 1: In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them. 
+===Use Cases===
 
-Example use case 2: direct energy hedging, for energy suppliers
-Example use case 3: Hash rental scenario. Power purchase agreements between miners and utilities. 
+tood, pretty much everything here needs fleshing out
+
+====Hedging USD/BTC in crashes and manias=====
+In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them, using OP_ENERGY.
+
+====Hedging power purchasing agreements, for miners====
+
+Megawatt futures rental rental scenario. Power purchase agreements between miners and utilities. 
+
+====Heding hashrate purchasing agreements, for utilities====
+
+Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
 
 ===Example OP_ENERGY Prices===
 
@@ -398,9 +410,7 @@ OP_REVENUE could be further decomposed into OP_FEES and OP_SUBSIDY. This is not 
 
 ===Pros and Cons===
 
-todo, flesh this out, and perhaps merge with "comparison to similar proposals"
-
-OP_ENERGY is preferred as it is a reasonable schelling point to bootstrap a market. The more flexible approaches a) require more opcodes b) fragment the market.
+The single OP_ENERGY approach is preferred in this bip as it is a reasonable schelling point to bootstrap a derivatives market. The downside to the more flexible approach is that this requires more opcodes, and could potentially fragment the market when it is in early stages. However, if there is strong consensus for the a la carte "just suppply primitives" approach, there is no strong reason not to do so. Potentially OP_ENERGY could be rolled out first, and then if it gains traction the additional a la carte opcodes could roll out in a later stage.
 
 Is there another alternative implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? (would be good  to understand powswap better)
 
