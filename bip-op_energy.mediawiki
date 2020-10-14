@@ -25,9 +25,9 @@ OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi be
 To give first some preliminaries, chainwork is a consensus measure that all nodes can access and all nodes agree on. It can currently be accessed using bitcoin-cli getblockheader. Chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. So, the average number of hashes expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   The chainwork delta of a single block is the expected number of hashes needed to calculate the block. For a block with difficulty D
 
 <pre>
-chainworkDelta(D) = 2**256 / blockTarget
-  where blockTarget = (genesisTarget * D)
-        genesisTarget = 0x00ffff * 2**(8*0x1d-3)
+chainworkDelta(D) = D * chainwork_genesis_block
+  where chainwork_genesis_block = 2**256 / genesis_target
+  where genesisTarget = 0x00ffff * 2**(8*0x1d-3)
         -- which is same as 0x00ffff * (2 ** 208)
 
 As an aside, target is stored as a uint256 bitcoin block header field. 
@@ -35,7 +35,7 @@ GenesisTarget, the bits target of the bitcoin genesis block, is uint256 encoded 
 The unpacking to a 256 bit target is as above.
 </pre>
 
-So obviously, chainworkDelta is a pure mathematical function of the difficulty of a given block.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref> This chaiwork delta changes every two weeks, along with the difficulty adjustment. Then chainwork(blockN) is just the sum of the chainwork deltas. 
+So obviously, chainworkDelta is a pure mathematical function of the difficulty of a given block.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref> This chainwork delta changes every two weeks, along with the difficulty adjustment. Then chainwork(blockN) is just the sum of the chainwork deltas. 
 
 With that out of the way, OP_ENERGY is defined as follows.
 
