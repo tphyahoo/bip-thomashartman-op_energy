@@ -28,6 +28,7 @@ To give first some preliminaries, chainwork is a consensus measure that all node
 chainworkDelta(D) = 2**256 / blockTarget
   where blockTarget = (genesisTarget * D)
         genesisTarget = 0x00ffff * 2**(8*0x1d-3)
+        -- which is same as 0x00ffff * (2 ** 208)
 
 As an aside, target is stored as a uint256 bitcoin block header field. 
 GenesisTarget, the bits target of the bitcoin genesis block, is uint256 encoded in the genesis block as 0x1d00ffff. 
