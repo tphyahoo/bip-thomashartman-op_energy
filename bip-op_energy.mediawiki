@@ -76,9 +76,9 @@ To a lesser but still consequential degree, OP_ENERGY price tracks dollar price.
 
 ===Use Cases===
 
-tood, pretty much everything here needs fleshing out
+tood, pretty much everything here needs fleshing out.
 
-====Hedging USD/BTC in crashes and manias=====
+====Hedging USD/BTC in crashes and manias====
 In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them, using OP_ENERGY.
 
 ====Hedging power purchasing agreements, for miners====
