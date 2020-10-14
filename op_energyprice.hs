@@ -28,8 +28,14 @@ blockTotals' (bits, stats)= do
         blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
     return blocktotals
 
-
-
+writeBlockTotals' :: (FilePath, FilePath) -> FilePath IO ()
+writeBlockTotals' (bits, stats) btFile = do
+    b <- parseFile blocksP bits --  
+    s <- parseFile statsP stats -- 
+    let z = OP_ENERGY_TOTALS 0 (Seconds 0) (Int256 0) (Satoshis 0)
+        blocktotals :: [OP_ENERGY_TOTALS]
+        blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
+    return blocktotals
 
 
 -- getPrices = do
@@ -119,28 +125,33 @@ sanityCheck = do
     putStrLn $ "after third halving (OP_ENERGY 430000 430500): " ++ ( show $ op_energy' 430000 430500)
 
 
-mainTest = op_energy_report_test 3
-main = op_energy_report 500
+mainTest = op_energy_report_test 3 1
+main = op_energy_report 500 100
 
 
-op_energy_report_test = op_energy_report' blockTotalsTest
-op_energy_report = op_energy_report' blockTotals
-op_energy_report' blockTotals' span = do
+op_energy_report_test = op_energy_report' blockTotalsTest 
+op_energy_report = op_energy_report' blockTotals 
+op_energy_report' blockTotals' span sampleEvery = do
     totals <- blockTotals'
-    let csvheader = concat . intersperse "," $ ["start","finish","OP_ENERGY price"]
+    let csvheader = concat . intersperse "," $ 
+            ["start block","finish block","start time","finish time","OP_ENERGY price"]
         csvline xs = 
             let startBlock = head xs
                 finishBlock = last xs
-                start = oeh_blocknumber startBlock
-                finish = oeh_blocknumber finishBlock
-                price = op_energy startBlock finishBlock
-            in  concat . intersperse "," $ [show start,show finish, show price]
-        csvlines = map csvline . windows span $ totals
+                startNum  = show . oeh_blocknumber $ startBlock
+                finishNum = show . oeh_blocknumber $ finishBlock
+                startTime  = show . unwrap_seconds . oeh_median_time $ startBlock
+                finishTime = show . unwrap_seconds . oeh_median_time $ finishBlock
+                price = show . op_energy startBlock $ finishBlock
+            in  concat . intersperse "," $ 
+                    [startNum,finishNum,startTime, finishTime,price]
+        csvlines = map csvline . sample sampleEvery . windows span $ totals
         csv :: String
         csv = concat . intersperse "\n" $ csvheader : csvlines
     putStrLn csv 
 
-
+sample _ [] = []
+sample i xs@(x:_) = x : ( sample i $ drop i xs)
 
 op_energy :: OP_ENERGY_TOTALS -> OP_ENERGY_TOTALS -> Integer
 op_energy fromBlock toBlock = floor $ hashes / satoshis
