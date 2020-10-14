@@ -12,7 +12,7 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
+This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain without an oracle. 
 
 For best results, OP_ENERGY should be adopted in conjunction with bip "Prevent Manipulation of Transaction Fee rate by Miners."
 
