@@ -22,7 +22,7 @@ Todo: write bip "Prevent Manipulation of Transaction Fee Rate by Miners".
 
 OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
 
-To preface this, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. So, the average number of hashes expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1). Chainwork is a consensus measure that all nodes can access and all nodes agree on.  The chainwork delta of a single block is the expected number of hashes needed to calculate the block. This number is a pure mathematical function of the difficulty.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F<ref>:
+To preface this, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. So, the average number of hashes expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1). Chainwork is a consensus measure that all nodes can access and all nodes agree on.  The chainwork delta of a single block is the expected number of hashes needed to calculate the block. This number is a pure mathematical function of the difficulty.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref>
 
 <pre>
 Fora a block with difficulty D
