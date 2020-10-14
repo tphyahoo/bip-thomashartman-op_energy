@@ -22,7 +22,19 @@ Todo: write bip "Prevent Manipulation of Transaction Fee Rate by Miners".
 
 OP_ENERGY redefines the existing NOP_TBD opcode to measure hashes per satoshi between two blocks. Higher difficulty makes bitcoin more expensive. Higher transaction fees makes it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
 
-To preface this, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This information is a consensus measure that all nodes can access and all nodes agree on. So, the average number of hashes expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1). The expected number of hashes needed to calculate to find a block with difficulty D is D * 2**256 / (0xffff * 2**208), where 0xffff * 2**208 is the genesis difficulty<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref>. In other words, the chainwork delta for a single block is a mathematical function of the difficulty.  This chaiwork delta changes every two weeks, along with the difficulty adjustment. Then chainwork(blockN) is just the sum of the chainwork deltas. 
+To preface this, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. So, the average number of hashes expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1). Chainwork is a consensus measure that all nodes can access and all nodes agree on.  The chainwork delta of a single block is the expected number of hashes needed to calculate the block. This number is a pure mathematical function of the difficulty.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F<ref>:
+
+<pre>
+Fora a block with difficulty D
+
+chainworkDelta = 2**256 / blockTarget
+  where blockTarget = (genesisTarget * d)
+        genesisTarget = 0xffff * 2**(8*0x1d-3)
+
+As an aside, genesisTarget, the bits target of the bitcoin genesis block, is uint256 encoded as  0x1d00ffff.
+</pre>
+
+In other words, the chainwork delta for a single block is a mathematical function of the difficulty.  This chaiwork delta changes every two weeks, along with the difficulty adjustment. Then chainwork(blockN) is just the sum of the chainwork deltas. 
 
 With that out of the way, OP_ENERGY is defined as follows.
 
