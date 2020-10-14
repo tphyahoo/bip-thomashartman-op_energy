@@ -30,7 +30,7 @@ where 0xffff is the mantissa and 0x1d is the packed exponent of the uint256 bits
 
 0xffff * 2 ** (8*(0x1d-3)) 
 
-is the fully unpacked genesis block target.</ref>. This chainwork delta changes every two weeks, along with the difficulty adjustment. Then chainwork(blockN) is just the sum of the chainwork deltas.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref>
+is the fully unpacked genesis block target.</ref>. This chainwork delta changes every two weeks, along with the difficulty adjustment. Then chainwork(blockN) is just the sum of the chainwork deltas from genesis to blockN.<ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref>
 
 With that out of the way, OP_ENERGY is defined as follows.
 
@@ -95,7 +95,7 @@ In a fiat centric world, if fiat can buy less bitcoin via direct exchange than v
 
 Megawatt futures rental rental scenario. Power purchase agreements between miners and utilities. 
 
-====Heding hashrate purchasing agreements, for utilities====
+====Hedging hashrate purchasing agreements, for utilities====
 
 Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
 
@@ -367,7 +367,7 @@ In the latter casse, this is not risk free. Because the block with the high tran
 
 Further mitigating this attack is that nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase this risk.  See bip "Prevent Manipulation of Transaction Fee Rate by Miners.
 
-Another attack would be to lower fxfee rate by excluding transactions, or in the extreme just mining empty blocks. This attack is not as bad, because it is more expensive to miners than the raising fee attack, and it cannot lower txfee rate arbitrarily within a single block, whereas the fee raising attack can raise fees arbitrarily with a single transaction. So it is believed that already existing penalties are sufficient to stop OP_ENERGY manipulation by lowering transaction fees. 
+Another attack would be to lower txfee rate by excluding transactions, or in the extreme just mining empty blocks. This attack is not as bad, because it is more expensive to miners than the raising fee attack, and it cannot lower txfee rate arbitrarily within a single block, whereas the fee raising attack can raise fees arbitrarily with a single transaction. So it is believed that already existing penalties are sufficient to stop OP_ENERGY manipulation by lowering transaction fees. 
 
 Alternatively, on chain energy derivatives could use a different measure, such as hashes / block instead of hashes / sat, and only observe hashrate. This can already be done with powswap, without a protocol change. However, perhaps there are advantages of the OP_ENERGY approach over powswap. (todo: think about this more.)
 
@@ -441,8 +441,6 @@ Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not 
 Tamas Blummer (RIP), whose OP_DIFFICULTY proposal was the inspiration for this bip. Jeremy Rubin (powswap). 
 
 Everyone who helped on bitcoin-dev (todo). 
-
-chainwork
 
 
 
