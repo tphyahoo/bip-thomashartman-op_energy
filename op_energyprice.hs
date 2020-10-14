@@ -5,6 +5,12 @@ import Data.List (tails, intersperse)
 import Control.Applicative (ZipList(..))
 import Op_Energy_Parsing
 
+
+-- Before running these commands, you need to create input files for them to use.
+-- See datafetch/README.md 
+main = op_energy_report 500 100
+mainTest = op_energy_report_test 3 1
+
 -- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
 windows :: Int -> [a] -> [[a]]
 windows m = transpose' . take m . tails
@@ -123,11 +129,6 @@ sanityCheck = do
     putStrLn $ "before third halving (OP_ENERGY 629499 629999): " ++ ( show $ op_energy' 629499 629999)
     putStrLn $ "around third halving (OP_ENERGY 629750 630250): " ++ ( show $ op_energy' 629750 630250)
     putStrLn $ "after third halving (OP_ENERGY 430000 430500): " ++ ( show $ op_energy' 430000 430500)
-
-
-mainTest = op_energy_report_test 3 1
-main = op_energy_report 500 100
-
 
 op_energy_report_test span sampleEvery = op_energy_report' blockTotalsTest span sampleEvery
 op_energy_report span sampleEvery = op_energy_report' blockTotals span sampleEvery
