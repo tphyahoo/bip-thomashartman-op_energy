@@ -412,7 +412,7 @@ OP_REVENUE could be further decomposed into OP_FEES and OP_SUBSIDY. This is not 
 
 The single OP_ENERGY approach is preferred in this bip as it is a reasonable schelling point to bootstrap a derivatives market. This is preferred to the the more flexible "just add primitives" approach because it requires fewer opcodes, and unifies the market around a single reasonable type of contract. The single opcode approach also saves some bytes on chain. However, if there is strong consensus for the a la carte "just suppply primitives" approach, there is no strong reason not to do so. Potentially OP_ENERGY could be rolled out first, and then if it gains traction the additional a la carte opcodes could roll out in a later protocol upgrade.
 
-Is there another alternative implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? (would be good  to understand powswap better)
+todo: Is there another alternative/equivalent implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? Would be good to understand powswap better.
 
 ===Comparison to Similar Proposals===
 
