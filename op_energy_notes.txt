@@ -5,15 +5,15 @@ review old definition:
 OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments, and prices the cost in hashes to mine this span of blocks. A working miner is more likely to find a block within a given span if competing total-network hashrate during the span period is lower than expected, and less likely if hashrate is higher. So the price in hashes is adjusted accordingly. Longer spans allow more accurate measurements, shorter spans more granularity in trading. 
 
 <pre>
-OP_ENERGY x y = hashes / satoshis 
+OP_ENERGY block1 block2 = hashes / satoshis 
   where 
       hashes = expectedHashes * ( expectedSeconds / seconds )
             where
-              blocks = y - x
+              blocks = block2 - block1
               expectedSeconds = 600 * blocks
-              seconds = mediantime (y) - mediantime (x)
-              expectedHashes = chainwork (y) - chainwork (x)
-      satoshis = chainRevenue(y) - chainRevenue(x)
+              seconds = mediantime (block2) - mediantime (block1)
+              expectedHashes = chainwork (block2) - chainwork (block1)
+      satoshis = chainRevenue(block2) - chainRevenue(block1)
             where chainRevenue(block) = sum of all miner rewards (subsidy + fees) up to this block
 / = integer division done on uin5256 integers, same as target, and throwing out remainder
 </pre>
@@ -125,9 +125,11 @@ Hashrate is difficulty target * time delta
 
 
 Next topics.
-Lightning example.
+Lightning example, with routing
 
+It's the same contract as before, but now Alice wants to buy it from Charlie, routing through Bob. It seems to me this is possible, reusing the construction described before by ZmnSCPxJ. The initial channels are set up in the usual way. Then Charlie negotiates a futures contract with Alice. A signed but unbroadcasted futures sale contract is created between all three participants, using lightning routiung. After everything is signed the lightning route looks like (ignoring routing fees).
 
+Alice <- 100 (FutDiff 30) 70 -> Bob <- 52.6 (FutDiff 30) 117.4 -> Charlie
 
 
 
@@ -474,7 +476,9 @@ https://medium.com/efficient-frontier/the-new-financial-tools-for-bitcoins-minin
 
 
 
-
+As an aside, target is stored as a uint256 bitcoin block header field. 
+GenesisTarget, the bits target of the bitcoin genesis block, is uint256 encoded in the genesis block as 0x1d00ffff. 
+The unpacking to a 256 bit target is as above.
 
 
 
@@ -486,6 +490,100 @@ The rationale for the hashrate-adjusted price is that faster blocks suggest hash
 Another way of looking at it: every hash is a lottery ticket that has an equal chance of winning some block. However, if the goal is to mine a specific block (or span of blocks), a working miner is more likely to achieve this if competing total-network hashrate during the span period is lower than expected, and less likely if hashrate is higher. 
 
 Hashrate measurements over a short span of blocks are not very meaningful, but this is not disallowed by the proposed mechanism. Longer spans allow more accurate measurement of hashrate trends, shorter spans more granularity in trading. Traders are free to take positions as they wish, or gamble in the case of very short spans. 
+
+Dev Bitcoin Question. 
+
+Does variation in hashrate within a difficulty regime have any effect on rational miner behavior? 
+Should higher network hashrate make you want to turn on more personal miners, or the opposite, or neither?
+Have there been any papers / studies / guides on this topic? 
+  Starting points: the r/bitcoinmining question I asked, which was also answered
+
+
+patrick dugan call. he knows: 
+  grid, 
+  james macavity (miner, wants year duration)
+  jim buy
+  jack mallers
+  jack mallers and bitcoin tina, conversation
+  market making is hard
+  lnmarkets doesn't do custody? how does that work technically?
+  patrick likes crosstower
+  FCM? Futures Contract Merchant
+  If you're not doing custody, what's the next issue? "It's not custody."
+    CFTC got abra. Justice went after abra too.
+  OECD side, china side
+  "more opcodes"
+  gambling app, kyc everybody
+  incorporate in country that doens't have crs reporting, don't have that de minibus thing
+  become #1 gateway, for after opcode goes live
+  jumio, helps with tokens? mati. has de minimis threshold, then it's $1/head.
+  next steps: 
+    exchange licensing. license jim's exchange
+    help with data and backtesting
+    lead gen
+  who is long difficulty?
+  matching is a regulated function too
+  mining securities
+  bitcoin liquid index
+     $10,000, brave new coin
+     *** coauthor article for deribit insights ****
+     bandwidth later this month
+     look at r2 of hashrate (and/or op_energy) btc to usd.
+     it would be cool if op_energy worked better than hashrate.
+
+
+
+
+
+fee manipulation:
+  https://cis.temple.edu/~jiewu/research/publications/Publication_files/jiang_blockchain_2019.pdf
+  https://scalingbitcoin.org/stanford2017/Day2/redesigning-bitcoin-fee-market.pptx.pdf
+  https://www.reddit.com/r/Bitcoin/comments/glbc8n/game_theory_of_fees_may_cause_artificial/
+
+r^2 regression analysis
+  https://www.investopedia.com/terms/r/r-squared.asp
+
+  clark moody intro
+
+
+subject: can you sell me (or better still donate) well wrangled btc/usd historical data. Also wanted to tell you about my project because I think you may find it interesting as a fellow bitcoin maxi (OP_ENERGY)
+
+Hi Clark Moody! I am thomas hartman / standardcrypto. Saw you on taproot activation telegram, and decided to email you out of the blue because there's something I need help with, and I think you may both find it of interest and be in a position to help. 
+
+I'm a big fan of your dashboard (checking multiple times a day). Mostly I am interested in mining statistics. I am working on a statistic of my own that I hope will gain popularity in the community and potentially even lead to a protocol upgrade.
+
+My project, "OP_ENERGY" -- 
+
+https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/bip-op_energy.mediawiki
+
+tldr: OP_ENERGY measures the cost to mine a single satoshi between two blocks. This can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. (No oracle required. Similar to powswap / OP_DIFFICULTY if you are familiar with these.)
+
+I'm wondering if you could help me on my OP_ENERGY quest, by providing me with historical btc/usd data at a ten minute (because blocks are 10 minutes) resolution. Either donating if you like my project, selling if this is your business model, or advising me what is the best / most economical way to aquire this data. 
+
+If you donate this, I will promote your dashboard and say nice things about you, and basically do whatever I can to help. Easy, because I'm already a fan. Also open to buy the data if that's your preference and it's something you normally do.
+
+My best bitcon maxi writing is (imho) https://taaalk.co/t/bitcoin-maxima-other-crypto-things
+
+Blog is https://standardcrypto.wordpress.com
+
+I need the btc/usd data to do a regresion test on OP_ENERGY (hashes/satoshi) versus the btcusd price. As part of selling the concept. Of course I would not resell this data. If it is easy for you to do the regression analysis yourself, another option would be to hire you to do this, credit clark moody as the source for the report, and then I wouldn't need the data nor be in a position to resell it if that's something you care about. 
+
+As a final thought, if you like OP_ENERGY, I would love to have this incorporated into the clark moody dashboard. 
+
+Either way, thank you for your dashboard. Also it would be great to chat some time.
+
+best, thomas.
+
+
+
+
+
+
+
+
+
+
+
 
 
 

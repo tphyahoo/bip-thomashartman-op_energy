@@ -28,14 +28,14 @@ blockTotals' (bits, stats)= do
         blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
     return blocktotals
 
-writeBlockTotals' :: (FilePath, FilePath) -> FilePath IO ()
+writeBlockTotals' :: (FilePath, FilePath) -> FilePath -> IO ()
 writeBlockTotals' (bits, stats) btFile = do
     b <- parseFile blocksP bits --  
     s <- parseFile statsP stats -- 
     let z = OP_ENERGY_TOTALS 0 (Seconds 0) (Int256 0) (Satoshis 0)
         blocktotals :: [OP_ENERGY_TOTALS]
         blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
-    return blocktotals
+    writeFile btFile $ show blocktotals
 
 
 -- getPrices = do
@@ -129,8 +129,8 @@ mainTest = op_energy_report_test 3 1
 main = op_energy_report 500 100
 
 
-op_energy_report_test = op_energy_report' blockTotalsTest 
-op_energy_report = op_energy_report' blockTotals 
+op_energy_report_test span sampleEvery = op_energy_report' blockTotalsTest span sampleEvery
+op_energy_report span sampleEvery = op_energy_report' blockTotals span sampleEvery
 op_energy_report' blockTotals' span sampleEvery = do
     totals <- blockTotals'
     let csvheader = concat . intersperse "," $ 

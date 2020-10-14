@@ -1,0 +1,17 @@
+<pre>
+  BIP: TK
+  Layer: Consensus (soft fork)
+  Title: Penalize Manipulation of Transaction Fee Rate by Miners
+  Author: Thomas Hartman <thomashartman1@gmail.com>
+  Comments-Summary: No comments yet.
+  Comments-URI: ?
+  Status: ?
+  Type: ?
+  Created: 2014-10-01
+  License: ?
+</pre>
+
+==Abstract==
+This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain. 
+
+For best results, OP_ENERGY should be adopted in conjunction with wip bip "Prevent Manipulation of Transaction Fee rate by Miners."
