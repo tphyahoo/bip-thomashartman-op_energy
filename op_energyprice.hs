@@ -1,5 +1,4 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-import Numeric
 
 import Data.List (tails, intersperse)
 import Control.Applicative (ZipList(..))
@@ -11,12 +10,50 @@ import Op_Energy_Parsing
 main = op_energy_report 500 100
 mainTest = op_energy_report_test 3 1
 
+op_energy_report_test span sampleEvery = op_energy_report' blockTotalsTest span sampleEvery
+op_energy_report span sampleEvery =      op_energy_report' blockTotals     span sampleEvery
+op_energy_report' blockTotals' span sampleEvery = do
+    totals <- blockTotals'
+    let csvheader = concat . intersperse "," $ 
+            ["start block","finish block","start time","finish time","OP_ENERGY price"]
+        csvline xs = 
+            let startBlock = head xs
+                finishBlock = last xs
+                startNum  = show . oeh_blocknumber $ startBlock
+                finishNum = show . oeh_blocknumber $ finishBlock
+                startTime  = show . unwrap_seconds . oeh_median_time $ startBlock
+                finishTime = show . unwrap_seconds . oeh_median_time $ finishBlock
+                price = show . op_energy startBlock $ finishBlock
+            in  concat . intersperse "," $ 
+                    [startNum,finishNum,startTime, finishTime,price]
+        csvlines = map csvline . sample sampleEvery . windows span $ totals
+        csv :: String
+        csv = concat . intersperse "\n" $ csvheader : csvlines
+    putStrLn csv 
+
 -- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
 windows :: Int -> [a] -> [[a]]
 windows m = transpose' . take m . tails
   where 
     transpose' :: [[a]] -> [[a]]
     transpose' = getZipList . sequenceA . map ZipList
+
+sample _ [] = []
+sample i xs@(x:_) = x : ( sample i $ drop i xs)
+
+op_energy :: OP_ENERGY_TOTALS -> OP_ENERGY_TOTALS -> Integer
+op_energy fromBlock toBlock = floor $ hashes / satoshis
+  where 
+    hashes :: Float
+    hashes = fromIntegral expectedHashes * ( fromIntegral expectedTime / fromIntegral time )
+            where
+              numBlocks = (oeh_blocknumber toBlock) - (oeh_blocknumber fromBlock)
+              expectedTime = 600 * numBlocks
+              time = (unwrap_seconds . oeh_median_time $ toBlock) - (unwrap_seconds . oeh_median_time $ fromBlock)
+              expectedHashes = (unwrap_int256 . oeh_chainwork $ toBlock) - (unwrap_int256. oeh_chainwork $ fromBlock)
+    satoshis :: Float
+    satoshis = fromIntegral $ ( unwrap_satoshis . oeh_chainreward $ toBlock ) - ( unwrap_satoshis . oeh_chainreward $ fromBlock)
+
 
 -- todo, needs fixing 
 t = take 10 `fmap` blockTotals
@@ -53,51 +90,6 @@ writeBlockTotals' (bits, stats) btFile = do
                  Right r -> r
 -}
 
-
-
-unpack_bits :: PackedBits -> Double
-unpack_bits x = (fromIntegral . packedbits_mantissa $ x) * ( 2**(8*( (fromIntegral . packedbits_exponent $ x) - 3)) )
-
-
-
-
--- next thing to do is to start dumping blocks
-data OP_ENERGY_Block = OP_ENERGY_Block { block_number :: Integer,
-                                         hashes_from_target :: Int256, 
-                                         hashes_from_totalwork :: Int256,
-                                         total_reward :: Satoshis
-                                   }
-  deriving ( Read, Show )
-
-                                                     
-
-
--- Options stuff, / black scholes for binary options maybe can be removed or moved to a more pricing specific model
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-----------------------------------------------------------------
-tsd10000_10250 = strikeDelta (10000, 380, 416) (10250, 210, 241)
-tsd10250_10500 = strikeDelta (10250, 210, 236) (10500, 108, 123)
-
-
-strikeDelta (strike1, bid1, ask1) (strike2, bid2, ask2) = 
-  let callprice1 = ( bid1 + ask1 ) / 2
-      callprice2 = ( bid2 + ask2 ) / 2
-      dCv = callprice2 - callprice1
-      dK  = strike2 - strike1
-      dCv_dK = dCv / dK
-  in  dCv_dK
-
-
-decToHex x = Numeric.showHex x ""
-
-
-
-
-
-
 timestamp_1 = 1231469665
 timestamp_2 = 1231469744
 timestamp_3 = 1231470173
@@ -129,45 +121,6 @@ sanityCheck = do
     putStrLn $ "before third halving (OP_ENERGY 629499 629999): " ++ ( show $ op_energy' 629499 629999)
     putStrLn $ "around third halving (OP_ENERGY 629750 630250): " ++ ( show $ op_energy' 629750 630250)
     putStrLn $ "after third halving (OP_ENERGY 430000 430500): " ++ ( show $ op_energy' 430000 430500)
-
-op_energy_report_test span sampleEvery = op_energy_report' blockTotalsTest span sampleEvery
-op_energy_report span sampleEvery = op_energy_report' blockTotals span sampleEvery
-op_energy_report' blockTotals' span sampleEvery = do
-    totals <- blockTotals'
-    let csvheader = concat . intersperse "," $ 
-            ["start block","finish block","start time","finish time","OP_ENERGY price"]
-        csvline xs = 
-            let startBlock = head xs
-                finishBlock = last xs
-                startNum  = show . oeh_blocknumber $ startBlock
-                finishNum = show . oeh_blocknumber $ finishBlock
-                startTime  = show . unwrap_seconds . oeh_median_time $ startBlock
-                finishTime = show . unwrap_seconds . oeh_median_time $ finishBlock
-                price = show . op_energy startBlock $ finishBlock
-            in  concat . intersperse "," $ 
-                    [startNum,finishNum,startTime, finishTime,price]
-        csvlines = map csvline . sample sampleEvery . windows span $ totals
-        csv :: String
-        csv = concat . intersperse "\n" $ csvheader : csvlines
-    putStrLn csv 
-
-sample _ [] = []
-sample i xs@(x:_) = x : ( sample i $ drop i xs)
-
-op_energy :: OP_ENERGY_TOTALS -> OP_ENERGY_TOTALS -> Integer
-op_energy fromBlock toBlock = floor $ hashes / satoshis
-  where 
-    hashes :: Float
-    hashes = fromIntegral expectedHashes * ( fromIntegral expectedTime / fromIntegral time )
-            where
-              numBlocks = (oeh_blocknumber toBlock) - (oeh_blocknumber fromBlock)
-              expectedTime = 600 * numBlocks
-              time = (unwrap_seconds . oeh_median_time $ toBlock) - (unwrap_seconds . oeh_median_time $ fromBlock)
-              expectedHashes = (unwrap_int256 . oeh_chainwork $ toBlock) - (unwrap_int256. oeh_chainwork $ fromBlock)
-    satoshis :: Float
-    satoshis = fromIntegral $ ( unwrap_satoshis . oeh_chainreward $ toBlock ) - ( unwrap_satoshis . oeh_chainreward $ fromBlock)
-
-
 
 {-
 https://blockchair.com/bitcoin/block/645996           bits 386926570       171007ea
