@@ -13,8 +13,9 @@ bitcoin-cli getblockstats 1 | jq --monochrome-output '.["height","blockhash"]'
 
 Then run the following commands. This might take a while. 
 
-
+<pre>
 time ./getblockhashes.sh >> blockhashes.txt
 time ./getblockstats.sh >> blockstats.txt
 time ./getblockbits.sh >> blockbits.txt
-time ./getblockhashesCsv.sh >> blockhashes.csv (maybe this is obsolete)
+time ./getblockhashesCsv.sh >> blockhashes.csv (maybe this one is obsolete)
+</pre>
