@@ -352,9 +352,7 @@ profit = expectedProfit - expectedLoss
         networkTrustDestructionLoss = cost of loss of trust due to miner misbehavior. (Not much can  be said about this hard to measure quantity, other than noting it.)
 </pre>
 
-Clearly, more txfeeManipulationRevenue can be gained with OP_ENERGY cheating, than just with transaction fee manipulation. But, OP_ENERGY manipulation is also likely to involve high txV fees, in order to successfully dupe counterparties into taking bad trades.  So there is more incentive for fee poaching as well, meaning more risk for cheaters. 
-
-There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, which makes the poaching risk higher yet. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
+Clearly, OP_ENERGY cheating has potential for greater txfeeManipulationRevenue, than is currently the case with just trying to surreptitiously nudge bitcoin users to pay higher fees. But, OP_ENERGY manipulation is also likely to involve higher txV fees, and be more obviously suspicious. So there is more incentive for fee poaching as well, meaning more risk for cheaters. There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, further raising the poaching risk. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
 
 In sum, the incentives already pitting hodling nodes against miners are sufficient to deter the attack.
 
