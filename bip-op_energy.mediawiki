@@ -388,7 +388,7 @@ Rather than supply opcodes for each possible measurement, another approach would
 hashes / satoshis * ( expectedSeconds / seconds ) > strike
 </pre>
 
- is equivalent to
+is equivalent to
 
 <pre>
 hashes * expectedSecconds > strike * satoshis * seconds
