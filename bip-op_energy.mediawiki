@@ -382,21 +382,26 @@ Soft fork.
 
 ===More Primitives===
 
-Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example, OP_ENERGY as defined above is equivalent to
+Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example
 
 <pre>
-hashes / satoshis > strike is equivalent to 
-  => hashes > strike * satoshis 
+hashes / satoshis * ( expectedSeconds / seconds ) > strike
 </pre>
 
-To do OP_ENERGY with the "a la carte primitives" the following opcodes are recommended
+ is equivalent to
+
+<pre>
+hashes * expectedSecconds > strike * satoshis * seconds
+</pre>
+
+So, to do OP_ENERGY with "a la carte primitives" the following opcodes are recommended
 
 <pre>
 OP_HASHES block
 OP_MEDIANTIME block
 OP_CHAINFEES block (sum of all fees since genesis)
 OP_CHAINSUBSIDY block (sum of all subsidy since genesis)
-OP_UINT256ADD
+OP_UINT256ADD (for adding fee revenue and subsidy revenue)
 OP_UINT256SUBTRACT uint1 uint2
 OP_UINT256MULTIPLY uint1 uint2
 </pre>
