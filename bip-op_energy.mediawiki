@@ -326,7 +326,11 @@ arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
 add a coouple functions that do the OP_ENERGY math and I think this would do what we need.
 </pre>
 
+==Cost to Nodes==
 
+OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep uint256 converted values for mediantime, chainFees, chainSubsidy, and chainwork. This is 16 bytes total per block, so the first million blocks will require 16mb additional storage. Not too bad, even for an underpowered node running on a raspi. Note that chainSubsidy is stored rather than computed from the reward function because some blocks underpaid the block reward<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
+
+ Or, chainFees and chainSubsidy could be combined as a single chainRevenue record, saving 4 bytes. Storing fees and subsidy separately is recommended, as it clears the way for the "More Primitives" approach if adopted in the future.
 
 ==Risks==
 
@@ -336,22 +340,7 @@ uint256 specification needs to be very simple and clear, to minimize risk of inc
 
 other issues?
 
-===Cost to Nodes / DOS Attack ===
 
-Todo
-
-look at validation cost to node, of uint256 ops
-
-* cost of computing prices for nodes 
-* memory cost: 
-
-Calculating the price requires that validating nodes save mediantime (4 bytes?), chainRevenue (8 bytes), and chainwork (32 bytes) information for all blocks, to perform this calculation. I think it should be possible to index and read this quickly into memory, even for raspberry pi type nodes.
-44 bytes / block, 2 mb per year --  (365 * 24 * 6) * 44 / 1e6. seems ok. 
-
-double check number of bytes per field that needs to be saved. 
-  is there any overflow risk or other issues, performing the calculation?
-
-Model a scenario where there is a full 1mb block full of maximally expensive OP_ENERGY transactions, ie writes and settlements. Is there a DOS attack here?
 
 === Price manipulation ===
 
@@ -393,11 +382,7 @@ Soft fork.
 
 ==Alternative Approaches==
 
-===Provide Additional Measures===
-
-There are other possible measures. For instance, one might wish to allow contracts on txfee rate in a range of blocks, or hashes / block (ignoring transaction fewes, or ovarious other things. These could all be added with their own OP measuring code. Or...
-
-===Just Supply Primitives===
+====More Primitives===
 
 Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example, OP_ENERGY as defined above is equivalent to
 
@@ -406,21 +391,29 @@ hashes / satoshis > strike is equivalent to
   => hashes > strike * satoshis 
 </pre>
 
-To do OP_ENERGY with the "a la carte primitives" approach would require the following opcodes
+To do OP_ENERGY with the "a la carte primitives" the following opcodes are recommended
 
 <pre>
 OP_HASHES block
 OP_MEDIANTIME block
-OP_REVENUE block
+OP_CHAINFEES block (sum of all fees since genesis)
+OP_CHAINSUBSIDY block (sum of all subsidy since genesis)
+OP_UINT256ADD
 OP_UINT256SUBTRACT uint1 uint2
 OP_UINT256MULTIPLY uint1 uint2
 </pre>
 
-OP_REVENUE could be further decomposed into OP_FEES and OP_SUBSIDY. This is not strictly necessary for OP_ENERGY, but could be useful for other contracts. Adding OP_BYTES and OP_VBYTES might also be desirable. These measures would enable speculation on transaction fee rates. 
+If only OP_ENERGY style contracts for miner revenue are desired, OP_CHAINFEES/OP_CHAINSUBSIDY/OP_UINT256ADD could be combined into the single OP_CHAINREVENUE opcode. 
+
+OP_BYTES and OP_VBYTES might also be desirable. These measures would enable speculation on transaction fee rates. 
+
+===More Measures===
+
+There are other possible measures. For instance, one might wish to allow contracts on txfee rate in a range of blocks, or hashes / block (ignoring transaction fewes, or ovarious other things. These could all be added with their own OP measuring code, without enabling additional primitives.
 
 ===Pros and Cons===
 
-The single OP_ENERGY approach is preferred in this bip as it is a reasonable schelling point to bootstrap a derivatives market. This is preferred to the the more flexible "just add primitives" approach because it requires fewer opcodes, and unifies the market around a single reasonable type of contract. The single opcode approach also saves some bytes on chain. However, if there is strong consensus for the a la carte "just suppply primitives" approach, there is no strong reason not to do so. Potentially OP_ENERGY could be rolled out first, and then if it gains traction the additional a la carte opcodes could roll out in a later protocol upgrade.
+The single OP_ENERGY approach is preferred in this bip as it is a reasonable schelling point to bootstrap a derivatives market. This is preferred to the the more flexible "more primitives" approach because it requires fewer opcodes, and unifies the market around a single reasonable type of contract. The single opcode approach also saves some bytes on chain. However, if there is strong consensus for the a la carte "more primitives" approach, there is no strong reason not to do so. Potentially OP_ENERGY could be rolled out first, and then if it gains traction the additional a la carte opcodes, and/or more measures, could roll out in a later protocol upgrade. 
 
 todo: Is there another alternative/equivalent implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? Would be good to understand powswap better.
 
