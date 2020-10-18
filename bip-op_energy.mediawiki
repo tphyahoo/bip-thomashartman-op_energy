@@ -340,8 +340,6 @@ uint256 specification needs to be very simple and clear, to minimize risk of inc
 
 other issues?
 
-
-
 === Price manipulation ===
 
 Todo, needs work: 
@@ -382,7 +380,7 @@ Soft fork.
 
 ==Alternative Approaches==
 
-====More Primitives===
+===More Primitives===
 
 Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example, OP_ENERGY as defined above is equivalent to
 
