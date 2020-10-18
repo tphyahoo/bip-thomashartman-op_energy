@@ -322,29 +322,51 @@ Or, chainFees and chainSubsidy could be combined as a single chainRevenue record
 
 ==Risks==
 
-===Protocol Inconsistency===
+===UINT256 Specification Inconsistency===
 
-uint256 specification needs to be very simple and clear, to minimize risk of inconsistent implementation between clients
+The specification of uint256 must be very simple and clear, to eliminate inconsistency between clients. 
 
-other issues?
+===Price manipulation ===
 
-=== Price manipulation ===
+====Inclusion of Uneconomic Transactions====
 
 Todo, needs work: 
 
-====Transaction Fee Manipulation====
+Miners can long OP_ENERGY and self-mine high-fee transactions that they themselves have created and not transmitted, to manipulate the price up. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily high with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on long OP_ENERGY trades. 
 
-Miners can mine their own transactions without broadcasting them first, to raise the OP_ENERGY for a block span to any desired level, thus griefing OP_ENERGY. The more hash rate the miner controls, the more confidence in the attack. 
+That being said, a lesser version of this problem exists without OP_ENERGY. Miners are already currently incentivized to include uneconomic high-fee transactions, to manipulate transaction fees higher.
 
-We will disregard 51% attack capable miners as out of scope for this bip, since there are bigger problems in that case, and focus our worries on high but less than 51% miners.
+There are game theoretic reasons why miners don't in fact manipulate transaction fees -- or are limited in how much manipulation can in practice be done. These reasons and limits apply in an OP_ENERGY world as well.
 
-In the latter casse, this is not risk free. Because the block with the high transaction fee could be orphaned, and then mined by another miner. 
+The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee.  A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions, further increasing the orphan risk. No such confirmation delay mechanism is described in  the bitcoin white paper. But, nodes control confirmation, not miners. So miners cannot self-mine uneconomic transactions with complete impunity. 
 
-Further mitigating this attack is that nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase this risk.  See bip "Prevent Manipulation of Transaction Fee Rate by Miners.
+Let's explore this in more depth. 
+
+Both for current transaction fee manipulation, and in an OP_ENERGY world, the calculus for profitability of cheating by inclusion of uneconomic fees worth txV satoshis, is something like:
+
+<pre>
+profit = expectedProfit - expectedLoss
+  where expectedProfit = probabilitySuccessfullyMinedBlock * blockManipulationRevenue 
+        expectedLoss = txLoss + blockLoss + networkTrustDestructionLoss
+        txLoss = orphanProbabilityWithManipulation * txV
+        blockLoss = orphanProbabilityDelta * blockRevenue
+        orphanProbabilityDelta = orphanProbabilityWithManipulation - orphanProbabilityWithoutManipulation
+        networkTrustDestructionLoss = cost of loss of trust due to miner misbehavior. (Not much can  be said about this hard to measure quantity, other than noting it.)
+</pre>
+
+Clearly, more blockManipulationRevenue can be gained with OP_ENERGY cheating, than just with transaction fee manipulation. But, OP_ENERGY manipulation is likely to involve higher txV fees, in order to successfully dupe counterparties into taking bad trades.  So there is more incentive for fee poaching as well, meaning more risk for cheaters. 
+
+There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, which makes the poaching risk higher yet. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
+
+In sum, the incentives already pitting hodling nodes against miners raise the attack cost enough to render it unprofitable, if OP_ENERGY were activated. 
+
+Also, these attacks don't require OP_ENERGY in the protocol, as OP_ENERGY style binary trades could also be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. 
+
+====Exclusion of Economic Transactions====
+
+Miners can also short OP_ENERGY and exclude transactions to manipulate the price down. The extreme of this would be to mine empty blocks. Cartels of miners and pools could be formed to make the attack more effective. 
 
 Another attack would be to lower txfee rate by excluding transactions, or in the extreme just mining empty blocks. This attack is not as bad, because it is more expensive to miners than the raising fee attack, and it cannot lower txfee rate arbitrarily within a single block, whereas the fee raising attack can raise fees arbitrarily with a single transaction. So it is believed that already existing penalties are sufficient to stop OP_ENERGY manipulation by lowering transaction fees. 
-
-Alternatively, on chain energy derivatives could use a different measure, such as hashes / block instead of hashes / sat, and only observe hashrate. This can already be done with powswap, without a protocol change. However, perhaps there are advantages of the OP_ENERGY approach over powswap. (todo: think about this more.)
 
 ==== Difficulty Manipulation ====
 
@@ -379,7 +401,7 @@ hashes / satoshis * ( expectedSeconds / seconds ) > strike
 is equivalent to
 
 <pre>
-hashes * expectedSecconds > strike * satoshis * seconds
+hashes * expectedSeconds > strike * satoshis * seconds
 </pre>
 
 So, to do OP_ENERGY with "a la carte primitives" the following opcodes are recommended
@@ -389,9 +411,9 @@ OP_HASHES block
 OP_MEDIANTIME block
 OP_CHAINFEES block (sum of all fees since genesis)
 OP_CHAINSUBSIDY block (sum of all subsidy since genesis)
-OP_UINT256ADD (for adding fee revenue and subsidy revenue)
-OP_UINT256SUBTRACT uint1 uint2
-OP_UINT256MULTIPLY uint1 uint2
+OP_UINT256ADD uint256_1 uint256_2 (for adding fee revenue and subsidy revenue)
+OP_UINT256SUBTRACT uint256_1 uint256_2
+OP_UINT256MULTIPLY uint256_1 uint256_2
 </pre>
 
 If only OP_ENERGY style contracts for miner revenue are desired, OP_CHAINFEES/OP_CHAINSUBSIDY/OP_UINT256ADD could be combined into the single OP_CHAINREVENUE opcode. 
@@ -408,7 +430,7 @@ The single OP_ENERGY approach is preferred in this bip as it is a reasonable sch
 
 todo: Is there another alternative/equivalent implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? Would be good to understand powswap better.
 
-===Comparison to Similar Proposals===
+==Comparison to Similar Proposals==
 
 POWSWAP: Enables on-chain speculation in hashrate.<ref>https://powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
 
