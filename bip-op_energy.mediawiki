@@ -74,7 +74,7 @@ To a lesser but still consequential degree, OP_ENERGY price tracks dollar price.
 
 ===Use Cases===
 
-tood, pretty much everything here needs fleshing out.
+todo, pretty much everything here needs fleshing out.
 
 ====Hedging USD/BTC in crashes and manias====
 In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them, using OP_ENERGY.
@@ -336,7 +336,7 @@ That being said, a lesser version of this problem exists without OP_ENERGY. Mine
 
 There are game theoretic reasons why miners don't in fact manipulate transaction fees -- or are limited in how much manipulation can in practice be done. These reasons and limits apply in an OP_ENERGY world as well.
 
-The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions, further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. So miners cannot self-mine uneconomic transactions with complete impunity. 
+The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions (unusually high fee, and not seen in mempool), further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. So miners cannot self-mine uneconomic transactions with complete impunity. 
 
 Let's explore this in more depth. 
 
