@@ -330,7 +330,7 @@ add a coouple functions that do the OP_ENERGY math and I think this would do wha
 
 OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep uint256 converted values for mediantime, chainFees, chainSubsidy, and chainwork. This is 16 bytes total per block, so the first million blocks will require 16mb additional storage. Not too bad, even for an underpowered node running on a raspi. Note that chainSubsidy is stored rather than computed from the reward function because some blocks underpaid the block reward<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
 
-Or, chainFees and chainSubsidy could be combined as a single chainRevenue record, saving 4 bytes. Storing fees and subsidy separately is recommended, as it clears the way for the "More Primitives" approach if adopted in the future.
+Or, chainFees and chainSubsidy could be combined as a single chainRevenue record, saving 4 bytes. Storing fees and subsidy separately is recommended, as it clears the way for the "More Primitives" approach if adopted in the future. (See "Alternative Approaches" section of this bip.)
 
 ==Risks==
 
