@@ -330,8 +330,6 @@ The specification of uint256 must be very simple and clear, to eliminate inconsi
 
 ====Inclusion of Uneconomic Transactions====
 
-Todo, needs work: 
-
 Miners can long OP_ENERGY and self-mine high-fee transactions that they themselves have created and not transmitted, to manipulate the price up. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily high with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on long OP_ENERGY trades. 
 
 That being said, a lesser version of this problem exists without OP_ENERGY. Miners are already currently incentivized to include uneconomic high-fee transactions, to manipulate transaction fees higher.
@@ -363,6 +361,8 @@ In sum, the incentives already pitting hodling nodes against miners raise the at
 Also, these attacks don't require OP_ENERGY in the protocol, as OP_ENERGY style binary trades could also be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. 
 
 ====Exclusion of Economic Transactions====
+
+Todo, needs work: 
 
 Miners can also short OP_ENERGY and exclude transactions to manipulate the price down. The extreme of this would be to mine empty blocks. Cartels of miners and pools could be formed to make the attack more effective. 
 
