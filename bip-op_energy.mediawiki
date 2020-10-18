@@ -344,7 +344,7 @@ Both for current transaction fee manipulation, and in an OP_ENERGY world, the ca
 
 <pre>
 profit = expectedProfit - expectedLoss
-  where expectedProfit = probabilitySuccessfullyMinedBlock * blockManipulationRevenue 
+  where expectedProfit = probabilitySuccessfullyMinedBlock * txfeeManipulationRevenue 
         expectedLoss = txLoss + blockLoss + networkTrustDestructionLoss
         txLoss = orphanProbabilityWithManipulation * txV
         blockLoss = orphanProbabilityDelta * (blockRevenue - txV)
@@ -352,7 +352,7 @@ profit = expectedProfit - expectedLoss
         networkTrustDestructionLoss = cost of loss of trust due to miner misbehavior. (Not much can  be said about this hard to measure quantity, other than noting it.)
 </pre>
 
-Clearly, more blockManipulationRevenue can be gained with OP_ENERGY cheating, than just with transaction fee manipulation. But, OP_ENERGY manipulation is also likely to involve high txV fees, in order to successfully dupe counterparties into taking bad trades.  So there is more incentive for fee poaching as well, meaning more risk for cheaters. 
+Clearly, more txfeeManipulationRevenue can be gained with OP_ENERGY cheating, than just with transaction fee manipulation. But, OP_ENERGY manipulation is also likely to involve high txV fees, in order to successfully dupe counterparties into taking bad trades.  So there is more incentive for fee poaching as well, meaning more risk for cheaters. 
 
 There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, which makes the poaching risk higher yet. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
 
