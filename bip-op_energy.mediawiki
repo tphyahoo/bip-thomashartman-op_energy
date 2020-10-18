@@ -330,13 +330,13 @@ The specification of uint256 must be very simple and clear, to eliminate inconsi
 
 ====Inclusion of Uneconomic Transactions====
 
-Miners can long OP_ENERGY and self-mine high-fee transactions that they themselves have created and not transmitted, to manipulate the OP_ENERGY hashes/sat price down. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily low with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on short OP_ENERGY trades. 
+Miners can short OP_ENERGY and self-mine high-fee transactions that they themselves have created and not transmitted, to manipulate the OP_ENERGY hashes/sat price down. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily low with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on short OP_ENERGY trades. 
 
 That being said, a lesser version of this problem exists without OP_ENERGY. Miners are already currently incentivized to include uneconomic high-fee transactions, to manipulate transaction fees higher.
 
 There are game theoretic reasons why miners don't in fact manipulate transaction fees -- or are limited in how much manipulation can in practice be done. These reasons and limits apply in an OP_ENERGY world as well.
 
-The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee.  A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions, further increasing the orphan risk. No such confirmation delay mechanism is described in  the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. So miners cannot self-mine uneconomic transactions with complete impunity. 
+The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions, further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. So miners cannot self-mine uneconomic transactions with complete impunity. 
 
 Let's explore this in more depth. 
 
