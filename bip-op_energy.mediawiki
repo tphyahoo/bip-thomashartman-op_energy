@@ -31,7 +31,7 @@ The bitcoin-cli tool sometimes give summary statistics in difficulty units, and 
 
 OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. 
 
-To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   The chainwork delta of a single block (chainwork(blockN+1) - chainwork(blockN)) is the expected number of hashes needed to calculate this block. 
+To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   
 
 With that out of the way, OP_ENERGY is defined as follows.
 
