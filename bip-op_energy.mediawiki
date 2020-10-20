@@ -16,7 +16,7 @@ This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a s
 
 ==Units: Converting from Difficulty to Hashes / Chainwork==
 
-Bitcoin difficulty is a measure of how many hashes are expected to be needed, to mine a particular block. 
+Bitcoin difficulty<ref>https://en.bitcoin.it/wiki/Difficulty</ref> is a measure of how many hashes are expected to be needed, to mine a particular block. 
 
 <pre>
 hashes(block) = difficulty(block) * genesis_hashes
