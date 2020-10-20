@@ -186,7 +186,7 @@ On deribit:
 
 The on-chain predicted OP_ENERGY price adjustment of -4.3% is reasonably in line with deribit's prediction that fiat price is 73% likely to not drop more than 4%. 
 
-So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136, at 7300 sat (10,000 * 0.73, where by  convention 10,000 sat is the standard settlement amount of an OP_ENERGY binary, Alice contributing 7300 premium, and Bob the rest). 
+So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136, at 7300 sat (10,000 * 0.73, where by  convention 10,000 sat is the standard settlement amount of an OP_ENERGY binary, Alice contributing 7300 premium, and Bob the rest). The 10,000 sat settlement convention used in this bip is similar to how, eg, Nadex binaries always have $100 settlement.<ref>https://www.nadex.com/learning/what-are-binary-options-and-how-do-they-work/</ref>
 
 <pre>
  STRIKE_ALICE_BOB = PRICE_645_646 * 0.96 = (todo, give real number)
@@ -328,11 +328,11 @@ The specification of uint256 must be very simple and clear, to eliminate inconsi
 
 ===Price manipulation ===
 
-Some scenarios will now be explored, where miners attempt to profit by manipulating the OP_ENERGY price via their mining actrivity. 
+Some scenarios will now be explored, where miners attempt to profit by manipulating the OP_ENERGY price via their mining activity. 
 
 These scenarios can generally be mitigated, as we will see.
 
-A point in favor of adopting OP_ENERGY, despite potential attacks, is that OP_ENERGY style binary trades could be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. In this case, miners could  perform all these manipulation strategies, without OP_ENERGY in the protocol. Given this, it can be argued: might as well do OP_ENERGY on chain and have bitcoin benefit from higher hashrate, volume moving off custodying exchanges, and more rapid hyperbitcoinization.
+Mitigation aside, a point in favor of adopting OP_ENERGY, despite potential attacks, is that OP_ENERGY style binary trades could be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. In this case, miners could  perform all these manipulation strategies, without OP_ENERGY in the protocol. Given this, it can be argued: might as well do OP_ENERGY on chain and have bitcoin benefit from higher hashrate, volume moving off custodying exchanges, and more rapid hyperbitcoinization.
 
 That being stated, let's look at attacks, and mitigations.
 
