@@ -14,11 +14,26 @@
 ==Abstract==
 This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain between untrusting parties, and without requiring an oracle. 
 
+==Units== 
+
+===Converting from Difficulty to Hashes / Chainwork===
+
+Bitcoin difficulty is a measure of how many hashes are expected to be needed, to mine a particular block. 
+
+<pre>
+hashes(block) = difficulty(block) * genesis_hashes
+  where genesis_hashes = 2**32 
+
+chainwork(blockN) = hashes(blockGenesis) + hashes(block2) + ... + hashes(blockN)
+</pre>
+
+The bitcoin-cli tool sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes. 
+
 ==Summary==
 
-OP_ENERGY redefines the existing NOP_TBD opcode to give a measure of hashes per satoshi between two blocks. 
+OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. 
 
-To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   The chainwork delta of a single block (chainwork(blockN+1) - chainwork(blockN)) is the expected number of hashes needed to calculate this block. For a block with difficulty D, this is D * 2**32 (because 2**32 was the difficulty of the genesis block). Difficulty is a pure mathematical function of target bits, which is stored in block headers: Difficulty(block) = targetBits(genesis_block) / targetBits(block).<ref>https://en.bitcoin.it/wiki/Difficulty#What_is_the_formula_for_difficulty.3F</ref>
+To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   The chainwork delta of a single block (chainwork(blockN+1) - chainwork(blockN)) is the expected number of hashes needed to calculate this block. 
 
 With that out of the way, OP_ENERGY is defined as follows.
 
