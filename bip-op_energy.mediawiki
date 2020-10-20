@@ -130,7 +130,7 @@ Settling (Resolution): After the settlement block is reached, the settlement is 
 
 Normalized premium is a probability-like number between 0 and 1, corresponding to unit settlement value.  
 
-By Black Scholes, the normalized premium is the is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. <ref>https://en.wikipedia.org/wiki/Binary_option#Skew</ref> (StrikeD is distinct from traditional delta, which is the derivative with respect to spot.)
+By Black Scholes, the normalized premium is the negative of a greek-like value I will term strikeD. StrikeD, for strike delta, is the derivative of the vanilla call with respect to strike. <ref>https://en.wikipedia.org/wiki/Binary_option#Skew</ref> (StrikeD is distinct from traditional delta, which is the derivative with respect to spot.)
 
 <pre>
 Cv = vanilla call price
@@ -186,7 +186,7 @@ On deribit:
 
 The on-chain predicted OP_ENERGY price adjustment of -4.3% is reasonably in line with deribit's prediction that fiat price is 73% likely to not drop more than 4%. 
 
-So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136, at 7300 sat (10,000 * 0.73). 
+So Bob could price a strike of PRICE_645_646 - 4%, on blocks 647,136 to 648,136, at 7300 sat (10,000 * 0.73, where by  convention 10,000 sat is the standard settlement amount of an OP_ENERGY binary, Alice contributing 7300 premium, and Bob the rest). 
 
 <pre>
  STRIKE_ALICE_BOB = PRICE_645_646 * 0.96 = (todo, give real number)
@@ -220,7 +220,7 @@ With compound contracts, we can create synthetic versions of derivatives such as
 
 Let us create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
 
-Our vanilla call is composed of ten binary calls, each 10,000 sat, as in the previous example. The binaries have strikes at STRIKE_ALICE_BOB (see above), STRIKE_ALICE_BOB+1%, etc, up to STRIKE_ALICE_BOB+9%. The synthetic vanilla call has expected payoff less than the organic vanilla call if the underlying OP_ENERGY price increases by more than 9%.
+Our vanilla call is composed of ten binary calls, each 10,000 sat, as in the previous example. The binaries have strikes at STRIKE_ALICE_BOB (see above), STRIKE_ALICE_BOB+1%, etc, up to STRIKE_ALICE_BOB+9%. The synthetic vanilla call has expected payoff less than the organic vanilla call if the underlying OP_ENERGY price increases by more than 9%.<ref>tier nolan:  https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018087.html</ref>
 
 This vanilla has a maximum settlement value of 100,000 sat. If the measured price is under STRIKE_ALICE_BOB, Bob sweeps all 100,000 sats. If it is higher than the STRIKE_ALICE_BOB*1.09 cap, Alice gets everything. If the price settles somewhere between, Bob and Alice split the 100,000 sats, with each binary acting like a price tick that decides who should get the settlement coins. So it acts very similarly, but not identically, to an organic call.
 
@@ -236,7 +236,7 @@ From a bitcoin script point of view, there are a few basic techniques for compos
 ** one maker, one taker
 ** easiest to negotiate and coordinate
 ** works well with 2-party lightning
-** cheaper in block space than multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear. 
+** cheaper in block space than multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear.<ref>zmnscpxj: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018090.html</ref>
 * Multiple utxos, single if/then clause for each utxo
 ** many makers and takers (similar feel to coinjoin)
 ** could work with multi party lightning
@@ -328,15 +328,27 @@ The specification of uint256 must be very simple and clear, to eliminate inconsi
 
 ===Price manipulation ===
 
+Some scenarios will now be explored, where miners attempt to profit by manipulating the OP_ENERGY price via their mining actrivity. 
+
+These scenarios can generally be mitigated, as we will see.
+
+A point in favor of adopting OP_ENERGY, despite potential attacks, is that OP_ENERGY style binary trades could be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. In this case, miners could  perform all these manipulation strategies, without OP_ENERGY in the protocol. Given this, it can be argued: might as well do OP_ENERGY on chain and have bitcoin benefit from higher hashrate, volume moving off custodying exchanges, and more rapid hyperbitcoinization.
+
+That being stated, let's look at attacks, and mitigations.
+
 ====Inclusion of Uneconomic Transactions====
 
-Miners can short OP_ENERGY and self-mine high-fee transactions that they themselves have created and not transmitted, to manipulate the OP_ENERGY hashes/sat price down. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily low with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on short OP_ENERGY trades. 
+For the purposes of this bip, an uneconomic transaction is a transaction whose primary purpose is other than to move bitcoin cheaply as the market will allow at the speed desired.  Currently (I have no proof of this but seems likely), uneconomic transactions may being mined whose purpose is to manipulate transaction fees higher. In an OP_ENERGY world, uneconomic high-fee transactions could be made to manipulate OP_ENERGY lower.
+
+From an observing node's point of view, an uneconomic transaction can be characterized as a transaction with unnecessarily high fees, which is included in a block without being in the node's mempool. There is no way to know with certainty that a transaction is uneconomic, as opposed to user overpayment error, or that the mempool is propagating slowly. But transactions could receive "suspiciousness" scores according to this metric. 
+
+Miners can short OP_ENERGY and self-mine high-fee uneconomic transactions that they themselves have created and not transmitted, to manipulate the OP_ENERGY hashes/sat price down. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily low with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on short OP_ENERGY trades. 
 
 That being said, a lesser version of this problem exists without OP_ENERGY. Miners are already currently incentivized to include uneconomic high-fee transactions, to manipulate transaction fees higher.
 
 There are game theoretic reasons why miners don't in fact manipulate transaction fees -- or are limited in how much manipulation can in practice be done. These reasons and limits apply in an OP_ENERGY world as well.
 
-The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions (unusually high fee, and not seen in mempool), further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. So miners cannot self-mine uneconomic transactions with complete impunity. 
+The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions (unusually high fee, and not seen in mempool), further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. In an OP_ENERGY world, economically important nodes would want a fair and smoothly functioning OP_ENERGY market, as they are working as market makers and earning lightning transaction fees. So miners cannot self-mine uneconomic transactions with impunity. This is true today, and would continue to be true if OP_ENERGY went live. 
 
 Let's explore this in more depth. 
 
@@ -349,15 +361,13 @@ profit = expectedProfit - expectedLoss
         txLoss = orphanProbabilityWithManipulation * txV
         blockLoss = orphanProbabilityDelta * (blockRevenue - txV)
         orphanProbabilityDelta = orphanProbabilityWithManipulation - orphanProbabilityWithoutManipulation
-        networkTrustDestructionLoss = cost of loss of trust due to miner misbehavior. 
+        networkTrustDestructionLoss = socialized cost of loss of trust due to miner misbehavior. 
           (Not much can  be said about this hard to measure quantity, other than noting it.)
 </pre>
 
 Clearly, OP_ENERGY cheating has potential for greater txfeeManipulationRevenue, than is currently the case with just trying to surreptitiously nudge bitcoin users to pay higher fees. But, OP_ENERGY manipulation is also likely to involve higher txV fees, and be more obviously suspicious. So there is more incentive for fee poaching as well, meaning more risk for cheaters. There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, further raising the poaching risk. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
 
 In sum, the incentives already pitting hodling nodes against miners are sufficient to deter the attack.
-
-Also, these attacks don't require OP_ENERGY in the protocol, as OP_ENERGY style binary trades could also be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. So, might as well do it on chain and have bitcoin benefit from higher hashrate and more rapid hyperbitcoinization.
 
 ====Exclusion of Economic Transactions====
 
@@ -432,6 +442,9 @@ todo: Is there another alternative/equivalent implementation of OP_ENERGY, using
 ==Comparison to Similar Proposals==
 
 POWSWAP: Enables on-chain speculation in hashrate.<ref>https://powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
+
+todo: is there an issue with powswap, where you need watchtowers? I think I asked on list about this, and jeremy rubin said no and gave an example, but I didn't understand it. (right?)
+review this: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-September/018150.html
 
 OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016952.html</ref> Alas, Tamas Blummer passed away before he could produce a concrete specification. 
 
