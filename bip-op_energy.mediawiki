@@ -47,7 +47,7 @@ OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds )
       seconds = mediantime (block2) - mediantime (block1)
 </pre>
 
-Per this formula, higher difficulty makes bitcoin more expensive. Higher transaction fees render it cheaper. An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
+Per this formula, higher difficulty makes bitcoin more expensive (in hashes). Higher transaction fees render it cheaper (in hashes). An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
 
 All values are translated into uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
 
