@@ -2,6 +2,25 @@ OP_ENERGY Whitepaper
 
 todo, intro
 
+===Use Cases===
+
+todo, pretty much everything here needs fleshing out.
+
+====Gambling====
+
+With short block spans, OP_ENERGY contracts are essentially gambling, since these prices are dominated by block discovery time. 
+
+====Hedging USD/BTC in crashes and manias====
+In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them, using OP_ENERGY.
+
+====Hedging power purchasing agreements, for miners====
+
+Megawatt futures rental rental scenario. Power purchase agreements between miners and utilities. 
+
+====Hedging hashrate purchasing agreements, for utilities====
+
+Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
+
 ==Historical OP_ENERGY Prices==
 
 <pre>

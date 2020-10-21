@@ -86,22 +86,9 @@ OP_ENERGY trading is a potentially rich source of miner income, securing bitcoin
 
 Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer systems such as lightning. So high frequency trading is feasible, and affordable. OP_ENERGY market makers would be running lightning nodes, earning lightning fees, and presumably also routing non-OP_ENERGY lightning transactions for additional lightning fee income. 
 
-There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
+There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket.
 
-===Use Cases===
-
-todo, pretty much everything here needs fleshing out.
-
-====Hedging USD/BTC in crashes and manias====
-In a fiat centric world, if fiat can buy less bitcoin via direct exchange than via hashes (high fiat price, low OP_ENERGY price), it makes sense for savvy bitcoin accumulators to sell bitcoin for fiat, and rebuy the bitcoin with hashes instead. This explains fiat manias, and can be used to hedge against them, using OP_ENERGY.
-
-====Hedging power purchasing agreements, for miners====
-
-Megawatt futures rental rental scenario. Power purchase agreements between miners and utilities. 
-
-====Hedging hashrate purchasing agreements, for utilities====
-
-Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
+Further concrete use cases are given in the whitepaper.
 
 ==Intuition==
 
