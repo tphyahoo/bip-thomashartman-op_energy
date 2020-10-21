@@ -33,7 +33,7 @@ OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a mea
 
 To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   
 
-With that out of the way, OP_ENERGY is defined as follows.
+OP_ENERGY is defined as follows.
 
 <pre>
 OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
@@ -100,7 +100,7 @@ Megawatt futures rental rental scenario. Power purchase agreements between miner
 
 Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
 
-===Example OP_ENERGY Prices===
+==Example OP_ENERGY Prices==
 
 <pre>
 Todo:
@@ -148,6 +148,8 @@ strike < OP_ENERGY block1 block2
 or Bob otherwise.
 
 Settling (Resolution): The settlement transaction is simply for Alice or Bob to spend the now unlocked funds, after the second block is reached.
+
+==Pricing==
 
 ===Black Scholes Pricing===
 
@@ -231,7 +233,7 @@ If Bob can match buyers and sellers for say, a 1 month lock-up period, this is e
 
 If custodial exchanges offered vanilla OP_ENERGY calls, strikeD on these could be used for pricing the binaries directly, rather than translating from strikeD on vanilla fiat calls. There is profit incentive to do so. Custodial exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the data (in particular strikeD) on their own platforms. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
 
-===Compound Contracts===
+==Compound Contracts==
 
 We have already seen the binary call contract. From Bob's point of view, this is a binary put. 
 
@@ -239,7 +241,7 @@ Two binary calls or puts can be composed and the result is another contract. In 
 
 With compound contracts, we can create synthetic versions of derivatives such as vanilla puts and calls, futures, and the like.
 
-===Synthetic Call Example===
+====Synthetic Call Example====
 
 Let us create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
 
@@ -251,7 +253,7 @@ Pricing for the synthetic call can be worked out by pricing the component binary
 
 The payoff of this call is capped. And it pays off in granular ticks. So the non-custodied synthetic is different from the custodied organic, which pays off smoothly and is not capped. However, by expanding the max price higher and adding more ticks, the synthetic can mock the organic to any desired level of fidelity. The more realistic, the longer the definition in bitcoin script and hence the higher the transaction fee. Fortunately, synthetics can avoid mining fees by using lightning. So, very rich and organic feeling derivatives can be built affordably. 
 
-===Compound Contract Construction=== 
+====Compound Contract Construction====
 
 From a bitcoin script point of view, there are a few basic techniques for composing binaries into compound contracts.
 
@@ -271,6 +273,8 @@ From a bitcoin script point of view, there are a few basic techniques for compos
 All of these techniques create contracts via a single bitcoin transaction. This guarantees alice a set price for the contract. 
 
 Alternatively, Alice may compromise and split the contract she desires into multiple transactions. She loses the single transaction price guarantee, but by shopping around for advantageous prices over a longer period of time she gains flexibility and may ultimately be more profitable. In so doing, Alice shifts from taker into maker role.
+
+==High Frequency Trading (OP_ENERGY with Lightning)==
 
 === Buying and Selling Binaries with Lightning (direct channel) === 
 
