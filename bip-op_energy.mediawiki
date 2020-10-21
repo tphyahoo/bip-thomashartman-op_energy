@@ -91,7 +91,7 @@ Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer s
 
 There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket.
 
-Further concrete use cases are given in the whitepaper.
+Many concrete use cases are given in the whitepaper.
 
 ==Intuition==
 
