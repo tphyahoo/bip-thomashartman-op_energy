@@ -63,6 +63,12 @@ If any of the following conditions are true, the script interpreter will termina
 
 Otherwise, the 4 byte uint256 hash/sat price goes on the stack. 
 
+===OP_ENERGY of Genesis Block===
+
+To give a concrete example, OP_ENERGY 1 2 is 6.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/bip-op_energy.mediawiki#Definition_of_OP_ENERGY</ref> 
+
+More examples of historical OP_ENERGY prices, with in depth dicussion and analysis, are available in the OP_ENERGY whitepaper.
+
 ==Motivation==
 
 As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel. Rather than price financial instruments in dollars, or bitcoin, OP_ENERGY prices are given in hashes.

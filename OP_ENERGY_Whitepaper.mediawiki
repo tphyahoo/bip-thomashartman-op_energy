@@ -2,6 +2,39 @@ OP_ENERGY Whitepaper
 
 todo, intro
 
+==Historical OP_ENERGY Prices==
+
+<pre>
+Todo:
+Give correct numbers, which could also work as test vectors. 
+Use uint256 arithmetic. Currently using ieee754 floating points, and rounding to the nearest integer.
+Use median time. Currently using using block timestamp.
+Give packed uint256 as well as decimal representation.
+</pre>
+
+Single block spans: 
+
+* genesis block                 (OP_ENERGY 1 2): 6
+* first two blocks              (OP_ENERGY 1 3): 13
+* first block of first halving  (OP_ENERGY 210,000 210,001): 8,078,338 -- 320,069,304,320 -- todo, did this change? seems suspicious?
+* first block of second halving (OP_ENERGY 420,000 420,001): 700,961,030,332 -- 80,732,483,485,696 -- todo, suspicious?
+
+The 6 order of magnitude change from genesis to first halving reflects the transition to asics, which was a one time event. The 2 order of magnitude change from first to second halving shows hashes more closely tracking energy (and hence fiat) prices. (todo: work on this paragraph, express it more clearly)
+
+Todo: can we look at OP_ENERGY price at point in time where first fiat trade occurred, for a penny or whatever it was? 2010 sometime iirc. I suspect OP_ENERGY price from then to first halving would far exceed the fiat price change, due to asics. But again this is one time thing. Discuss and make it clearer.
+
+500 block spans: 
+
+* first 500 blocks      (OP_ENERGY 1 500): todo
+* before first halving  (OP_ENERGY 209,499 209,999): todo
+* around first halving  (OP_ENERGY 209,750 210,250): todo
+* after first halving   (OP_ENERGY 210,000 210,500): todo
+* before second halving (OP_ENERGY 419,499 419,999): todo
+* around second halving (OP_ENERGY 419,750 420,250): todo
+* after second halving  (OP_ENERGY 420,000 420,500): todo
+
+Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
+
 ==Pricing==
 
 Todo, move this out of bip, to whitepaper or something. (bip should have reference to whitepaper and touch on this briefl)
