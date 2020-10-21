@@ -14,7 +14,9 @@
 ==Abstract==
 This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain between untrusting parties, and without requiring an oracle. 
 
-==Units: Converting from Difficulty to Hashes / Chainwork==
+==Summary==
+
+===Units: Converting from Difficulty to Hashes / Chainwork===
 
 Bitcoin difficulty<ref>https://en.bitcoin.it/wiki/Difficulty</ref> is a measure of how many hashes are expected to be needed, to mine a particular block. 
 
@@ -25,9 +27,10 @@ hashes(block) = difficulty(block) * genesis_hashes
 chainwork(blockN) = hashes(blockGenesis) + hashes(block2) + ... + hashes(blockN)
 </pre>
 
-The bitcoin-cli tool sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes. 
+The bitcoin-cli tool sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes.
 
-==Summary==
+===Definition of OP_ENERGY===
+
 
 OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. 
 
