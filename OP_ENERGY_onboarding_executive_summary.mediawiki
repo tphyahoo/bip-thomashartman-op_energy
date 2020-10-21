@@ -1,0 +1,17 @@
+the fundamental justification for CFTC to go after bitmex (and someday soon deribit) is that US traders with gambling problem get rekt and go complain to mommy. of course they are also protecting incumbent big banks and trading platforms. But the thing about protecting gamblers is what lets CFTC enforcers sleep at night.
+
+No amount of KYC/AML will ultimately protect these types of exchanges. As long as they have a bank somewhere, with someone's name attached to it, OECD/Interpol/Five eyes are going to treat them with hostility.
+
+It may be that the problem is solved organically if the incumbent platforms (big banks) adopt crypto derivatives themselves. The ETF path on steroids basically. But, obviously, this is not censorship resistant. Stroke of a pen, government halts 90% of bitcoin volume, when they need to protect their interests.
+
+That's not good enough.
+
+the dream of defi is to liberate trade activity from mommy, so you can trade as you want, take risk as you want, get rekt or go big as you want. Freedom.
+
+Problem is ethereumlike-based defi is a) a scam b) not really censorship resistant
+
+"The Net treats censorship as a defect and routes around it."
+
+https://en.wikiquote.org/wiki/John_Gilmore
+
+OP_ENERGY is my personal attempt to route around this problem.

@@ -154,6 +154,9 @@ Settling (Resolution): The settlement transaction is simply for Alice or Bob to 
 
 ==Pricing==
 
+Todo, move this out of bip, to whitepaper or something. (bip should have reference to wherever this moves)
+could initially be appendix, step 2 is move everything in appendis to whitepaper.
+
 ===Black Scholes Pricing===
 
 Normalized premium is a probability-like number between 0 and 1, corresponding to unit settlement value.  
@@ -238,6 +241,8 @@ If custodial exchanges offered vanilla OP_ENERGY calls, strikeD on these could b
 
 ==Compound Contracts==
 
+Todo, move this out of bip, to whitepaper or something. (bip should have reference to wherever this moves)
+
 We have already seen the binary call contract. From Bob's point of view, this is a binary put. 
 
 Two binary calls or puts can be composed and the result is another contract. In fact any two contracts can be composed, yielding a rich structure of possible contracts which can be created and settled as individual units. 
@@ -278,6 +283,8 @@ All of these techniques create contracts via a single bitcoin transaction. This 
 Alternatively, Alice may compromise and split the contract she desires into multiple transactions. She loses the single transaction price guarantee, but by shopping around for advantageous prices over a longer period of time she gains flexibility and may ultimately be more profitable. In so doing, Alice shifts from taker into maker role.
 
 ==High Frequency Trading (OP_ENERGY with Lightning)==
+
+Todo, move this out of bip, to whitepaper or something. (bip should have reference to wherever this moves)
 
 === Buying and Selling Binaries with Lightning (direct channel) === 
 
@@ -489,6 +496,8 @@ Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not 
 Tamas Blummer (RIP), whose OP_DIFFICULTY proposal was the inspiration for this bip. Jeremy Rubin (powswap). 
 
 Everyone who helped on bitcoin-dev (todo). 
+
+
 
 
 
