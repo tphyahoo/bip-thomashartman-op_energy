@@ -31,7 +31,6 @@ The bitcoin-cli tool sometimes give summary statistics in difficulty units, and 
 
 ===Definition of OP_ENERGY===
 
-
 OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. 
 
 To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   
@@ -78,13 +77,15 @@ As Bitcoin lets untrusted parties send value over a communications channel, OP_E
 The basic contract is a european cash-or-nothing binary call <ref>https://en.wikipedia.org/wiki/Binary_option#Cash-or-nothing_call</ref>
 on whether some future OP_ENERGY price exceeds some strike. 
 
-Synthetic versions of derivatives such as vanilla puts, calls, and futures, can be built up out of the binary call primitive.
+Fair prices for OP_ENERGY binaries can be determined using techniques such as black scholes, as is done by market makers on many existing binary exchanges. OP_ENERGY settlements are less prone to abuse than binaries on existing centralized binary exchanges, as settlement prices are derived from consensus bitcoin data. 
+
+Synthetic versions of derivatives such as vanilla puts, calls, and futures, can be built up out of the binary call primitive. (whitepaper: compound contracts)
 
 As fiat prices roughly track energy prices, fiat trading volume can thus be moved off custodial exchanges, making markets more efficient, private, and secure.
 
 OP_ENERGY trading is a potentially rich source of miner income, securing bitcoin as miners are weaned off block rewards.
 
-Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer systems such as lightning. So high frequency trading is feasible, and affordable. OP_ENERGY market makers would be running lightning nodes, earning lightning fees, and presumably also routing non-OP_ENERGY lightning transactions for additional lightning fee income. 
+Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer systems such as lightning. So high frequency trading is feasible, and affordable. OP_ENERGY market makers would be running lightning nodes, earning lightning fees, and presumably also routing non-OP_ENERGY lightning transactions for additional lightning fee income. (whitepaper: HFT)
 
 There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket.
 
@@ -116,7 +117,7 @@ Settling (Resolution): The settlement transaction is simply for Alice or Bob to 
 
 ==More Complicated Stuff==
 
-Pricing, Compound Contracts, HFT, alternative approaches, comparison to similar proposals. 
+Pricing, alternative approaches, comparison to similar proposals. 
 
 Todo, add better breadcrumbs to whitepaper for these more advanced topics.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref>
 
