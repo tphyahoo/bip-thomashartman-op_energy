@@ -53,7 +53,7 @@ Per this formula, higher difficulty makes bitcoin more expensive (in hashes). Hi
 
 The subsidy part of the miner reward is the protocol approved subsidy, which can be computed from the block number. (Actual subsidy differs from this by a few satoshis, presumably due to miner error.<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>)
 
-All values are translated into uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
+All values are translated into arith_uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. 
 
 If any of the following conditions are true, the script interpreter will terminate with an error:
 
@@ -62,7 +62,7 @@ If any of the following conditions are true, the script interpreter will termina
 * block2 <= block1
 * block2 is in the future
 
-Otherwise, the 4 byte uint256 hash/sat price goes on the stack. 
+Otherwise, the 4 byte arith_uint256 computed value goes on the stack. 
 
 ===OP_ENERGY of Genesis Block===
 

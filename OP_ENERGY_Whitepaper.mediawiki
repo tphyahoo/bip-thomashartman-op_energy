@@ -26,9 +26,9 @@ Similar to how large miners have power purchasing agreements from utilities, uti
 <pre>
 Todo:
 Give correct numbers, which could also work as test vectors. 
-Use uint256 arithmetic. Currently using ieee754 floating points, and rounding to the nearest integer.
+Use arith_uint256 arithmetic. Currently using ieee754 floating points, and rounding to the nearest integer.
 Use median time. Currently using using block timestamp.
-Give packed uint256 as well as decimal representation.
+Give packed arith_uint256 packed representation, as well as decimal representation.
 </pre>
 
 Single block spans: 
@@ -230,9 +230,9 @@ Todo: flesh out this example.
 
 ==Risks==
 
-===UINT256 Specification Inconsistency===
+===ARITH_UINT256 Specification Inconsistency===
 
-The specification of uint256 must be very simple and clear, to eliminate inconsistency between clients. 
+The specification of 256 bit integers must be very simple and clear, to eliminate inconsistency between clients. Review bitcoin core for gotchas. 
 
 ===Price manipulation ===
 
@@ -299,7 +299,7 @@ A starting point could be a low probability, high profit OP_ENERGY trade between
 
 ==Cost to Nodes==
 
-OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep uint256 converted values for chainwork, mediantime, and chainFees. This is 12 bytes total per block, so the first million blocks will require 12mb additional storage. Not too bad, even for an underpowered node running on a raspi. These values may already be being stored in nodes. (Mediantime certainly is, as it is in block header.)
+OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep arith_uint256 converted values for chainwork, mediantime, and chainFees. This is 12 bytes total per block, so the first million blocks will require 12mb additional storage. Not too bad, even for an underpowered node running on a raspi. These values may already be being stored in nodes. (Mediantime certainly is, as it is in block header.)
 
 ==Alternative Approaches==
 
@@ -324,9 +324,9 @@ OP_HASHES block
 OP_MEDIANTIME block
 OP_CHAINFEES block (sum of all fees since genesis)
 OP_CHAINSUBSIDY block (sum of all subsidy since genesis)
-OP_UINT256ADD uint256_1 uint256_2 (for adding fee revenue and subsidy revenue)
-OP_UINT256SUBTRACT uint256_1 uint256_2
-OP_UINT256MULTIPLY uint256_1 uint256_2
+OP_UINT256ADD arith_uint256_1 arith_uint256_2 (for adding fee revenue and subsidy revenue)
+OP_UINT256SUBTRACT arith_uint256_1 arith_uint256_2
+OP_UINT256MULTIPLY arith_uint256_1 arith_uint256_2
 </pre>
 
 If only OP_ENERGY style contracts for miner revenue are desired, OP_CHAINFEES/OP_CHAINSUBSIDY/OP_UINT256ADD could be combined into the single OP_CHAINREVENUE opcode. 
@@ -341,7 +341,7 @@ There are other possible measures. For instance, one might wish to allow contrac
 
 The single OP_ENERGY approach is preferred in this bip as it is a reasonable schelling point to bootstrap a derivatives market. This is preferred to the the more flexible "more primitives" approach because it requires fewer opcodes, and unifies the market around a single reasonable type of contract. The single opcode approach also saves some bytes on chain. However, if there is strong consensus for the a la carte "more primitives" approach, there is no strong reason not to do so. Potentially OP_ENERGY could be rolled out first, and then if it gains traction the additional a la carte opcodes, and/or more measures, could roll out in a later protocol upgrade. 
 
-todo: Is there another alternative/equivalent implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? Would be good to understand powswap better.
+todo: Is there another alternative/equivalent implementation of OP_ENERGY, using POWSWAP, along with arith_uint256 arithmetic and OP_REVENUE? Would be good to understand powswap better.
 
 ==Comparison to Similar Proposals==
 
