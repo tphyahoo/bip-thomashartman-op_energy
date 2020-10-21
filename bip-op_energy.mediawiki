@@ -52,6 +52,8 @@ OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds )
 
 Per this formula, higher difficulty makes bitcoin more expensive (in hashes). Higher transaction fees render it cheaper (in hashes). An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
 
+The subsidy part of the miner reward is the protocol approved subsidy, which can be computed from the block number. Actual subsidy differs from this by a few satoshis, presumably due to miner error.<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>
+
 All values are translated into uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. So division is uint256 integer arithmetic, throwing out remainder.
 
 If any of the following conditions are true, the script interpreter will terminate with an error:
@@ -127,7 +129,7 @@ Settling (Resolution): The settlement transaction is simply for Alice or Bob to 
 
 ==More Complicated Stuff==
 
-Pricing, Compound Contracts, HFT
+Pricing, Compound Contracts, HFT, alternative approaches, comparison to similar proposals. 
 
 Todo, add better breadcrumbs to whitepaper for these more advanced topics.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref>
 
@@ -155,12 +157,6 @@ arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
 add a coouple functions that do the OP_ENERGY math and I think this would do what we need.
 </pre>
 
-==Cost to Nodes==
-
-OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep uint256 converted values for mediantime, chainFees, chainSubsidy<ref>ChainSubsidy must be stored rather than computed from the deterministic reward function because miners can (and have<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>) underpaid the block reward.</ref>, and chainwork. This is 16 bytes total per block, so the first million blocks will require 16mb additional storage. Not too bad, even for an underpowered node running on a raspi. 
-
-Or, chainFees and chainSubsidy could be combined as a single chainRevenue record, saving 4 bytes. Storing fees and subsidy separately is recommended, as it clears the way for the "More Primitives" approach if adopted in the future. (See "Alternative Approaches" section of this bip.)
-
 ==Risks==
 
 See whitepaper<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref>.
@@ -169,62 +165,16 @@ See whitepaper<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/
 
 Todo.
 
+Initial thoughts for tests... 
+
+* uint256 stuff
+* check some empty blocks, in early times when approved subsidy = actual subsidy. The OP_ENERGY should depend on only the computed subsidy, and the mediantimes. 
+* actual reward, versus approved subsidy (should be approved subsidy). Check block spans where approved does not equal actual subsidy
+* hardcode historical prices from whitepaper, check these in tests
+
 ==Deployment==
 
 Soft fork. 
-
-==Alternative Approaches==
-
-===More Primitives===
-
-Rather than supply opcodes for each possible measurement, another approach would be to supply primitives and let traders use these a la carte. For example
-
-<pre>
-hashes / satoshis * ( expectedSeconds / seconds ) > strike
-</pre>
-
-is equivalent to
-
-<pre>
-hashes * expectedSeconds > strike * satoshis * seconds
-</pre>
-
-So, to do OP_ENERGY with "a la carte primitives" the following opcodes are recommended
-
-<pre>
-OP_HASHES block
-OP_MEDIANTIME block
-OP_CHAINFEES block (sum of all fees since genesis)
-OP_CHAINSUBSIDY block (sum of all subsidy since genesis)
-OP_UINT256ADD uint256_1 uint256_2 (for adding fee revenue and subsidy revenue)
-OP_UINT256SUBTRACT uint256_1 uint256_2
-OP_UINT256MULTIPLY uint256_1 uint256_2
-</pre>
-
-If only OP_ENERGY style contracts for miner revenue are desired, OP_CHAINFEES/OP_CHAINSUBSIDY/OP_UINT256ADD could be combined into the single OP_CHAINREVENUE opcode. 
-
-OP_BYTES and OP_VBYTES might also be desirable. These measures would enable speculation on transaction fee rates. 
-
-===More Measures===
-
-There are other possible measures. For instance, one might wish to allow contracts on txfee rate in a range of blocks, or hashes / block (ignoring transaction fewes, or ovarious other things. These could all be added with their own OP measuring code, without enabling additional primitives.
-
-===Pros and Cons===
-
-The single OP_ENERGY approach is preferred in this bip as it is a reasonable schelling point to bootstrap a derivatives market. This is preferred to the the more flexible "more primitives" approach because it requires fewer opcodes, and unifies the market around a single reasonable type of contract. The single opcode approach also saves some bytes on chain. However, if there is strong consensus for the a la carte "more primitives" approach, there is no strong reason not to do so. Potentially OP_ENERGY could be rolled out first, and then if it gains traction the additional a la carte opcodes, and/or more measures, could roll out in a later protocol upgrade. 
-
-todo: Is there another alternative/equivalent implementation of OP_ENERGY, using POWSWAP, along with uint256 arithmetic and OP_REVENUE? Would be good to understand powswap better.
-
-==Comparison to Similar Proposals==
-
-POWSWAP: Enables on-chain speculation in hashrate.<ref>https://powswap.com</ref> Powswap does not require a protocol change. However, powswap is an inferior measure of the price of bitcoin in hashes as it does not include transaction fees, which will some day dominate block reward. So powswap is a good measure of overall energy spend, but not (in the long run) of energy price, which requires a denominator in bitcoin. That being said, I think it would be great to see powswap brought online asap.
-
-todo: is there an issue with powswap, where you need watchtowers? I think I asked on list about this, and jeremy rubin said no and gave an example, but I didn't understand it. (right?)
-review this: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-September/018150.html
-
-OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2019-May/016952.html</ref> Alas, Tamas Blummer passed away before he could produce a concrete specification. 
-
-Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not only in energy derivatives but in any asset.<ref>https://dci.mit.edu/smart-contracts</ref> No protocol change is required. However, trust in an oracle is required, which makes DLC inferior to OP_ENERGY for energy derivatives. That being said, I very much favor DLC for every other type of trading that cannot be trustlessly pegged to hashing, and hope it is developed successfully and sees wide adoption soon. 
 
 == Footnotes ==
 
