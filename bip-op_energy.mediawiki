@@ -100,7 +100,7 @@ Megawatt futures rental rental scenario. Power purchase agreements between miner
 
 Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
 
-==Example OP_ENERGY Prices==
+==Historical OP_ENERGY Prices==
 
 <pre>
 Todo:
@@ -133,7 +133,7 @@ Todo: can we look at OP_ENERGY price at point in time where first fiat trade occ
 
 Todo: chart 500 block OP_ENERGY price for first 500,000 blocks. 
 
-===Bitcoin Transactions For Writing and Settling OP_ENERGY Binary Calls===
+==Bitcoin Transactions For Writing and Settling OP_ENERGY Binary Calls==
 
 Writing (Buy/Sell): Alice (the buyer) and Bob (the seller) agree on terms of an OP_ENERGY binary call contract: block span (block1 to block2), strike, premium, and settlement. The settlement value is always 10,000 sat by convention in the examples given here, so that only block span, strike, and and premium need vary.
 
