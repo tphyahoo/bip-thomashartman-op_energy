@@ -77,7 +77,9 @@ As Bitcoin lets untrusted parties send value over a communications channel, OP_E
 The basic contract is a european cash-or-nothing binary call <ref>https://en.wikipedia.org/wiki/Binary_option#Cash-or-nothing_call</ref>
 on whether some future OP_ENERGY price exceeds some strike. 
 
-Fair prices for OP_ENERGY binaries can be determined using techniques such as black scholes, as is done by market makers on many existing binary exchanges. (Whitepaper: pricing) ƒOP_ENERGY settlements are less prone to abuse than binaries on existing centralized binary exchanges, as settlement prices are derived from consensus bitcoin data. 
+Fair prices for OP_ENERGY binaries can be determined using techniques such as black scholes, as is done by market makers on many existing binary exchanges. (Whitepaper: pricing) 
+
+OP_ENERGY settlements are less prone to abuse than binaries on existing centralized binary exchanges, as settlement prices are derived from consensus bitcoin data. 
 
 Synthetic versions of derivatives such as vanilla puts, calls, and futures, can be built up out of the binary call primitive. (whitepaper: compound contracts)
 
