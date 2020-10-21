@@ -88,14 +88,6 @@ Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer s
 
 There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket. 
 
-===Intuition===
-
-OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, these are prices of bitcoin in hashes. So miner revenue is also factored in. 
-
-To a lesser but still consequential degree, OP_ENERGY price tracks dollar price. Bcause electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there is correlation enough to be useful for hedging. 
-
-(Todo: do r squared regression analysis on OP_ENERGY vs BTCUSD prices, for various lenghts of OP_ENERGY block spans. And make charts of OP_ENERGY price vs usd price, using real data, to support this assertion that OP_ENERGY derivatives would be a useful instrument to hedge BTCUSD.)
-
 ===Use Cases===
 
 todo, pretty much everything here needs fleshing out.
@@ -110,6 +102,14 @@ Megawatt futures rental rental scenario. Power purchase agreements between miner
 ====Hedging hashrate purchasing agreements, for utilities====
 
 Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
+
+==Intuition==
+
+OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, these are prices of bitcoin in hashes. So miner revenue is also factored in. 
+
+To a lesser but still consequential degree, OP_ENERGY price tracks dollar price. Bcause electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there is correlation enough to be useful for hedging. 
+
+(Todo: do r squared regression analysis on OP_ENERGY vs BTCUSD prices, for various lenghts of OP_ENERGY block spans. And make charts of OP_ENERGY price vs usd price, using real data, to support this assertion that OP_ENERGY derivatives would be a useful instrument to hedge BTCUSD.)
 
 ==Bitcoin Transactions For Writing and Settling OP_ENERGY Binary Calls==
 
