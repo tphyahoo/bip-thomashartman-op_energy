@@ -208,3 +208,74 @@ What if Alice does not have a direct channel with Bob, but wishes to route throu
 This should still work. However, unlike the usual situation for a routing node, Carol has 10,000 sats of liquidity locked up. She will have to be compensated for this with lightning fees. It's similar to paying interest at a bank. 
 
 Todo: flesh out this example. 
+
+==Risks==
+
+===UINT256 Specification Inconsistency===
+
+The specification of uint256 must be very simple and clear, to eliminate inconsistency between clients. 
+
+===Price manipulation ===
+
+Some scenarios will now be explored, where miners attempt to profit by manipulating the OP_ENERGY price via their mining activity. 
+
+These scenarios can generally be mitigated, as we will see.
+
+Mitigation aside, a point in favor of adopting OP_ENERGY, despite potential attacks, is that OP_ENERGY style binary trades could be conducted on normal custodying / centralized exchanges, with a trusted oracle to enforce trades. In this case, miners could  perform all these manipulation strategies, without OP_ENERGY in the protocol. Given this, it can be argued: might as well do OP_ENERGY on chain and have bitcoin benefit from higher hashrate, volume moving off custodying exchanges, and more rapid hyperbitcoinization.
+
+That being stated, let's look at attacks, and mitigations.
+
+====Inclusion of Uneconomic Transactions====
+
+For the purposes of this bip, an uneconomic transaction is a transaction whose primary purpose is other than to move bitcoin cheaply as the market will allow at the speed desired.  Currently (I have no proof of this but seems likely), uneconomic transactions may being mined whose purpose is to manipulate transaction fees higher. In an OP_ENERGY world, uneconomic high-fee transactions could be made to manipulate OP_ENERGY lower.
+
+From an observing node's point of view, an uneconomic transaction can be characterized as a transaction with unnecessarily high fees, which is included in a block without being in the node's mempool. There is no way to know with certainty that a transaction is uneconomic, as opposed to user overpayment error, or that the mempool is propagating slowly. But transactions could receive "suspiciousness" scores according to this metric. 
+
+Miners can short OP_ENERGY and self-mine high-fee uneconomic transactions that they themselves have created and not transmitted, to manipulate the OP_ENERGY hashes/sat price down. Since there is no upper limit on transaction fees, OP_ENERGY can be made arbitrarily low with a single successfully self-mined transaction. Miners with high hashrate, or colluding miners who collectively have high hashrate, thus are well positioned to profit on short OP_ENERGY trades. 
+
+That being said, a lesser version of this problem exists without OP_ENERGY. Miners are already currently incentivized to include uneconomic high-fee transactions, to manipulate transaction fees higher.
+
+There are game theoretic reasons why miners don't in fact manipulate transaction fees -- or are limited in how much manipulation can in practice be done. These reasons and limits apply in an OP_ENERGY world as well.
+
+The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions (unusually high fee, and not seen in mempool), further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. In an OP_ENERGY world, economically important nodes would want a fair and smoothly functioning OP_ENERGY market, as they are working as market makers and earning lightning transaction fees. So miners cannot self-mine uneconomic transactions with impunity. This is true today, and would continue to be true if OP_ENERGY went live. 
+
+Let's explore this in more depth. 
+
+Both for current transaction fee manipulation, and in an OP_ENERGY world, the calculus for profitability of cheating by inclusion of uneconomic fees worth txV satoshis, is something like:
+
+<pre>
+profit = expectedProfit - expectedLoss
+  where expectedProfit = probabilitySuccessfullyMinedBlock * txfeeManipulationRevenue 
+        expectedLoss = txLoss + blockLoss + networkTrustDestructionLoss
+        txLoss = orphanProbabilityWithManipulation * txV
+        blockLoss = orphanProbabilityDelta * (blockRevenue - txV)
+        orphanProbabilityDelta = orphanProbabilityWithManipulation - orphanProbabilityWithoutManipulation
+        networkTrustDestructionLoss = socialized cost of loss of trust due to miner misbehavior. 
+          (Not much can  be said about this hard to measure quantity, other than noting it.)
+</pre>
+
+Clearly, OP_ENERGY cheating has potential for greater txfeeManipulationRevenue, than is currently the case with just trying to surreptitiously nudge bitcoin users to pay higher fees. But, OP_ENERGY manipulation is also likely to involve higher txV fees, and be more obviously suspicious. So there is more incentive for fee poaching as well, meaning more risk for cheaters. There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, further raising the poaching risk. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
+
+In sum, the incentives already pitting hodling nodes against miners are sufficient to deter the attack.
+
+====Exclusion of Economic Transactions====
+
+Todo, needs work: 
+
+Miners can also short OP_ENERGY and exclude transactions to manipulate the price up. The extreme of this would be to mine empty blocks. Cartels of miners and pools could be formed to make the attack more effective. 
+
+Another attack would be to lower txfee rate by excluding transactions, or in the extreme just mining empty blocks. This attack is not as bad, because it is more expensive to miners than the raising fee attack, and it cannot lower txfee rate arbitrarily within a single block, whereas the fee raising attack can raise fees arbitrarily with a single transaction. So it is believed that already existing penalties are sufficient to stop OP_ENERGY manipulation by lowering transaction fees. 
+
+==== Difficulty Manipulation ====
+
+This is more difficult. Todo, think it through anyway.
+
+====Does Price Manipulation Pose Increased Risk of Chain Split?====
+
+Is there a problem?
+
+Look for OP_ENERGY scenarios where miners are more incentivized to hoard unpublished blocks and/or split the chain, beyond what already exists. I can't think of any, but if I am wrong this could be a reason to abandon OP_ENERGY. 
+
+A starting point could be a low probability, high profit OP_ENERGY trade between a large miner and a speculator, where the miner bets on an unlikely OP_ENERGY measurement and then manipulates hash and/or transaction fees to win the bet. While manipulation is undesirable, I don't see why this would lead to chain splits or other misbehavior to non OP_ENERGY transactions however. 
+
+
