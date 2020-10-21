@@ -65,7 +65,7 @@ Otherwise, the 4 byte uint256 hash/sat price goes on the stack.
 
 ===OP_ENERGY of Genesis Block===
 
-To give a concrete example, OP_ENERGY 1 2 is 6.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/bip-op_energy.mediawiki#Definition_of_OP_ENERGY</ref> 
+To give a concrete example, OP_ENERGY 1 2 is 6.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref> 
 
 The OP_ENERGY whitepaper has further information on historical prices, with interpretation and analysis.
 
