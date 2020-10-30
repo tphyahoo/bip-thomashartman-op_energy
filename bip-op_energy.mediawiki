@@ -14,7 +14,7 @@
 ==Abstract==
 This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain between untrusting parties, and without requiring an oracle. 
 
-==Summary==
+==Prelude==
 
 ===Units: Converting from Difficulty to Hashes / Chainwork===
 
@@ -23,19 +23,22 @@ Bitcoin difficulty<ref>https://en.bitcoin.it/wiki/Difficulty</ref> is a measure 
 <pre>
 hashes(block) = difficulty(block) * genesis_hashes
   where genesis_hashes = 2**32 
+        ** = exponentiation
 
 chainwork(blockN) = hashes(blockGenesis) + hashes(block2) + ... + hashes(blockN)
 </pre>
 
 The bitcoin-cli tool sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes.
 
-===Definition of OP_ENERGY===
+==Summary==
+
+===Calculation of OP_ENERGY===
 
 OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. 
 
 To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   
 
-OP_ENERGY is defined as follows.
+OP_ENERGY is calculated as follows.
 
 <pre>
 OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
@@ -55,6 +58,14 @@ The subsidy part of the miner reward is the protocol approved subsidy, which can
 
 All values are translated into arith_uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. 
 
+===OP_ENERGY of Genesis Block===
+
+To give a concrete example, OP_ENERGY 1 2 is 6.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref> The OP_ENERGY measurement at the start of bitcoin was that 6 hashes per satoshi were required.  
+
+The OP_ENERGY whitepaper has further information on historical prices, with interpretation and analysis.
+
+===Script Interpreter Behavior===
+
 If any of the following conditions are true, the script interpreter will terminate with an error:
 
 * the stack has less than 2 elements
@@ -64,11 +75,11 @@ If any of the following conditions are true, the script interpreter will termina
 
 Otherwise, the 4 byte arith_uint256 computed value goes on the stack. 
 
-===OP_ENERGY of Genesis Block===
+===Penalization of Uneconomic Transactions===
 
-To give a concrete example, OP_ENERGY 1 2 is 6.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref> The OP_ENERGY measurement at the start of bitcoin was that 6 hashes per satoshi were required.  
+To do
 
-The OP_ENERGY whitepaper has further information on historical prices, with interpretation and analysis.
+
 
 ==Motivation==
 
