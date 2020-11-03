@@ -6,30 +6,42 @@ import Op_Energy_Parsing
 
 
 -- Before running these commands, you need to create input files for them to use.
--- See datafetch/README.md 
-main = op_energy_report 500 100
-mainTest = op_energy_report_test 3 1
+-- See datafetch/README.md \
+-- todo, these should be in current directory, and in gitignore
+main = op_energy_report_100_500
 
-op_energy_report_test span sampleEvery = op_energy_report' blockTotalsTest span sampleEvery
-op_energy_report span sampleEvery =      op_energy_report' blockTotals     span sampleEvery
-op_energy_report' blockTotals' span sampleEvery = do
-    totals <- blockTotals'
+op_energy_report_100_500 = do
+  totals <- blockTotals
+  let sampled = sample 100 . windows 500 $ totals
+      csv = op_energy_csv sampled
+  putStrLn csv
+
+mainTest = do
+  totals <- blockTotalsTest
+  let sampled = sample 1 . windows 3 $ totals
+      csv = op_energy_csv sampled
+  putStrLn csv
+
+
+op_energy_csv :: [[OP_ENERGY_TOTALS]] -> [Char]
+op_energy_csv s = 
     let csvheader = concat . intersperse "," $ 
             ["start block","finish block","start time","finish time","OP_ENERGY price"]
         csvline xs = 
-            let startBlock = head xs
-                finishBlock = last xs
-                startNum  = show . oeh_blocknumber $ startBlock
-                finishNum = show . oeh_blocknumber $ finishBlock
-                startTime  = show . unwrap_seconds . oeh_median_time $ startBlock
-                finishTime = show . unwrap_seconds . oeh_median_time $ finishBlock
-                price = show . op_energy startBlock $ finishBlock
+            let startBlockTotals = head xs
+                finishBlockTotals = last xs
+
+                startBlockNum  = show $ oeh_blocknumber $ startBlockTotals
+                finishBlockNum = show $ oeh_blocknumber $ finishBlockTotals
+                startTime  = show $ unwrap_seconds . oeh_median_time $ startBlockTotals
+                finishTime = show $ unwrap_seconds . oeh_median_time $ finishBlockTotals
+
+                price = show $ op_energy startBlockTotals finishBlockTotals
             in  concat . intersperse "," $ 
-                    [startNum,finishNum,startTime, finishTime,price]
-        csvlines = map csvline . sample sampleEvery . windows span $ totals
-        csv :: String
-        csv = concat . intersperse "\n" $ csvheader : csvlines
-    putStrLn csv 
+                    [startBlockNum,finishBlockNum,startTime, finishTime,price]
+        csvlines = map csvline s
+    in  concat . intersperse "\n" $ csvheader : csvlines
+    
 
 -- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
 windows :: Int -> [a] -> [[a]]
@@ -71,14 +83,41 @@ blockTotals' (bits, stats)= do
         blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
     return blocktotals
 
-writeBlockTotals' :: (FilePath, FilePath) -> FilePath -> IO ()
-writeBlockTotals' (bits, stats) btFile = do
-    b <- parseFile blocksP bits --  
-    s <- parseFile statsP stats -- 
-    let z = OP_ENERGY_TOTALS 0 (Seconds 0) (Int256 0) (Satoshis 0)
-        blocktotals :: [OP_ENERGY_TOTALS]
-        blocktotals = tail . scanl (flip make_next_helper_record) z $ zip b s
-    writeFile btFile $ show blocktotals
+-- stdout to "/Users/flipper/op_energy_prices/blocktotalsTest.txt" 
+saveBlockTotalsHaskellShow = putStrLn . show =<< blockTotals 
+-- stdout to "/Users/flipper/op_energy_prices/blocktotalsTest.txt"
+saveBlockTotalsHaskellShowTest =  putStrLn . show =<< blockTotalsTest 
+
+readBlockTotals, readBlockTotalsTest :: IO [OP_ENERGY_TOTALS]
+readBlockTotals = read `fmap` readFile "/Users/flipper/op_energy_prices/blocktotalsHaskellShow.txt"
+readBlockTotalsTest = read `fmap` readFile "/Users/flipper/op_energy_prices/blocktotalsHaskellShowTest.txt"
+
+
+
+t1 = putStrLn "hello world"
+-- $ runghc op_energyprice.hs --ghc-arg "main-is t1"
+-- $ runghc op_energyprice.hs --ghc-arg "main-is saveBlockTotalsCsv" > /Users/flipper/op_energy_prices/blocktotals.csv
+saveBlockTotalsCsv :: IO ()
+saveBlockTotalsCsv = do
+  totals <- blockTotals 
+  let csvheader :: String
+      csvheader = concat . intersperse "," $
+                ["block number", "median time", "chain work", "chain reward"]
+      csvline ( OP_ENERGY_TOTALS 
+                oeh_blocknumber 
+                oeh_median_time 
+                oeh_chainwork 
+                oeh_chainreward ) = concat . intersperse "," $
+                                      [ show oeh_blocknumber, 
+                                        show . unwrap_seconds $ oeh_median_time,
+                                        show . unwrap_int256 $ oeh_chainwork,
+                                        show . unwrap_satoshis $ oeh_chainreward ]
+                                                     
+      csvlines = map csvline totals
+      csv = concat . intersperse "\n" $ csvheader : csvlines
+  writeFile "/Users/flipper/op_energy_prices/blocktotals.csv" csv
+
+
 
 
 -- getPrices = do
