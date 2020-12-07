@@ -1,4 +1,4 @@
-OP_ENERGY: A private, peer to peer energy derivatives market settled in bitcoin. 
+OP_ENERGY: A peer to peer energy derivatives market settled in bitcoin. 
 
 ********************
 ********************
@@ -16,13 +16,13 @@ Bitcoin with OP_ENERGY provides free as in speech trading transactions: a protoc
 
 WHY
 
-Custodial trading is vulnerable to surveillance, censorship, capital controls, and confiscation by act of law, as well as theft by hackers and exit scamming by insiders. 
+OP_ENERGY empowers bitcoin and energy traders to make markets without the custodial and surveillance risks inherent to traditional fiat, commodity, and altcoin exchanges.  
 
-OP_ENERGY provides an easy way for bitcoin owners to increase or decrease their bitcoin position size without relying on custodial fiat exchanges or competing altcoins, all while growing the energy security of bitcoin.  
+For instance, OP_ENERGY would enable an overweight bitcoin holder to reduce his bitcoin position by trading it for a long position in future energy (hashes). The counterparty to this trade would be an overweight energy trader who believes the value of bitcoin will rise against energy. 
 
-Rather than take a position in altcoins or fiat, or risk a "local" back alley in-person deal, OP_ENERGY enables bitcoin owners to resize their bitcoin position against a position in energy (hashes), without counterparty risk or surveillance. The counterparty can be anyone in the world who wishes to take the opposite position, with no custodian or trust required. Energy derivative trades are just bitcoin transactions.
+Trades are just bitcoin (usually lightning) transactions.
 
-The vast majority of global economic activity is in financial trade, not value transfers. Shifting a macroscopic share of trading volume from custodial platforms into noncustodial bitcoin / lightning transactions means increased demand for bitcoin transactions. This translates to higher transaction fees, higher energy cost of bitcoin (hashes / bitcoin earned by miners), and more purchasing power for bitcoin hodlers. 
+Participants are anonymous. Counterparties are unknown to each other. No reputation building is required. It's the ultimate free market.
 
 Trading benefits: 
 
@@ -40,7 +40,6 @@ Ecosystem benefits:
 * increases hashrate
 * increases anonymity set of coinjoins
 * makes bitcoin more valuable, private, and secure
-* focuses attention on energy 
 * small code footprint, with a single transaction opcode providing most of the functionality
 
 ********************
