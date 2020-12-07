@@ -7,7 +7,7 @@
   Comments-URI: ?
   Status: ?
   Type: ?
-  Created: 2014-10-01
+  Created: 2020-08-31
   License: ?
 </pre>
 
@@ -28,7 +28,7 @@ hashes(block) = difficulty(block) * genesis_hashes
 chainwork(blockN) = hashes(blockGenesis) + hashes(block2) + ... + hashes(blockN)
 </pre>
 
-The bitcoin-cli tool sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes.
+The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes.
 
 ==Summary==
 
@@ -52,7 +52,7 @@ OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds )
       seconds = mediantime (block2) - mediantime (block1)
 </pre>
 
-Per this formula, higher difficulty makes bitcoin more expensive (in hashes). Higher transaction fees render it cheaper (in hashes). An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive.
+Per this formula, higher difficulty makes bitcoin more expensive (in hashes). Higher transaction fees render it cheaper (in hashes). An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive, and lower trending cheaper.
 
 The subsidy part of the miner reward is the protocol approved subsidy, which can be computed from the block number. (Actual subsidy differs from this by a few satoshis, presumably due to miner error.<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>)
 

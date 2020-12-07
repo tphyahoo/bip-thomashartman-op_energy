@@ -1,5 +1,14 @@
 TODO:
 
+For best results, OP_ENERGY should be adopted in conjunction with bip "Prevent Manipulation of Transaction Fee rate by Miners."
+
+Todo: write bip "Prevent Manipulation of Transaction Fee Rate by Miners".
+
+
+
+Further mitigating this attack is that nodes could mark "suspicious" blocks with significantly out of expected fee rate transactions, and delay them as confirmed, to increase this risk.  See bip "Prevent Manipulation of Transaction Fee Rate by Miners.
+
+
 ***************************
 review old definition:
 OP_ENERGY redefines the NOP_TBD1 opcode. It takes two block numbers as arguments, and prices the cost in hashes to mine this span of blocks. A working miner is more likely to find a block within a given span if competing total-network hashrate during the span period is lower than expected, and less likely if hashrate is higher. So the price in hashes is adjusted accordingly. Longer spans allow more accurate measurements, shorter spans more granularity in trading. 
@@ -135,6 +144,9 @@ Alice <- 100 (FutDiff 30) 70 -> Bob <- 52.6 (FutDiff 30) 117.4 -> Charlie
 
 
 Within a 2016 block difficulty regime, the remaining blocks are more or less energetically expensive depending on how quickly they are found. This, the constantly varying hashrate, is gauged with a difficulty and a timestamp delta. 
+
+Moving forward (note to self), it may be time to prioritize breaking the bip down into a smaller technical focused bip, with the non-core material broken out into supporting documents: whitepaper, or others . This is the same problem I identified in my last "summary" email to the john maeck group. Onboarding is too difficult now. 
+I'd like to do another phone call today if that's ok. It really helps me to have another person to bounce ideas with. Rubber ducking?
 
 
 
@@ -576,14 +588,25 @@ best, thomas.
 
 
 
+powswap issues
+  is there an issue with powswap, where you need watchtowers?
+  I think I asked on list about this, and jeremy rubin said no and gave an example, but I didn't understand it. 
+
+
+==Units: Converting from Difficulty to Hashes==
+
+
+pure mathematical function of target bits, which is what is actually stored in block headers: Difficulty(block) = targetBits(genesis_block) / targetBits(block).
 
 
 
 
+So, a block with difficulty D requires D * genesis_hashes (2**32 hashes), to mine. The bitcoin-cli getblockheader command gives summary information on both chainwork (number of hashes to mine the entire chain, in hashes), and difficulty (number of hashes to mine the block, in difficulty units). The relationship between these two quantities is
 
+<pre>
+chainwork(blockN) = hashes(blockGenesis) + hashes(block2) + ... hashes(blockN)
+  where hashes(blockX) = difficulty(blockX) * genesis_hashes
+        genesis_hashes = 2**32
+</pre>
 
-
-
-
-
-
+deleted this, don't think it's needed: The chainwork delta of a single block (chainwork(blockN+1) - chainwork(blockN)) is the expected number of hashes needed to calculate this block. 
