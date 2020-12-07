@@ -122,9 +122,9 @@ We must estimate the physical energy spend, because we cannot know the exact kwh
 
 These three factors -- speed of block production, difficulty, and miner reward -- can be used to calculate a protocol energy price. OP_ENERGY proposes a definition, which would result in the following energy prices for the above hashes
 
-fixme
-00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: tk hashes / satoshi.
-0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: ridiculously larger numer
+(todo, double check values as calculated prices are still in flux)
+00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi.
+0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: 733 trillion hashes / satoshi
 
 OP_ENERGY -- GAMIFYING THE THERMOSTAT 
 
@@ -136,7 +136,7 @@ A trader in an OP_ENERGY world tries to predict if the OP_ENERGY hashes / sat pr
 
 The key difference: in the OP_ENERGY case, the bitcoin protocol has all the data it needs to fully specify the energy price in hashes, so this trade can be conducted purely following protocol rules, without relying on custodial exchanges. 
 
-The simplest OP_ENERGY trades are binary options, which are exotic and difficult to trade. However, by composing a large number of binary options into a compound instrument, OP_ENERGY trades can simulate familiar instruments such as vanilla options and futures. By leveraging the power of the lightning network, this can be done while keeping trading fees low. Thusly, a modern derivatives market where a mainstream energy or bitcoin trader of today would feel at home, can be bootstrapped with OP_ENERGY.
+The simplest OP_ENERGY trades are binary options, which are exotic and difficult to trade. However, by composing a large number of binary options into a compound instrument, OP_ENERGY trades can simulate familiar instruments such as vanilla options and futures. By using lightning, plus taproot if activated, this can be done while still keeping trading fees low, even for extremely high throughput HFT. Thus, a modern derivatives market where a mainstream energy or bitcoin trader of today would feel at home, can be bootstrapped with OP_ENERGY.
 
 For details, see BIP and whitepaper.
 
