@@ -1,0 +1,165 @@
+OP_ENERGY: A private, peer to peer energy derivatives market settled in bitcoin. 
+
+********************
+********************
+********************
+
+WHAT
+
+Bitcoin provides free as in speech (not beer) value transfer transactions: a protocol for mutually distrusting parties to transfer value over a communications channel.
+
+Bitcoin with OP_ENERGY provides free as in speech trading transactions: a protocol for mutually distrusting parties to trade derivatives on the future price of energy, measured in hashes, over a communications channel. 
+
+********************
+********************
+********************
+
+WHY
+
+Custodial trading is vulnerable to surveillance, censorship, capital controls, and confiscation by act of law, as well as theft by hackers and exit scamming by insiders. 
+
+OP_ENERGY provides an easy way for bitcoin owners to increase or decrease their bitcoin position size without relying on custodial fiat exchanges or competing altcoins, all while growing the energy security of bitcoin.  
+
+Rather than take a position in altcoins or fiat, or risk a "local" back alley in-person deal, OP_ENERGY enables bitcoin owners to resize their bitcoin position against a position in energy (hashes), without counterparty risk or surveillance. The counterparty can be anyone in the world who wishes to take the opposite position, with no custodian or trust required. Energy derivative trades are just bitcoin transactions.
+
+The vast majority of global economic activity is in financial trade, not value transfers. Shifting a macroscopic share of trading volume from custodial platforms into noncustodial bitcoin / lightning transactions means increased demand for bitcoin transactions. This translates to higher transaction fees, higher energy cost of bitcoin (hashes / bitcoin earned by miners), and more purchasing power for bitcoin hodlers. 
+
+Trading benefits: 
+
+* alternative to custodial commodity exchanges for energy traders
+* alternative to custodial fiat and altcoin exchanges for bitcoin traders
+* no custodial risk
+* no oracle risk
+* all market makers are equal -- no order book front running
+
+Ecosystem benefits: 
+
+* absorbs trade volume from competing fiat and cryptocurrencies into bitcoin
+* increases miner revenue without increasing block size
+* drives lightning adoption
+* increases hashrate
+* increases anonymity set of coinjoins
+* makes bitcoin more valuable, private, and secure
+* focuses attention on energy 
+* small code footprint, with a single transaction opcode providing most of the functionality
+
+********************
+********************
+********************
+
+HOW 
+
+SCARCITY
+
+Energy is physical. 
+Bitcoin is virtual.
+Mining is the bridge between the real scarcity of energy and the virtual scarcity of bitcoin.
+
+TRANSACTION FEES ARE THE FUTURE OF BITCOIN MINING
+
+Currently miners are paid with newly minted bitcoin plus transaction fees.
+But, bitcoin minting is capped at 21 million.  After this minting will end.
+So eventually 100% of income to miners will be from transaction fees. 
+
+TRANSACTION SCARCITY
+
+No none knows exactly how much oil is left underground.
+But everyone knows how much much bitcoin transaction data can be written into the blockchain over time.
+The protocol limit is a one megabyte block per 600 seconds, or about four transactions per second.
+For a global financial ledger, that's not a lot. So, transactions are expensive. Potentially, they are about to get a lot more so. 
+A bitcoin civil war was fought to raise the block size limit, and the side that wanted the limit raised lost.
+Scarce transactions make bitcoin valuable. Bitcoin hodlers, who set protocol rules, like that.
+
+SCARCITY TRIANGLE
+
+Scarce bitcoin pays bitcoin miners transaction fees to process scarce bitcoin transactions. 
+The mined blocks of transactions require scarce energy. 
+
+Scarce energy is consumed to produce block hashes, which secure scarce bitcoin transactions.
+
+(note: below is best viewed with courrier or similar fixed point font)
+
+    BITCOIN
+     //\\
+    A/  \C
+   //    \\
+  TXS=B=ENERGY
+
+    BITCOIN
+    HODLERS
+     //\\
+    A/  \C
+   //    \\
+BITCOIN=B=ENERGY 
+MINERS    PRODUCERS
+
+These are two views of the same triangle.
+
+Transactions are bought from miners, with bitcoin transaction fees. (A)
+Miners buy blocks of transactions with energy, via hashing. (B)
+Energy is purchased with bitcoin for every industrial purpose under the sun (C)
+
+DIFFICULTY: THE BLOCKCHAIN THERMOSTAT
+
+Per the bitcoin protocol, blocks must be produced at the same rate, no matter how much energy -- or how little -- miners are spending, trying to collect precious bitcoin transaction fees. 
+One block, with one megabyte of transactions, every 600 seconds. 
+No more. No less.
+
+If bitcoin is running too hot, transactions start coming in too fast.
+If bitcoin is running too cold, transactions slow down.
+Mining difficulty adjustment is a thermostat that keeps bitcoin running just right, at one block per 600 seconds.  The difficulty thermostat adjusts about every 1.2 million seconds (2016 blocks).
+
+A regular thermostat holds a house's temperature constant, by burning more or less energy to keep the temperature constant. The bitcoin difficulty thermostat holds the rate of bitcoin transactions per second constant, by increasing or decreasing the energy cost of block hashes. 
+
+For example: If bitcoin is 10% too fast (averaging 540 seconds per block instead of 600), the difficulty increases by 10%. If difficulty is too slow (averaging 660 seconds instead of 600) the difficulty increases by 10%. 
+
+Low energy block hash:  00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 (from 2009)
+High energy block hash: 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 (from 2020)
+
+Due to its smaller numeric value (notice the leading zeros), producing the second hash required a billion to a trillion times more kwh (energy).
+
+We must estimate the physical energy spend, because we cannot know the exact kwh of electricity required to produce either hash, nor the embodied energy in kwh to produce the hardware. But, we can with precision say how many hashes were required to satisfy the bitcoin protocol in each case, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. 
+
+These three factors -- speed of block production, difficulty, and miner reward -- can be used to calculate a protocol energy price. OP_ENERGY proposes a definition, which would result in the following energy prices for the above hashes
+
+fixme
+00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: tk hashes / satoshi.
+0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: ridiculously larger numer
+
+OP_ENERGY -- GAMIFYING THE THERMOSTAT 
+
+A typical trader in today's world tries to predict if the fiat price of bitcoin will be lower or higher in some future period. If he predicts right, he increases his stack of bitcoin. 
+
+The bitcoin protocol has no way to know the fiat price, so such trades must rely on custodial exchanges.
+
+A trader in an OP_ENERGY world tries to predict if the OP_ENERGY hashes / sat price of some range of future blocks will be greater than or less than some threshold value. Like the fiat trader, if he predicts right, he increases his stash of bitcoin.
+
+The key difference: in the OP_ENERGY case, the bitcoin protocol has all the data it needs to fully specify the energy price in hashes, so this trade can be conducted purely following protocol rules, without relying on custodial exchanges. 
+
+The simplest OP_ENERGY trades are binary options, which are exotic and difficult to trade. However, by composing a large number of binary options into a compound instrument, OP_ENERGY trades can simulate familiar instruments such as vanilla options and futures. By leveraging the power of the lightning network, this can be done while keeping trading fees low. Thusly, a modern derivatives market where a mainstream energy or bitcoin trader of today would feel at home, can be bootstrapped with OP_ENERGY.
+
+For details, see BIP and whitepaper.
+
+WHO
+
+Thomas Hartman (originator and BIP writer)
+ZoolandersDad (C++ and python implementation)
+John Maeck (community building and strategic planning)
+Many others who assisted
+
+WHEN
+
+Not for a while. Other procol stuff needs to happen first.
+Estimate for OP_ENERGY mainnet inclusion, if on success path: five years
+
+
+WHAT'S NEXT
+
+Peer Review
+Testnet implementation
+Toy custodial exchange on testnet (should this be open source?)
+Toy custodial exchange on mainnet (small values, full KYC)
+Real custodial exchange on mainnet (commercial product, hopefully proof of demand)
+Proposal to implement on top of Blockstream Elements
+With proof of demand, lobbying for inclusion in mainnet bitcoin protocol
+
