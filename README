@@ -20,9 +20,9 @@ OP_ENERGY empowers bitcoin and energy traders to make markets without the custod
 
 For instance, OP_ENERGY would enable an overweight bitcoin holder to reduce his bitcoin position by trading it for a long position in future energy (hashes). The counterparty to this trade would be an overweight energy trader who believes the value of bitcoin will rise against energy. 
 
-Trades are just bitcoin (usually lightning) transactions.
+Trades are just bitcoin (usually lightning) transactions, with all the privacy and security this entails. 
 
-Participants are anonymous. Counterparties are unknown to each other. No reputation building is required. It's the ultimate free market.
+It's the ultimate free market.
 
 Trading benefits: 
 
