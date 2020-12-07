@@ -128,7 +128,7 @@ These three factors -- speed of block production, difficulty, and miner reward -
 
 OP_ENERGY -- GAMIFYING THE THERMOSTAT 
 
-A typical trader in today's world tries to predict if the fiat price of bitcoin will be lower or higher in some future period. If he predicts right, he increases his stack of bitcoin. 
+A typical trader in today's world tries to predict if the fiat (usd / sat) price of bitcoin will be lower or higher in some future period. If he predicts right, he increases his stack of bitcoin. 
 
 The bitcoin protocol has no way to know the fiat price, so such trades must rely on custodial exchanges.
 
