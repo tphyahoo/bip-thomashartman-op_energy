@@ -105,6 +105,10 @@ Transactions are bought from miners, with bitcoin transaction fees. (A)
 Miners buy blocks of transactions with energy, via hashing. (B)
 Energy is purchased with bitcoin for every industrial purpose under the sun (C)
 
+COST OF HASHES
+
+A physical unit of energy is the kwh (kilowatt hour). This is about the amount of electrical energy a human can produce in ten hours, on an exercycle say. A virtual unit of energy measurement is the hash. A human can calculate a sha256 hash, also in about ten hours, using pen and graph paper say. Computers are much faster, of course. A pocket phone can do thousands of hashes per second. What they have in common is, both the human and his pocket phone consume energy. Whatever technique is used, if it is fixed, it always takes strictly twice as much energy to calculate two hashes than one hash. This connection from hashes to energy is how the physical scarcity of energy connects to the virtual scarcity of bitcoin. 
+
 DIFFICULTY: THE BLOCKCHAIN THERMOSTAT
 
 Per the bitcoin protocol, blocks must be produced at the same rate, no matter how much energy -- or how little -- miners are spending, trying to collect precious bitcoin transaction fees. 
@@ -117,7 +121,7 @@ Mining difficulty adjustment is a thermostat that keeps bitcoin running just rig
 
 A regular thermostat holds a house's temperature constant, by burning more or less energy to keep the temperature constant. The bitcoin difficulty thermostat holds the rate of bitcoin transactions per second constant, by increasing or decreasing the energy cost of block hashes. 
 
-For example: If bitcoin is 10% too fast (averaging 540 seconds per block instead of 600), the block energy increases by 10%. If bitcoin is 10% too slow (averaging 660 seconds instead of 600) the block energy decreases by 10%. 
+For example: If bitcoin is 10% too fast (averaging 540 seconds per block instead of 600), the block energy required for a hash increases by 10%. If bitcoin is 10% too slow (averaging 660 seconds instead of 600) the block energy decreases by 10%. 
 
 Low energy block hash:  00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 (from 2009)
 High energy block hash: 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 (from 2020)
@@ -126,10 +130,10 @@ Due to its smaller numeric value (notice the leading zeros), producing the secon
 
 We must estimate the physical (kwh) energy spend, because we cannot know the exact amount of electricity required to produce block hashes, nor the embodied energy in kwh to produce hardware. But, we can with precision say how many hashes were required to satisfy the bitcoin protocol in each case, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. By convention, miners are paid in "sats" -- ie, satoshis, which are a hundred millionth of a bitcoin.
 
-These three factors -- speed of block production, difficulty, and miner reward -- can be used to calculate a protocol energy price. OP_ENERGY proposes such a definition, which would result in the following energy prices for the above hashes
+These three factors -- speed of block production, difficulty, and miner reward -- can be used to calculate a protocol energy price for a range between any two blocks. OP_ENERGY proposes such a definition, which would result in the following energy prices for the above hashes
 
 (todo, double check values as calculated prices are still in flux)
-00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi.
+00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi
 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: 733 billion hashes / satoshi
 
 OP_ENERGY -- TRADING THE THERMOSTAT 
