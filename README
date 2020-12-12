@@ -127,9 +127,9 @@ High energy block hash: 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db
 
 Due to its smaller numeric value (notice the leading zeros), producing the second hash required a billion to a trillion times more kwh (energy).
 
-We must estimate the physical (kwh) energy spend, because we cannot know the exact amount of electricity required to produce block hashes, nor the embodied energy in kwh to produce hardware. But, we can with precision say how many hashes were required to satisfy the bitcoin protocol in each case, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. By convention, miners are paid in "sats" -- ie, satoshis, which are a hundred millionth of a bitcoin.
+We must estimate the physical (kwh) energy spend, because we cannot know the exact amount of electricity required to produce block hashes, nor the embodied energy in kwh to produce hardware. But, we can with precision say how many hash attempts were expected statistically in each case, to produce the above hashes, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. By convention, miners are paid in "sats" -- ie, satoshis, which are a hundred millionth of a bitcoin.
 
-These three factors -- speed of block production, difficulty, and miner reward -- can be used to calculate a protocol energy price for a range between any two blocks. OP_ENERGY proposes such a definition, which would result in the following energy prices for the above hashes
+These three factors -- number of hashes, number of seconds, and miner reward -- can be used to calculate a protocol energy price for a range between any two blocks. OP_ENERGY proposes such a definition, which would result in the following energy prices for the above hashes
 
 (todo, double check values as calculated prices are still in flux)
 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi
