@@ -144,8 +144,7 @@ A typical trader in today's world tries to predict if the usd / sat price of bit
 
 A trader in an OP_ENERGY world tries to predict if the OP_ENERGY hashes / sat price of some range of future blocks will be greater than or less than some threshold value. Like the usd trader, if he predicts right, he increases his stash of bitcoin.
 
-
-The key diffence with OP_ENERGY is, unlike with USD, the bitcoin protocol has all the data it needs to fully specify the hash price. So this trade can be conducted purely following protocol rules, without trusting custodial exchanges or oracles. 
+The key diffence with OP_ENERGY, unlike with USD, is that the bitcoin protocol has all the data it needs to fully specify the OP_ENERGY hash price. So this trade can be conducted purely following protocol rules, without trusting custodial exchanges or oracles. 
 
 The simplest OP_ENERGY trades are binary options, which are exotic and difficult to trade. However, by composing a large number of binary options into a compound instrument, OP_ENERGY trades can simulate familiar instruments such as vanilla options and futures. This can be done while keeping trading fees low, even for extremely high throughput HFT. Thus, a modern derivatives market where a mainstream energy or bitcoin trader of today would feel at home, can be bootstrapped with OP_ENERGY.
 
