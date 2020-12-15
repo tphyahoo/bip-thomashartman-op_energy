@@ -25,7 +25,7 @@ hashes(block) = difficulty(block) * genesis_hashes
   where genesis_hashes = 2**32 
         ** = exponentiation
 
-chainwork(blockN) = hashes(blockGenesis) + hashes(block2) + ... + hashes(blockN)
+chainwork(blockN) = hashes(block1) + hashes(block2) + ... + hashes(blockN)
 </pre>
 
 The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes.
