@@ -1,176 +1,99 @@
-OP_ENERGY: A peer to peer energy derivatives market settled in bitcoin. 
 
-********************
-********************
-********************
+## Welcome to TLA<sup>+</sup> Examples 
 
-WHAT
+The page **TLA<sup>+</sup> Examples** is a library of TLA<sup>+</sup> specifications for distributed algorithms. The webpage supplies the TLA<sup>+</sup> community with:
 
-Bitcoin provides free as in speech (not beer) value transfer transactions: a protocol for mutually distrusting parties to transfer value over a communications channel.
+- A comprehensive library of the TLA<sup>+</sup> specifications that are available today, in order to provide an overview of how to specify an algorithm in TLA<sup>+</sup>.
+- A comprehensive list of references and other interesting information for each problem. 
 
-Bitcoin with OP_ENERGY provides free as in speech trading transactions: a protocol for mutually distrusting parties to trade derivatives on the future price of energy, measured in hashes, over a communications channel. 
+Do you have your own case study that you like to share with the community? Send a pointer to us and we will include it in the repository. Your specifications will help the community in improving the tools for TLA<sup>+</sup> analysis.
 
-********************
-********************
-********************
+## List of Examples
 
-WHY
+| No 	 | Name  | Short description 																				| Spec's authors	| TLAPS Proof | TLC Check | Used modules | PlusCal |
+| :--: | ----  | -------------------------------------------------------- | --------------- | :---------: | :-------: | ------------ | ------------ |
+| 1 | 2PCwithBTM | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/2PCwithBTM">A modified version of  P2TCommit (Gray & Lamport, 2006)</a> | Murat Demirbas |  | &#10004; | FinSet, Int, Seq | &#10004; |
+| 2 | 802.16 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/802.16">IEEE 802.16 WiMAX Protocols</a> | Prasad Narayana, Ruiming Chen, Yao Zhao, Yan Chen, Zhi (Judy) Fu, and Hai Zhou |  | &#10004; | Int, Seq, FinSet ||
+| 3 | aba-asyn-byz | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/aba-asyn-byz">Asynchronous Byzantine agreement (Bracha & Toueg, 1985)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Nat ||
+| 4 | acp-nb | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/acp-nb">Non-blocking atomic commitment with a reliable broadcast (Babaoğlu & Toueg, 1993)</a> | Stephan Merz |  | &#10004; | default theories ||
+| 5 | acp-nb-wrong | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/acp-nb-wrong">Wrong version of the non-blocking atomic commitment with a reliable broadcast (Babaoğlu & Toueg, 1993)</a> | Stephan Merz |  | &#10004; | default theories ||
+| 6 | acp-sb | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/acp-sb">Non-blocking atomic commitment with a simple broadcast (Babaoğlu & Toueg, 1993)</a> | Stephan Merz |  | &#10004; | default theories ||
+| 7 | allocator | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/allocator">Specification of a resource allocator</a> | Stephan Merz |  | &#10004; | FinSet ||
+| 8 | async-comm | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/async-comm">The diversity of asynchronous communication (Chevrou et al., 2016) </a> | Florent Chevrou, Aurélie Hurault, Philippe Quéinnec |  | &#10004; | Nat ||
+| 9 | bcastByz | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/bcastByz">Asynchronous reliable broadcast - Figure 7 (Srikanth & Toeug, 1987)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder | &#10004; | &#10004; | Nat, FinSet ||
+| 10 | bcastFolklore | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/bcastFolklore">Folklore reliable broadcast - Figure 4 (Chandra and Toueg, 1996)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder | &#10004; | &#10004; | Nat ||
+| 11 | bosco | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/bosco">One-Step Byzantine asynchronous consensus (Song & Renesse, 2008)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Nat, FinSet ||
+| 12 | Boulangerie | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Bakery-Boulangerie">A variant of the bakery algorithm (Yoram & Patkin, 2015)</a> | Leslie Lamport, Stephan Merz | &#10004; | &#10004; | Int | &#10004; |
+| 13 | byihive | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/byihive">Based on RFC3506 - Requirements and Design for Voucher Trading System (Fujimura & Eastlake) </a> | Santhosh Raju |  | &#10004; | default theories ||
+| 14 | byzpaxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/byzpaxos">Byzantizing Paxos by Refinement (Lamport, 2011)</a> | Leslie Lamport |  | &#10004; | Int, FinSet ||
+| 15 | c1cs | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/c1cs">Consensus in one communication step (Brasileiro et al., 2001)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Int, FinSet ||
+| 16 | Caesar | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Caesar">Multi-leader generalized consensus protocol (Arun et al., 2017)</a> | Giuliano Losa |  | &#10004; | FinSet, Seq, Int | &#10004; |
+| 17 | CarTalkPuzzle | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/CarTalkPuzzle">A TLA+ specification of the solution to a nice puzzle.</a> |  |  | &#10004; | Int ||
+| 18 | CASPaxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/CASPaxos">An extension of the single-decree Paxos algorithm to a compare-and-swap type register (Rystsov)</a> | Tobias Schottdorf |  | &#10004; | Int, FinSet ||
+| 19 | cbc_max | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/cbc_max">Condition-based consensus (Mostefaoui et al., 2003)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Int, FinSet ||
+| 20 | cf1s-folklore | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/cf1s-folklore">One-step consensus with zero-degradation (Dobre & Suri, 2006)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Nat ||
+| 21 | ChangRoberts | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/chang_roberts">Leader election in a ring (Chang & Roberts, 1979)</a> | Stephan Merz |  | &#10004; | Nat, Seq | &#10004; |
+| 22 | DataPort | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/DataPort">Dataport protocal 505.89PT, only PDF files (Biggs & Noriaki, 2016)</a> | Geoffrey Biggs, Noriaki Ando |  |  | Int, Seq ||
+| 23 | detector_chan96 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/detector_chan96">Chandra and Toueg’s eventually perfect failure detector</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Int, FinSet ||
+| 24 | DieHard | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/DieHard">A very elementary example based on a puzzle from a movie</a> |  |  | &#10004; | Nat ||
+| 25 | dijkstra-mutex | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/dijkstra-mutex">Mutual exclusion algorithm (Dijkstra, 1965)</a> |  |  | &#10004; | Int | &#10004; |
+| 26 | diskpaxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/diskpaxos">Disk Paxos (Gafni & Lamport, 2003)</a> | Leslie Lamport, Giuliano Losa |  | &#10004; | Int ||
+| 27 | egalitarian-paxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/egalitarian-paxos">Leaderless replication protocol based on Paxos (Moraru et al., 2013)</a> | Iulian Moraru |  | &#10004; | Nat, FinSet ||
+| 28 | ewd840 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/ewd840">Termination detection in a ring (Dijkstra et al., 1986)</a> | Stephan Merz | &#10004; | &#10004; | Nat ||
+| 70 | ewd998 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/ewd998">Shmuel safra's version of termination detection</a> | Stephan Merz, Markus Kuppe |  | &#10004; | Int, FinSet ||
+| 29 | fastpaxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/fastpaxos">An extension of the classic Paxos algorithm, only PDF files (Lamport, 2006)</a> | Leslie Lamport |  |  | Nat, FinSet ||
+| 30 | fpaxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/fpaxos">A variant of Paxos with flexible quorums (Howard et al., 2017)</a> | Heidi Howard |  | &#10004; | Int ||
+| 31 | HLC | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/HLC">Hybrid logical clocks and hybrid vector clocks (Demirbas et al., 2014)</a> | Murat Demirbas |  | &#10004; | Int | &#10004; |
+| 32 | L1 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/L1">Data center network L1 switch protocol, only PDF files (Thacker)</a> | Tom Rodeheffer |  |  | FinSet, Nat, Seq ||
+| 33 | lamport_mutex | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/lamport_mutex">Mutual exclusion (Lamport, 1978)</a> | Stephan Merz | &#10004; | &#10004; | Nat, Seq ||
+| 34 | leaderless | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/leaderless">Leaderless generalized-consensus algorithms (Losa, 2016)</a> | Giuliano Losa |  | &#10004; | FinSet, Int, Seq | &#10004; |
+| 35 | losa_ap | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/losa_ap">The assignment problem, a variant of the allocation problem (Delporte-Gallet, 2018)</a> | Giuliano Losa |  | &#10004; | FinSet, Nat, Seq | &#10004; |
+| 36 | losa_rda | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/losa_rda">Applying peculative linearizability to fault-tolerant message-passing algorithms and shared-memory consensus, only PDF files (Losa, 2014)</a> | Giuliano Losa |  |  | FinSet, Nat, Seq ||
+| 37 | m2paxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/m2paxos">Multi-leader consensus protocols (Peluso et al., 2016)</a> | Giuliano Losa |  | &#10004; | Int, Seq, FinSet ||
+| 38 | mongo-repl-tla | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/mongo-repl-tla">A simplified part of Raft in MongoDB (Ongaro, 2014)</a> | Siyuan Zhou |  | &#10004; | FinSet, Nat, Seq ||
+| 39 | MultiPaxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/MultiPaxos">The abstract specification of Generalized Paxos (Lamport, 2004)</a> | Giuliano Losa |  | &#10004; | Int, FinSet ||
+| 40 | N-Queens | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/N-Queens">The N queens problem</a> | Stephan Merz |  | &#10004; | Nat, Seq | &#10004; |
+| 41 | naiad | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/naiad">Naiad clock protocol, only PDF files (Murray et al., 2013)</a> | Tom Rodeheffer |  | &#10004; | Int, Seq, FinSet ||
+| 42 | nbacc_ray97 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/nbacc_ray97">Asynchronous non-blocking atomic commit (Raynal, 1997)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Nat, FinSet ||
+| 43 | nbacg_guer01 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/nbacg_guer01">On the hardness of failure-sensitive agreement problems (Guerraoui, 2001)</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Nat, FinSet ||
+| 44 | nfc04 | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/nfc04">Non-functional properties of component-based software systems (Zschaler, 2010)</a> | Steffen Zschaler |  | &#10004; | Real, Nat ||
+| 45 | Paxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Paxos">Paxos consensus algorithm (Lamport, 1998)</a> | Leslie Lamport |  | &#10004; | Int, FinSet ||
+| 46 | Prisoners | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Prisoners">A puzzle that was presented on an American radio program.</a> |  |  | &#10004; | Nat, FinSet ||
+| 47 | raft | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/raft">Raft consensus algorithm (Ongaro, 2014)</a> | Diego Ongaro |  | &#10004; | FinSet, Nat, Seq ||
+| 48 | SnapshotIsolation | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/SnapshotIsolation">Serializable snapshot isolation (Cahill et al., 2010)</a> | Michael J. Cahill, Uwe Röhm, Alan D. Fekete |  | &#10004; | FinSet, Int, Seq ||
+| 49 | spanning | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/spanning">Spanning tree broadcast algorithm in Attiya and Welch’s book</a> | Thanh Hai Tran, Igor Konnov, Josef Widder |  | &#10004; | Int ||
+| 50 | SpecifyingSystems | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/SpecifyingSystems">Examples to accompany the book Specifying Systems (Lamport, 2002)</a> |  |  | &#10004; | all modules ||
+| 51 | Stones | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Stones">The same problem as CarTalkPuzzle</a> |  |  | &#10004; | FinSet, Int, Seq ||
+| 52 | sums_even | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/sums_even">Two proofs for showing that x+x is even, for any natural number x.</a> |  | &#10004; | &#10004; | Int ||
+| 53 | SyncConsensus | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/SyncConsensus">Synchronized round consensus algorithm (Demirbas)</a> | Murat Demirbas |  | &#10004; | FinSet, Int, Seq | &#10004; |
+| 54 | Termination | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Termination">Channel counting algorithm (Mattern, 1987)</a> | Giuliano Losa |  | &#10004; | FinSet, Bags, Nat | &#10004; |
+| 55 | Tla-tortoise-hare | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Tla-tortoise-hare">Robert Floyd's cycle detection algorithm</a> | Lorin Hochstein |  | &#10004; | Nat | &#10004; |
+| 56 | tower_of_hanoi | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/tower_of_hanoi">The well-known Towers of Hanoi puzzle.</a> | Markus Kuppe, Alexander Niederbühl |  | &#10004; | Bit, FinSet, Int, Nat, Seq ||
+| 57 | transaction_commit | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/transaction_commit">Consensus on transaction commit (Gray & Lamport, 2006)</a> | Leslie Lamport |  | &#10004; | Int ||
+| 58 | TransitiveClosure | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/TransitiveClosure">The transitive closure of a relation</a> |  |  | &#10004; | FinSet, Int, Seq ||
+| 59 | TwoPhase | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/TwoPhase">Two-phase handshaking</a> | Leslie Lamport, Stephan Merz |  | &#10004; | Nat ||
+| 60 | VoldemortKV | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/VoldemortKV">Voldemort distributed key value store</a> | Murat Demirbas |  | &#10004; | FinSet, Int, Seq | &#10004; |
+| 61 | Missionaries and Cannibals | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/MissionariesAndCannibals">Missionaries and Cannibals</a> | Leslie Lamport |  | &#10004; | FinSet, Int ||
+| 62 | Misra Reachability Algorithm | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/MisraReachability">Misra Reachability Algorithm</a> | Leslie Lamport | &#10004;  | &#10004; | Int, Seq, FiniteSets, TLC, TLAPS, NaturalsInduction | &#10004; |
+| 63 | Loop Invariance | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/LoopInvariance">Loop Invariance</a> | Leslie Lamport | &#10004;  | &#10004; | Int, Seq, FiniteSets, TLC, TLAPS, SequenceTheorems, NaturalsInduction | &#10004; |
+| 64 | Teaching Concurrency | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/TeachingConcurrency">Teaching Concurrency</a> | Leslie Lamport | &#10004;  | &#10004; | Int, TLAPS | &#10004; |
+| 65 | Spanning Tree | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/SpanningTree">Spanning Tree</a> | Leslie Lamport |  | &#10004; | Int, FiniteSets, TLC, Randomization ||
+| 66 | Paxos (How to win a Turing Award) | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/PaxosHowToWinATuringAward">Paxos</a> | Leslie Lamport |  | &#10004; | Nat, Int, FiniteSets ||
+| 67 | Tencent-Paxos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/TencentPaxos">PaxosStore: high-availability storage made practical in WeChat. Proceedings of the VLDB Endowment(Zheng et al., 2017)</a> | Xingchen Yi, Hengfeng Wei | &#10004; | &#10004; | Int, FiniteSets ||
+| 68 | Blocking Queue | <a href="https://github.com/lemmy/BlockingQueue/">BlockingQueue</a> | Markus Kuppe | &#10004; | &#10004; [(LiveEnv)](https://gitpod.io/#https://github.com/lemmy/BlockingQueue/blob/master/BlockingQueue.tla) | Naturals, Sequences, FiniteSets ||
+| 69 | Paxos | <a href="https://github.com/neoschizomer/Paxos">Paxos</a> | | | &#10004; | Int, FiniteSets ||
+| 71 | Echo Algorithm | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/echo">Echo Algorithm</a> | Stephan Merz |   | &#10004; | Naturals, FiniteSets, Relation, TLC | &#10004; |
+| 72 | Cigarette Smokers problem | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/CigaretteSmokers">Cigarette Smokers problem</a> | Mariusz Ryndzionek |   | &#10004; | Integers, FiniteSets ||
+| 73 | Conway's Game of Life | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/GameOfLife">Conway's Game of Life</a> | Mariusz Ryndzionek |   | &#10004; | Integers ||
+| 74 | Sliding puzzles | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/SlidingPuzzles">Sliding puzzles</a> | Mariusz Ryndzionek |   | &#10004; | Integers ||
+| 75 | Lock-Free Set | <a href="https://github.com/tlaplus/tlaplus/blob/master/tlatools/org.lamport.tlatools/src/tlc2/tool/fp/OpenAddressing.tla">PlusCal spec of a lock-Free set used by TLC</a> | Markus Kuppe |   | &#10004; | Sequences, FiniteSets, Integers, TLC | &#10004; |
+| 76 | Chameneos | <a href="https://github.com/tlaplus/Examples/tree/master/specifications/Chameneos">Chameneos, a Concurrency Game</a> | Mariusz Ryndzionek |   | &#10004; | Integers ||
+| 77 | ParallelRaft | <a                                         href="https://github.com/HappyCS-Gu/Parallel-Raft-tla">A variant of Raft</a> | Xiaosong Gu, Hengfeng Wei, Yu Huang | | &#10004; | Integers, FiniteSets, Sequences, Naturals ||
 
-OP_ENERGY empowers bitcoin and energy traders to make markets without the custodial and surveillance risks inherent to traditional currency, commodity, and altcoin exchanges.  
+## License
 
-For instance, OP_ENERGY would enable an overweight bitcoin holder to reduce his bitcoin position by trading it for a long position in future energy (hashes). The counterparty to this trade would be an overweight energy trader who believes the value of bitcoin will rise against energy. 
+The repository is under the MIT license. However, we can upload your benchmarks under your license.
 
-Trades are just bitcoin (usually lightning) transactions, with all the privacy and security this entails. 
+## Support or Contact
 
-It's the ultimate free market.
-
-Trading benefits: 
-
-* alternative to custodial commodity exchanges for energy traders
-* alternative to custodial forex and altcoin exchanges for bitcoin traders
-* no custodial risk
-* no oracle risk
-* all market makers are equal -- no order book front running
-
-Ecosystem benefits: 
-
-* absorbs trade volume from competing currencies and cryptocurrencies into bitcoin
-* increases miner revenue without increasing block size
-* drives lightning adoption
-* increases hashrate
-* increases anonymity set of coinjoins
-* makes bitcoin more valuable, private, and secure
-* small code footprint, with a single transaction opcode providing most of the functionality
-
-Environmental benefits:
-
-* prediction market for energy gluts and droughts
-* incentivizes energy efficiency
-* brings more green power online, sooner
-* bottom-up incentives for energy efficiency complement top-down regulations and taxes on carbon emissions
-
-********************
-********************
-********************
-
-HOW 
-
-SCARCITY
-
-Energy is physical. 
-Bitcoin is virtual.
-Mining of bitcoin transactions is the bridge between the real scarcity of energy and the virtual scarcity of bitcoin.
-
-TRANSACTION FEES ARE THE FUTURE OF BITCOIN MINING
-
-Currently miners are paid with newly minted bitcoin plus transaction fees.
-But, bitcoin minting is capped at 21 million.  After this minting will end.
-So eventually 100% of income to miners will be from transaction fees. 
-
-TRANSACTIONS ARE SCARCE
-
-No none knows exactly how much oil is left underground.
-But everyone knows how much much bitcoin transaction data can be written into the blockchain over time.
-The protocol limit is a one megabyte block per 600 seconds, or about four transactions per second.
-For a global financial ledger, that's not a lot. So, transactions are expensive. Potentially, they are about to get a lot more so. 
-A bitcoin civil war was fought to raise the block size limit, and the side that wanted the limit raised lost.
-Scarce transactions make bitcoin valuable. Bitcoin hodlers, who set protocol rules, like that.
-
-SCARCITY TRIANGLE
-
-Q: What do bitcoins, bitcoin transactions, and energy, all have in common?
-A: They're all scarce. 
-
-Bitcoin users buy transactions from miners with bitcoin transaction fees. Miners buy these transactions with energy. 
-
-The resulting 3-sided market is a scarcity triangle. 
-
-    BITCOIN
-     //\\
-    A/  \C
-   //    \\
-  TXS=B=ENERGY
-
-    BITCOIN
-     USERS
-     //\\
-    A/  \C
-   //    \\
-BITCOIN=B=ENERGY 
-MINERS    SOURCES
-
-These are two views of the same triangle.
-
-Transactions are bought from miners, with bitcoin transaction fees. (A)
-Miners buy blocks of transactions with energy, via hashing. (B)
-Energy is purchased with bitcoin for every industrial purpose under the sun (C)
-
-COST OF HASHES
-
-A physical unit of energy is the kwh (kilowatt hour). This is about the amount of electrical energy a human can produce in ten hours, on an exercycle say. A virtual unit of energy measurement is the hash. A human can calculate a sha256 hash, also in about ten hours, using pen and graph paper say. Computers are much faster, of course. A pocket phone can do thousands of hashes per second. What they have in common is, both the human and his pocket phone consume energy. Whatever technique is used, if it is fixed, it always takes strictly twice as much energy to calculate two hashes than one hash. This connection from hashes to energy is how the physical scarcity of energy connects to the virtual scarcity of bitcoin. 
-
-DIFFICULTY: THE BLOCKCHAIN THERMOSTAT
-
-Per the bitcoin protocol, blocks must be produced at the same rate, no matter how much energy -- or how little -- miners are spending, trying to collect precious bitcoin transaction fees. 
-One block, with one megabyte of transactions, every 600 seconds. 
-No more. No less.
-
-If bitcoin is running too hot, transactions start coming in too fast.
-If bitcoin is running too cold, transactions slow down.
-Mining difficulty adjustment is a thermostat that keeps bitcoin running just right, at one block per 600 seconds.  The difficulty thermostat adjusts about every 1.2 million seconds (2016 blocks).
-
-A regular thermostat holds a house's temperature constant, by burning more or less energy to keep the temperature constant. The bitcoin difficulty thermostat holds the rate of bitcoin transactions per second constant, by increasing or decreasing the energy cost of block hashes. 
-
-For example: If bitcoin is 10% too fast (averaging 540 seconds per block instead of 600), the block energy required for a hash increases by 10%. If bitcoin is 10% too slow (averaging 660 seconds instead of 600) the block energy decreases by 10%. 
-
-Low energy block hash:  00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 (from 2009)
-High energy block hash: 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 (from 2020)
-
-Due to its smaller numeric value (notice the leading zeros), producing the second hash required a billion to a trillion times more kwh (energy).
-
-We must estimate the physical (kwh) energy spend, because we cannot know the exact amount of electricity required to produce block hashes, nor the embodied energy in kwh to produce hardware. But, we can with precision say how many hash attempts were expected statistically in each case, to produce the above hashes, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. By convention, miners are paid in "sats" -- ie, satoshis, which are a hundred millionth of a bitcoin.
-
-These three factors -- number of hashes, number of seconds, and miner reward -- can be used to calculate a protocol energy price for a range between any two blocks. OP_ENERGY proposes such a definition, which would result in the following energy prices for the above hashes
-
-(todo, double check values as calculated prices are still in flux)
-00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi
-0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: 733 billion hashes / satoshi
-
-OP_ENERGY -- TRADING THE THERMOSTAT 
-
-A typical trader in today's world tries to predict if the usd / sat price of bitcoin will be lower or higher in some future period. If he predicts right, he increases his stack of bitcoin. 
-
-The bitcoin protocol has no way to know the usd price, so such trades must rely on trusted third parties. Usually this is a custodial exchange where both counterparties have an account. In "defi" world, it's a data feed from a publisher trusted by both counterparties, called an oracle.
-
-A trader in an OP_ENERGY world tries to predict if the OP_ENERGY hashes / sat price of some range of future blocks will be greater than or less than some threshold value. Like the usd trader, if he predicts right, he increases his stash of bitcoin.
-
-The key difference: in the OP_ENERGY case, the bitcoin protocol has all the data it needs to fully specify the energy price in hashes. So, this trade can be conducted purely following protocol rules, without relying on custodial exchanges or oracles. 
-
-The simplest OP_ENERGY trades are binary options, which are exotic and difficult to trade. However, by composing a large number of binary options into a compound instrument, OP_ENERGY trades can simulate familiar instruments such as vanilla options and futures. This can be done while keeping trading fees low, even for extremely high throughput HFT. Thus, a modern derivatives market where a mainstream energy or bitcoin trader of today would feel at home, can be bootstrapped with OP_ENERGY.
-
-For details, see BIP and whitepaper.
-
-WHO
-
-Thomas Hartman (originator and BIP writer)
-ZoolandersDad (C++ and python implementation)
-John Maeck (community building and strategic planning)
-Many others who assisted
-
-WHEN
-
-Not for a while. Other procol stuff needs to happen first.
-Estimate for OP_ENERGY mainnet inclusion, if on success path: five years
-
-
-WHAT'S NEXT
-
-Peer Review
-Testnet implementation
-Toy custodial exchange on testnet (should this be open source?)
-Toy custodial exchange on mainnet (small values, full KYC)
-Real custodial exchange on mainnet (commercial product, hopefully proof of demand)
-Proposal to implement on top of Blockstream Elements
-Lobby bitcoin-like currencies such as litecoin for protocol inclusion
-With proof of demand, lobbying for inclusion in mainnet bitcoin protocol
-
+Do you have any questions or comments? Please open an issue or send an email to the [TLA+ group](https://groups.google.com/g/tlaplus).
