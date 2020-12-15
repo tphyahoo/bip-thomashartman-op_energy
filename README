@@ -117,7 +117,7 @@ No more. No less.
 
 If bitcoin is running too hot, transactions start coming in too fast.
 If bitcoin is running too cold, transactions slow down.
-Mining difficulty adjustment is a thermostat that keeps bitcoin running just right, at one block per 600 seconds.  The difficulty thermostat adjusts about every 1.2 million seconds (2016 blocks).
+Mining difficulty adjustment is a thermostat that keeps bitcoin running just right, at one block per 600 seconds.  The difficulty thermostat adjusts about every 1.2 million seconds (2016 blocks, or around 2 weeks).
 
 A regular thermostat holds a house's temperature constant, by burning more or less energy to keep the temperature constant. The bitcoin difficulty thermostat holds the rate of bitcoin transactions per second constant, by increasing or decreasing the energy cost of block hashes. 
 
