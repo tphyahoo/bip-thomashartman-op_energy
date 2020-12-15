@@ -123,6 +123,8 @@ A regular thermostat holds a house's temperature constant, by burning more or le
 
 For example: If bitcoin is 10% too fast (averaging 540 seconds per block instead of 600), the block energy required for a hash increases by 10%. If bitcoin is 10% too slow (averaging 660 seconds instead of 600) the block energy decreases by 10%. 
 
+Hashes are just 16 digit (0 1 2 3 4 5 6 7 8 9 a b d e f) numbers. 
+
 Low energy block hash:  00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 (from 2009)
 High energy block hash: 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 (from 2020)
 
