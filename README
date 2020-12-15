@@ -134,7 +134,6 @@ We must estimate the physical (kwh) energy spend, because we cannot know the exa
 
 These three factors -- number of hashes, number of seconds, and miner reward -- can be used to calculate a protocol energy price for a range between any two blocks. OP_ENERGY proposes such a definition, which would result in the following protocol energy prices for the above hashes:
 
-(todo, double check values as calculated prices are still in flux)
 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi
 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: 733 billion hashes / satoshi
 
