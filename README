@@ -29,6 +29,7 @@ Trading benefits:
 * alternative to custodial commodity exchanges for energy traders
 * alternative to custodial forex and altcoin exchanges for bitcoin traders
 * no custodial risk
+* no oracle risk
 * all market makers are equal -- no order book front running
 
 Ecosystem benefits: 
@@ -139,11 +140,11 @@ OP_ENERGY -- TRADING THE THERMOSTAT
 
 A typical trader in today's world tries to predict if the usd / sat price of bitcoin will be lower or higher in some future period. If he predicts right, he increases his stack of bitcoin. 
 
-The bitcoin protocol has no way to know the usd price, so such trades must rely on custodial exchanges.
+The bitcoin protocol has no way to know the usd price, so such trades must rely on trusted third parties. Usually this is a custodial exchange where both counterparties have an account. In "defi" world, it's a data feed from a publisher trusted by both counterparties, called an oracle.
 
 A trader in an OP_ENERGY world tries to predict if the OP_ENERGY hashes / sat price of some range of future blocks will be greater than or less than some threshold value. Like the usd trader, if he predicts right, he increases his stash of bitcoin.
 
-The key difference: in the OP_ENERGY case, the bitcoin protocol has all the data it needs to fully specify the energy price in hashes, so this trade can be conducted purely following protocol rules, without relying on custodial exchanges. 
+The key difference: in the OP_ENERGY case, the bitcoin protocol has all the data it needs to fully specify the energy price in hashes. So, this trade can be conducted purely following protocol rules, without relying on custodial exchanges or oracles. 
 
 The simplest OP_ENERGY trades are binary options, which are exotic and difficult to trade. However, by composing a large number of binary options into a compound instrument, OP_ENERGY trades can simulate familiar instruments such as vanilla options and futures. This can be done while keeping trading fees low, even for extremely high throughput HFT. Thus, a modern derivatives market where a mainstream energy or bitcoin trader of today would feel at home, can be bootstrapped with OP_ENERGY.
 
