@@ -22,7 +22,7 @@ Bitcoin difficulty<ref>https://en.bitcoin.it/wiki/Difficulty</ref> is a measure 
 
 <pre>
 hashes(block) = difficulty(block) * genesis_hashes
-  where genesis_hashes = 2**32 
+  where genesis_hashes = (2**32 - 1)
         ** = exponentiation
 
 chainwork(blockN) = hashes(block1) + hashes(block2) + ... + hashes(blockN)
