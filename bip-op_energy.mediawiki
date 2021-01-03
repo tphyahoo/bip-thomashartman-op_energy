@@ -98,7 +98,7 @@ If any of the following conditions are true, the script interpreter will termina
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * block2 <= block1
-* block2 + 100 > blockchain tip (same burying condition as for spending miner rewards, see whitepaper)
+* block2 + 100 > blockchain tip (same 100 block burying condition as for spending miner rewards, see whitepaper for more)
 
 Otherwise, the 4 byte uint256 computed value goes on the stack. 
 
