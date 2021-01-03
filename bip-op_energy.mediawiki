@@ -16,47 +16,74 @@ This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a s
 
 ==Prelude==
 
-===Units: Converting from Difficulty to Hashes / Chainwork===
+===Target, Hashes, Difficulty and Chainwork===
 
-Bitcoin difficulty<ref>https://en.bitcoin.it/wiki/Difficulty</ref> is a measure of how many hashes are expected to be needed, to mine a particular block. 
+Hashes(block) is the statistically expected number of hashes expected to solve a block with a given target.
+
+<pre>
+hashes(block) = 2^256 / target(block)
+</pre>
+
+todo: is it 2^256 or 2^256-1 ?
+
+Difficulty(block) <ref>bitcoin-cli todo</ref> is a related measure.
+
+<pre>
+difficulty(block) = genesis_target / target(block)
+  where genesis_target = todo
+</pre>
+
+Hashes can also be expressed in difficulty units:
 
 <pre>
 hashes(block) = difficulty(block) * genesis_hashes
-  where genesis_hashes = (2**32 - 1)
-        ** = exponentiation
+  where genesis_hashes = (2^32 - 1)
+</pre>
 
+The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always prefers hashes. (todo: make this so, can we actually not mention difficulty again?)
+
+Chainwork(block) <ref>bitcoin-cli getblockheader</ref> is the cumulative hashes statistically expected to reach a certain height in the blockchain.
+
+<pre>
 chainwork(blockN) = hashes(block1) + hashes(block2) + ... + hashes(blockN)
 </pre>
 
-The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always uses hashes.
+The number of hashes statistically expected to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).
 
 ==Summary==
 
 ===Calculation of OP_ENERGY===
 
-OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. 
-
-To give first some preliminaries, chainwork(blockN) is the total number of hashes that is expected to produce the blockchain ending in blockN. This is a consensus measure that all nodes can access and all nodes agree on.<ref>Bitcoin nodes can look up the chainwork for a block using the bitcoin-cli getblockheader command.</ref>  The average number of hashes, then, expected to be needed to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).   
-
-OP_ENERGY is calculated as follows.
+OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. The formula is as follows.
 
 <pre>
-OP_ENERGY block1 block2 = ( hashes / satoshis ) * ( expectedSeconds / seconds ) 
+OP_ENERGY block1 block2 = ( hashes / satoshis ) * hashrate_adjustment_factor
   where 
-      hashes = chainwork (block2) - chainwork (block1) 
-          where chainwork (block) = expected number of hashes required to produce the block 
-      satoshis = chainRevenue(block2) - chainRevenue(block1)
+      hashes' = chainwork (block2) - chainwork (block1)
+            where chainwork is defined above
+      hashes = pack_uint256 (hashes')
+      satoshis' = chainRevenue(block2) - chainRevenue(block1)
             where chainRevenue(block) = sum of all miner rewards (approved subsidy + fees) up to this block
+      satoshis = pack_uint256 (satoshis')
+      hashrate_adjustment_factor = expectedSeconds / seconds
+      expectedSeconds' = 600 * blocks
+      expectedSeconds = int_to_uint256 (expectedSeconds')
       blocks = block2 - block1
-      expectedSeconds = 600 * blocks
-      seconds = mediantime (block2) - mediantime (block1)
+      seconds' = median_time_past (block2) - median_time_past (block1)
+      seconds = pack_uint256 (seconds')
+      median_time_past (block) = median time of previous 11 blocks (block timestamp is required to be greater than this value)
+      pack_uint256 = convert a vanilla integer into a bits target style reduced precision uint256 integer.
+      / = uint256 division
+      * = uint256 multiplication
 </pre>
 
-Per this formula, higher difficulty makes bitcoin more expensive (in hashes). Higher transaction fees render it cheaper (in hashes). An adjustment factor for hashrate is applied, so an upwards trending hashrate also makes bitcoin more expensive, and lower trending cheaper.
+Per this formula, higher difficulty makes bitcoin more expensive (measured in hashes). Higher transaction fees render it cheaper (in hashes).
 
-The subsidy part of the miner reward is the protocol approved subsidy, which can be computed from the block number. (Actual subsidy differs from this by a few satoshis, presumably due to miner error.<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>)
+The expectedSeconds / seconds term is an adjustment factor for hashrate, so an upwards trending hashrate makes bitcoin more expensive, and lower trending cheaper. Note that seconds, the denominator, is guaranteed to be nonzero, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>todo</ref>.
 
-All values are translated into arith_uint256 integers (same as chainwork / bits target), and arithmetic is done accordingly. 
+The subsidy part of the miner reward is the protocol approved subsidy, which can be computed from the block number. (Actual subsidy differs from this by a few satoshis, presumably due to miner error.<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>)  (todo, does this discrepancy matter to OP_ENERGY. double check.) This value is already calculated by bitcoind on a per-block basis, via the command todo.
+
+All values are translated into arith_uint256 integers (same as bits target), and arithmetic is done accordingly. 
 
 ===OP_ENERGY of Genesis Block===
 
@@ -71,15 +98,13 @@ If any of the following conditions are true, the script interpreter will termina
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * block2 <= block1
-* block2 is in the future
+* block2 + 100 > blockchain tip (same burying condition as for spending miner rewards, see whitepaper)
 
-Otherwise, the 4 byte arith_uint256 computed value goes on the stack. 
+Otherwise, the 4 byte uint256 computed value goes on the stack. 
 
 ===Penalization of Uneconomic Transactions===
 
 To do
-
-
 
 ==Motivation==
 
