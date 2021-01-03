@@ -26,21 +26,29 @@ hashes(block) = 2^256 / target(block)
 
 todo: is it 2^256 or 2^256-1 ?
 
-Difficulty(block) <ref>bitcoin-cli todo</ref> is a related measure.
+An important constant is the target of the genesis block:
+
+<pre>
+genesis_target = hashes(1) = 0xffff * 2^208
+</pre>
+
+With this, we can calculate the hashes of the genesis block:
+
+<pre>
+genesis_hashes = hashes(1) = 2^256 / genesis_target
+  (approximately 2^32)
+</pre>
+
+Difficulty(block) <ref>bitcoin-cli todo</ref> is a related measure to hashes(block):
 
 <pre>
 difficulty(block) = genesis_target / target(block)
-  where genesis_target = 0xffff * 2^208
 </pre>
 
 Hashes can also be expressed in difficulty units:
 
 <pre>
 hashes(block) = difficulty(block) * genesis_hashes
-  where genesis_hashes = 2^256 / genesis_target
-        genesis_target = (0xffff * 2^208) 
-
-  (genesis_hashes simplifies to approximately 2^32)
 </pre>
 
 The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always prefers hashes. (todo: make this so, can we actually not mention difficulty again?)
