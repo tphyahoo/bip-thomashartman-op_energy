@@ -92,7 +92,7 @@ Per this formula, higher difficulty makes bitcoin more expensive (measured in ha
 
 The expectedSeconds / seconds term is an adjustment factor for hashrate, so an upwards trending hashrate makes bitcoin more expensive, and lower trending cheaper. Note that seconds, the denominator, is guaranteed to be nonzero, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>https://en.bitcoin.it/wiki/Block_timestamp</ref>.
 
-The subsidy part of the miner reward is the protocol approved subsidy, which can be computed from the block number. (Actual subsidy differs from this by a few satoshis, presumably due to miner error.<ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>)  (todo, does this discrepancy matter to OP_ENERGY. double check.) This value is already calculated by bitcoind on a per-block basis, via the command todo.
+Miner revenue per block is provided by bitcoind getblockstats, subsidy and totalfee fields <ref>https://developer.bitcoin.org/reference/rpc/getblockstats.html</ref>. For chainrevenue, a running total of these values is used. Note that the subsidy part of the miner reward is the protocol approved subsidy, which can be looked up from the block number. Actual subsidy differs from this by a few satoshis, presumably due to miner error <ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
 
 All values are translated into arith_uint256 integers (same as bits target), and arithmetic is done accordingly. 
 
@@ -204,7 +204,7 @@ Initial thoughts for tests...
 
 * uint256 stuff
 * check some empty blocks, in early times when approved subsidy = actual subsidy. The OP_ENERGY should depend on only the computed subsidy, and the mediantimes. 
-* actual reward, versus approved subsidy (should be approved subsidy). Check block spans where approved does not equal actual subsidy
+* for actual subsidy, versus subsidy claimed, should be approved subsidy. Check block spans where approved does not equal actual subsidy <ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
 * hardcode historical prices from whitepaper, check these in tests
 
 ==Deployment==
