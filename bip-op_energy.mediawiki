@@ -53,7 +53,7 @@ hashes(block) = difficulty(block) * genesis_hashes
 
 The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always prefers hashes. (todo: make this so, can we actually not mention difficulty again?)
 
-Chainwork(block) <ref>bitcoin-cli getblockheader</ref> is the cumulative hashes statistically expected to reach a certain height in the blockchain.
+Chainwork(block) is the cumulative hashes statistically expected to reach a certain height in the blockchain.
 
 <pre>
 chainwork(blockN) = hashes(block1) + hashes(block2) + ... + hashes(blockN)
