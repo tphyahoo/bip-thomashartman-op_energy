@@ -2,7 +2,9 @@ OP_ENERGY Whitepaper
 Thomas Hartman
 thomashartman1@gmail.com
 
-=intro=
+=Abstract= 
+
+=Introduction=
 
 todo
 
