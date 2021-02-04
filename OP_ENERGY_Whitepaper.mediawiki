@@ -1,18 +1,10 @@
 OP_ENERGY Whitepaper
+Thomas Hartman
+thomashartman1@gmail.com
 
-todo, intro
+=intro=
 
-====Explanation of the 100 block depth requirememt for OP_ENERGY spends====
-
-(Note: the reader is advised to read ahead to understand how OP_ENERGY settlements work, to better understand this section.)
-
-Miner reward outputs are required to be buried 100 blocks deep before they can be spent. The same criteria applies to OP_ENERGY outputs, for a similar reason. 
-
-There is an implicit rule that once a transaction is admitted to the mempool, the only condition that would result in its ejection is a double spend. This condition could be violated if a miner reward spend was admitted to the mempool, and then the reward block was orphaned. With OP_ENERGY, this condition could be violated if an OP_ENERGY settlement transaction was initially in favor of the buyer (above the strike), but then changed to be in favor of the seller (below the strike), again due to reward block orphaning and the ensuing blockchain reorganization.  
-
-Burying the miner reward 100 deep is the protocol criteria for sufficient guarantee against spending of orphaned rewards, so it applies to OP_ENERGY settlements as well. 
-
-(todo: maybe move this to whitepaper)
+todo
 
 ===Use Cases===
 
@@ -246,7 +238,9 @@ Todo: flesh out this example.
 
 ===ARITH_UINT256 Specification Inconsistency===
 
-The specification of 256 bit integers must be very simple and clear, to eliminate inconsistency between clients. Review bitcoin core for gotchas. 
+The specification of 256 bit integers must be very simple and clear, to eliminate inconsistency between clients. Ditto for block target, and chainwork. 
+
+Review bitcoin core for gotchas. 
 
 ===Price manipulation ===
 
@@ -319,7 +313,19 @@ Todo, describe how this could be handled. I think all you need is a scaling fact
 
 ==Cost to Nodes==
 
+===Memory===
+
 OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep arith_uint256 converted values for chainwork, mediantime, and chainFees. This is 12 bytes total per block, so the first million blocks will require 12mb additional storage. Not too bad, even for an underpowered node running on a raspi. These values may already be being stored in nodes. (Mediantime certainly is, as it is in block header.)
+
+===Mempool, and 100 block depth burying rule for OP_ENERGY spends===
+
+There is an implicit bitcoin protocol rule that once a transaction is admitted to the mempool, the only condition that would result in its ejection is a double spend. <ref>personal communication related to op_energy peer review, zmnscpxj</ref>
+
+This rule could be violated if a miner reward spend was admitted to the mempool, and then the reward block was orphaned. Miner reward outputs are therefore required to be buried 100 blocks deep before they can be spent. Basically, it's believed that 100 blocks is sufficiently deep that no spend from an orphan could ever make it into the mempool. 
+
+With OP_ENERGY, the rule above could be violated if an OP_ENERGY settlement transaction was initially in favor of the buyer (above the strike), but then changed to be in favor of the seller (below the strike), again due to reward block orphaning and the ensuing blockchain reorganization.  
+
+The same 100 block burying criteria therefore applies to spending OP_ENERGY outputs. 
 
 ==Alternative Approaches==
 
