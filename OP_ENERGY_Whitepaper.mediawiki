@@ -1,6 +1,7 @@
-OP_ENERGY Whitepaper
-Thomas Hartman
-thomashartman1@gmail.com
+The OP_ENERGY Market
+Peer to Peer Energy Derivatives Trading on Bitcoin
+
+Thomas Hartman thomashartman1@gmail.com
 
 =Abstract= 
 
