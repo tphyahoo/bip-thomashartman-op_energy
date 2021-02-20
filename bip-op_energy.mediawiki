@@ -12,83 +12,101 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which measures the cost to mine a single satoshi between two blocks. This  can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled on chain between untrusting parties, and without requiring an oracle. 
+This BIP describes the new opcode OP_ENERGY, which measures the mining energy cost in hashes per satoshi between two blocks. This can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled between untrusting parties. 
 
 ==Prelude==
 
 ===Target, Hashes, Difficulty and Chainwork===
 
-Hashes(block) is the statistically expected number of hashes expected to solve a block with a given target.
+Chainwork(block) is the cumulative hashes statistically expected to reach a certain height in the blockchain. This is a key consensus value, used to determine which blockchain is most valuable when there are conflicts at the tip. 
 
 <pre>
-hashes(block) = 2^256 / target(block)
+chainwork(blockN) = blockwork(block0) + blockwork(block1) + ... + blockwork(blockN)
 </pre>
 
-todo: is it 2^256 or 2^256-1 ?
+blockwork(block) is the statistically expected number of hashes required to solve a block.<ref>Defined in the bitcoin core reference client, in GetBlockProof<ref>:
+
+<pre>
+blockwork(block) = 2^256 `div` ( target(block) + 1 )
+  where `div` = integer division
+</pre>
+
+
+Target(block) is the work (ie hashes) required of a block, recorded in the bitcoin block header.
 
 An important constant is the target of the genesis block:
 
 <pre>
-genesis_target = hashes(1) = 0xffff * 2^208
+genesis_target = target(0) = 0xffff * 2^208
 </pre>
 
-With this, we can calculate the hashes of the genesis block:
+With this, we can calculate the blockwork of the genesis block:
 
 <pre>
-genesis_hashes = hashes(1) = 2^256 / genesis_target
+genesis_blockwork = blockwork(0) = 2^256 `div` ((0xffff * 2^208)) + 1) = 0x100010001 
   (approximately 2^32)
 </pre>
 
-Difficulty(block) is a related measure to hashes(block):
+Difficulty(block) is a floating point measure of how much more expensive (in hashes) blocks have become since genesis.
 
 <pre>
 difficulty(block) = genesis_target / target(block)
+  where / = floating point division
 </pre>
 
-Hashes can also be expressed in difficulty units:
+Hashes can be expressed in difficulty units, allowing for some imprecision due to the complexities of float. IE: 
 
 <pre>
-hashes(block) = difficulty(block) * genesis_hashes
+blockwork(block) =~ difficulty(block) * genesis_blockwork
 </pre>
 
-The bitcoin-cli tool subcommands sometimes give summary statistics in difficulty units, and sometimes in hashes. OP_ENERGY always prefers hashes. (todo: make this so, can we actually not mention difficulty again?)
+The bitcoin-cli tool subcommands sometimes give summary statistics for work in difficulty units, and sometimes in hashes. For precision, OP_ENERGY always prefers hashes, which is defined using integer division.
 
-Chainwork(block) is the cumulative hashes statistically expected to reach a certain height in the blockchain.
+The total number of hashes statistically expected to have produced blocks from block1 to block2 is 
 
 <pre>
-chainwork(blockN) = hashes(block1) + hashes(block2) + ... + hashes(blockN)
+hashes block1 block2 = chainwork(block2) - chainwork(block1)
 </pre>
 
-The number of hashes statistically expected to produce blocks from block1 to block2 is chainwork(block2) - chainwork(block1).
 
 ==Summary==
+
+===Hashrate Adjustment Factor===
+
+todo
+  explain and justify this.
+  perhaps there should be versions of opcode with and without hashrate_adjustment_factor
+
 
 ===Calculation of OP_ENERGY===
 
 OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. The formula is as follows.
 
+Morally, OP_ENERGY is 
+
 <pre>
-OP_ENERGY block1 block2 = ( hashes / satoshis ) * hashrate_adjustment_factor
-  where 
-      hashes' = chainwork (block2) - chainwork (block1)
-            where chainwork is defined above
-      hashes = pack_uint256 (hashes')
-      satoshis' = chainRevenue(block2) - chainRevenue(block1)
-            where chainRevenue(block) = sum of all miner rewards (approved subsidy + fees) up to this block
-      satoshis = pack_uint256 (satoshis')
-      hashrate_adjustment_factor = expectedSeconds / seconds
-      expectedSeconds' = 600 * blocks
-      expectedSeconds = int_to_uint256 (expectedSeconds')
-      blocks = block2 - block1
-      seconds' = median_time_past (block2) - median_time_past (block1)
-      seconds = pack_uint256 (seconds')
-      median_time_past (block) = median time of previous 11 blocks (block timestamp is required to be greater than this value)
-      pack_uint256 = convert a vanilla integer into a bits target style reduced precision uint256 integer.
-      / = uint256 division
-      * = uint256 multiplication
+OP_ENERGY block1 block2 = (hashes / satoshi ) * hashrate_adjustment_factor
+ where
+      hashrate_adjustment_factor = expectedSeconds `div` seconds 
 </pre>
 
-Per this formula, higher difficulty makes bitcoin more expensive (measured in hashes). Higher transaction fees render it cheaper (in hashes).
+The exact definition is: x
+
+<pre>
+OP_ENERGY block1 block2 = pack_uint256 price'
+  where 
+      price' = ( hashes * expectedSeconds ) `div` ( satoshis * seconds )
+      hashes = chainwork (block2) - chainwork (block1)
+      satoshis = chainRevenue(block2) - chainRevenue(block1)
+            where chainRevenue is sum of all miner rewards (subsidy + fees) up to this block
+      expectedSeconds = 600 * (block2 - block1)
+      seconds = median_time_past (block2) - median_time_past (block1)
+        where median_time_past is median time of previous 11 blocks as defined in bip 113
+      pack_uint256 = compress a uint256 integer into 32 bits, using same compression as cbits in block header.
+      div = integer division
+</pre>
+
+Per this formula, higher chainwork makes bitcoin more expensive (measured in hashes). Higher transaction fees render it cheaper (in hashes).
 
 The expectedSeconds / seconds term is an adjustment factor for hashrate, so an upwards trending hashrate makes bitcoin more expensive, and lower trending cheaper. Note that seconds, the denominator, is guaranteed to be nonzero, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>https://en.bitcoin.it/wiki/Block_timestamp</ref>.
 
@@ -109,7 +127,7 @@ If any of the following conditions are true, the script interpreter will termina
 * the stack has less than 2 elements
 * either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * block2 <= block1
-* block2 + 100 > blockchain tip (same 100 block burying condition as for spending miner rewards, see whitepaper for more)
+* block2 >= blockchain tip -100 (same 100 block burying condition as for spending miner rewards, see whitepaper for why) (this only applies to spending transactions) (todo: explain how)
 
 Otherwise, the 4 byte uint256 computed value goes on the stack. 
 
@@ -142,7 +160,7 @@ Many concrete use cases are given in the whitepaper.
 
 ==Intuition==
 
-OP_ENERGY price charts look similar to charts of difficulty and hashrate. However, these are prices of bitcoin in hashes. So miner revenue is also factored in. 
+To a miner, OP_ENERGY is the price of a satoshi, in hashes. So OP_ENERGY time series charts look somewhat similar to hashrate charts. 
 
 To a lesser but still consequential degree, OP_ENERGY price tracks dollar price. Bcause electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there is correlation enough to be useful for hedging. 
 
@@ -173,9 +191,9 @@ see whitepaper
 Todo: 
 
 * uint256 arithmetic
-* binary call sale transaction, on chain
-* binary call sale transaction, lightning 
-* settlement transactions
+* write binary call, on chain
+* settle binary call, on chain
+* write and settle binary call, lightning 
 
 <pre>
 looks like implementation could start with 
