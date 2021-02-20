@@ -24,7 +24,7 @@ Chainwork(block) is the cumulative hashes statistically expected to reach a cert
 chainwork(blockN) = blockwork(block0) + blockwork(block1) + ... + blockwork(blockN)
 </pre>
 
-blockwork(block) is the statistically expected number of hashes required to solve a block.<ref>Defined in the bitcoin core reference client, in GetBlockProof<ref>:
+blockwork(block) is the statistically expected number of hashes required to solve a block.<ref>Defined in the bitcoin core reference client, in GetBlockProof</ref>:
 
 <pre>
 blockwork(block) = 2^256 `div` ( target(block) + 1 )
