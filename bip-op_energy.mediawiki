@@ -94,7 +94,7 @@ If we view mining as buying satoshis with hashes, then the price of a satoshi be
 hashes_per_satoshi block1 block2 = (hashes block1 block2) / (satoshis block1 block2)
   where hashes   block1 block2 = chainwork(block2) - chainwork(block1)
         satoshis block1 block2 = chainRevenue(block2) - chainRevenue(block1)
-<pre>
+</pre>
 
 with chainwork and chainRevenue as defined above.
 
