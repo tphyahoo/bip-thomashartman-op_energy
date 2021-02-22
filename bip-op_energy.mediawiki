@@ -146,7 +146,7 @@ This is equivalent to:
 
 <pre>
 op_energy_price (epoch) = hashes_per_satoshi (epoch + 1) 
-</pre
+</pre>
 
 Viewing arbitrary block span OP_ENERGY as a generalization of the above formula, we have then an interpretation of OP_ENERGY as an expected future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol.
 
