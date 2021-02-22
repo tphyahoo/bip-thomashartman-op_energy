@@ -11,7 +11,7 @@
 
 todo
 
-==Prelude==
+==Rationale for OP_ENERGY Formula==
 
 ===Target, Hashes, Difficulty and Chainwork===
 
