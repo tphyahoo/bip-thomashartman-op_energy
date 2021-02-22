@@ -62,57 +62,111 @@ blockwork(block) =~ difficulty(block) * genesis_blockwork
 
 The bitcoin-cli tool subcommands sometimes give summary statistics for work in difficulty units, and sometimes in hashes. For precision, OP_ENERGY always prefers hashes, which is defined using integer division.
 
-The total number of hashes statistically expected to have produced blocks from block1 to block2 is 
+=== Hashes Between Two Blocks === 
+
+As the definition of chainwork above should make clear, the total number of hashes statistically expected to have produced blocks from block1 to block2 is 
 
 <pre>
 hashes block1 block2 = chainwork(block2) - chainwork(block1)
 </pre>
 
+To make this calculation easy, a running total of chainwork should be stored. 
+
+=== Miner Revenue Between Two Blocks === 
+
+The total number of satoshis earned by miners from block1 to block2 is 
+
+<pre>
+satoshis block1 block2 = chainRevenue(block2) - chainRevenue(block1)
+            where chainRevenue is sum of all miner rewards (subsidy + fees) up to this block
+</pre>
+
+As with chainwork, a running total of chainRevenue should be stored.
+
+Note that the subsidy part of the miner reward is the protocol approved subsidy, which can be looked up from the block number. Actual subsidy differs from this by a few satoshis, presumably due to miner error <ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
+
+
+=== Price of Satoshis in Hashes Between Two Blocks === 
+
+If we view mining as buying satoshis with hashes, then the price of a satoshi between two blocks could be defined as 
+
+<pre>
+hashes_per_satoshi block1 block2 = (hashes block1 block2) / (satoshis block1 block2)
+  where hashes and satoshis are as defined above
+<pre>
+
+===Blocktime Dampening Between Two Blocks===
+
+A thermostat provides negative feedback -- i.e. dampening -- to a climate control system with the objective of keeping a room at a desired temperature.  A cruise control system provides dampening feedback to a vehicle to keep it moving at a desired velocity. Likewise, the bitcoin protocol adjusts the hash price of a satoshi every epoch (2016 blocks), to fix miner productivity at 600 seconds per block, no matter how much energy is spent.  This is generally referred to as the difficulty adjustment. <ref>todo, refer to wiki</ref> 
+
+If average seconds per block in a given epoch is under 600 (too fast), hashes per satoshi is judged to be too cheap. The blocktime_dampening_factor raises the price, to retarget the desired 600 seconds per block. If seconds per block is over 600 (too slow), hashes per satoshi is too expensive, and the blocktime_dampening_factor lowers the price, giving miners more incentive to mine.
+
+<pre>
+hashes_per_satoshi (new_epoch) = hashes_per_satoshi (previous_epoch) * blocktime_dampening_factor (previous_epoch)
+
+blocktime_dampening_factor(epoch) = expectedSeconds / actualSeconds
+  where expectedSeconds = 600 * blocks 
+        blocks = 2016 
+        actualSeconds = timestamp(lastBlock) - timestamp(lastBlock - 2016)  
+</pre>
+
+The above formula defines the protocol blocktime dampening for one of the 2016 block difficulty epochs. 
+
+OP_ENERGY generalizes this to define the dampening factor for any span of blocks. 
+
+<pre>
+blocktime_dampening_factor block1 block2 = expectedSeconds / actualSeconds
+  where expectedSeconds = 600 * blocks
+        blocks = block2 - block1
+        actualSeconds = timestamp(block2) - timestamp(block1)
+</pre>
+
+This dampening factor gives a subjective idea of whether blocks seem cheap (too fast) or expensive (slow), in any given span of blocks. 
+
+=== OP_ENERGY: The Dampened Price of Satoshis in Hashes Between Two Blocks === 
+
+Morally, the OP_ENERGY price is 
+
+<pre>
+op_energy_price block1 block2 = (hashes_per_satoshi block1 block2) * (blocktime_dampening_factor block1 block2)
+</pre>
+
+If transaction fee revenue was excluded, the following would hold for epoch spans of blocks:
+
+<pre>
+op_energy_price (epoch) = hashes_per_satoshi (epoch + 1) 
+</pre
+
+So, the OP_ENERGY price could be thought of as a schelling point for the expectation of the future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol in block headers.
 
 ==Summary==
 
-===Hashrate Adjustment Factor===
-
-todo
-  explain and justify this.
-  perhaps there should be versions of opcode with and without hashrate_adjustment_factor
-
-
 ===Calculation of OP_ENERGY===
 
-OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a measure of hashes per satoshi between two blocks. The formula is as follows.
+OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a protocol price in hashes per satoshi between two blocks, which accounts for speedup or slowdown in block discovery times.
 
-Morally, OP_ENERGY is 
-
-<pre>
-OP_ENERGY block1 block2 = (hashes / satoshi ) * hashrate_adjustment_factor
- where
-      hashrate_adjustment_factor = expectedSeconds `div` seconds 
-</pre>
-
-The exact definition is: x
+The exact definition is: 
 
 <pre>
-OP_ENERGY block1 block2 = pack_uint256 price'
+OP_ENERGY_PRICE block1 block2 = pack_uint256 price'
   where 
-      price' = ( hashes * expectedSeconds ) `div` ( satoshis * seconds )
+      price' = ( ( hashes `div` satoshis ) * expectedSeconds ) `div` actualSeconds 
       hashes = chainwork (block2) - chainwork (block1)
       satoshis = chainRevenue(block2) - chainRevenue(block1)
             where chainRevenue is sum of all miner rewards (subsidy + fees) up to this block
       expectedSeconds = 600 * (block2 - block1)
-      seconds = median_time_past (block2) - median_time_past (block1)
+      actualSeconds = median_time_past (block2) - median_time_past (block1)
         where median_time_past is median time of previous 11 blocks as defined in bip 113
       pack_uint256 = compress a uint256 integer into 32 bits, using same compression as cbits in block header.
       div = integer division
 </pre>
 
-Per this formula, higher chainwork makes bitcoin more expensive (measured in hashes). Higher transaction fees render it cheaper (in hashes).
+Unless otherwise noted, all values in the above calculation are ordinary integers.<ref>=Due to the cbits packing in the last step, this could technically overflow if price' overflows 2^256, but this seems to be impossible given that bitcoin is already using on the order of 0.1% of global energy and is thus unlikely to rise more than 1000x. A great many orders of magnitude more than 1000x would be required for the overflow issue to arise.</ref> 
 
-The expectedSeconds / seconds term is an adjustment factor for hashrate, so an upwards trending hashrate makes bitcoin more expensive, and lower trending cheaper. Note that seconds, the denominator, is guaranteed to be nonzero, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>https://en.bitcoin.it/wiki/Block_timestamp</ref>.
+It's also worth noting that actualSeconds is guaranteed to be positive, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>https://en.bitcoin.it/wiki/Block_timestamp</ref>.
 
-Miner revenue per block is provided by bitcoind getblockstats, subsidy and totalfee fields. For chainrevenue, a running total of these values is used. Note that the subsidy part of the miner reward is the protocol approved subsidy, which can be looked up from the block number. Actual subsidy differs from this by a few satoshis, presumably due to miner error <ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
 
-All values are translated into arith_uint256 integers (same as bits target), and arithmetic is done accordingly. 
+
 
 ===OP_ENERGY of Genesis Block===
 
