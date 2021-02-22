@@ -19,7 +19,7 @@ This BIP describes the new opcode OP_ENERGY, which measures the mining energy co
 
 ===Calculation of OP_ENERGY===
 
-OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a protocol price in hashes per satoshi between two blocks, which accounts for speedup or slowdown in block discovery times.
+OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a protocol price in hashes per satoshi between two blocks, which accounts for speedup or slowdown in block discovery times. The rationale for this formula is given in the OP_ENERGY whitepaper.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/bip-op_energy.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
 
 The exact definition is: 
 
