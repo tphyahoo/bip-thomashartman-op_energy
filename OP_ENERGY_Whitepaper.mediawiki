@@ -80,9 +80,6 @@ satoshis block1 block2 = chainRevenue(block2) - chainRevenue(block1)
 
 As with chainwork, it would be reasonable to store a running total of chainRevenue to facilitate such calculations. 
 
-Note that the subsidy part of the miner reward is the protocol approved subsidy, which can be looked up from the block number. Actual subsidy differs from this by a few satoshis, presumably due to miner error <ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
-
-
 === Price of Satoshis in Hashes Between Two Blocks === 
 
 If we view mining as buying satoshis with hashes, then the price of a satoshi between two blocks could be defined as 
@@ -181,8 +178,10 @@ Give packed arith_uint256 packed representation, as well as decimal representati
 
 Single block spans: 
 
-* genesis block                 (OP_ENERGY 1 2): 6
-* first two blocks              (OP_ENERGY 1 3): 13
+todo, genesis should be 0.
+
+* genesis block                 (OP_ENERGY 0 1): 6
+* first two blocks              (OP_ENERGY 0 2): 13
 * first block of first halving  (OP_ENERGY 210,000 210,001): 8,078,338 -- 320,069,304,320 -- todo, did this change? seems suspicious?
 * first block of second halving (OP_ENERGY 420,000 420,001): 700,961,030,332 -- 80,732,483,485,696 -- todo, suspicious?
 
