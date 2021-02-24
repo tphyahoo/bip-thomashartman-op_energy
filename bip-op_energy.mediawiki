@@ -12,14 +12,13 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which measures the mining energy cost in hashes per satoshi between two blocks. This can be treated as a price, given in hashes, for energy derivative contracts that can be written and settled between untrusting parties. 
-
+This BIP describes the new opcode OP_ENERGY, which is used to write and settle binary call contracts using bitcoin. The price for these contracts is a protocol measure of the energy cost of mining between two blocks, with price units given in hashes. 
 
 ==Summary==
 
-===Calculation of OP_ENERGY===
+===Calculation of OP_ENERGY Price===
 
-OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to give a protocol price in hashes per satoshi between two blocks, which accounts for speedup or slowdown in block discovery times. The rationale for this formula is given in the OP_ENERGY whitepaper.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
+The motivation for this formula is given in the OP_ENERGY whitepaper.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
 
 The exact definition is: 
 
@@ -47,14 +46,48 @@ Implementation notes:
 
 ===Script Interpreter Behavior===
 
+OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to write and settle binary calls.
+
+====Writing (Buy/Sell)==== 
+
+OP_ENERGY block1 block2 strike-price funds-address 
+
+Alice (the buyer) and Bob (the seller) agree on terms of an OP_ENERGY binary call contract: block span (block1 to block2), strike, premium, and settlement. 
+
+A sale transaction enforcing these terms is written interactively by Alice  and Bob, who need not trust each other. In broad outline, Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement.  
+
+The script output is spendable by Alice if 
+
+<pre>
+strike < op_energy_price block1 block2 
+</pre>
+
+or Bob otherwise.
+
+todo: fix this. show an actual example ScriptPubKey of a transaction. I think there was a comment from zmnscpxj on bitcoin-dev that said what to do. basically, said to copy mechanism from HTLC in lightning settlement. 
+
+
 If any of the following conditions are true, the script interpreter will terminate with an error:
 
-* the stack has less than 2 elements
-* either of the 2 arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
+* the stack has less than 4 elements
+* either of the 2 block arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * block2 <= block1
-* block2 >= blockchain tip -100 (same 100 block burying condition as for spending miner rewards, see whitepaper for why) (this only applies to spending transactions) (todo: explain how)
 
-Otherwise, the 4 byte uint256 computed value goes on the stack. 
+====Settling (Resolution)====
+
+The settlement transaction is simply for Alice or Bob to spend the now unlocked funds, after the second block + 100 is reached.
+
+todo: fix this as well, give example of ScriptSig for spending. 
+
+If the following conditions is true, the script interpreter will terminate with an error:
+
+* block2 >= blockchain tip - 100 (
+
+The same 100 block burying condition as for spending miner rewards applies to OP_ENERGY settlement. 
+
+<ref>see whitepaper for why. todo, link to relevant section</ref>
+
+todo: if we are using taproot, as I believe zmnscpxj claimed is necessary, what are implications of nodes enforcing this 100 block burying condition, if the script itself is obfuscated via taproot?
 
 ===Penalization of Uneconomic Transactions===
 
@@ -85,35 +118,11 @@ Many concrete use cases are given in the whitepaper.
 
 ==Intuition==
 
-To a miner, OP_ENERGY is the price of a satoshi, in hashes. So OP_ENERGY time series charts look somewhat similar to hashrate charts. 
+OP_ENERGY is an expected future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
 
-todo: say something about how this is expectation of future price. can use wording from whitepaper. Or can move this section to whitepaper. 
+To a miner, OP_ENERGY of some block span (eg. 100 blocks) is a moving average of the price of a satoshi, in hashes. So OP_ENERGY time series charts look somewhat similar to hashrate charts, with large leaps in OP_ENERGY prices at halving boundaries. 
 
-To a lesser but still consequential degree, OP_ENERGY price tracks dollar price. Because electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there is correlation enough to be useful for hedging. 
-
-The whitepaper has more on op_energy price correlation to usd price.
-
-todo: don't talk about dollar price in bip.
-
-==Bitcoin Transactions For Writing and Settling OP_ENERGY Binary Calls==
-
-Writing (Buy/Sell): Alice (the buyer) and Bob (the seller) agree on terms of an OP_ENERGY binary call contract: block span (block1 to block2), strike, premium, and settlement. The settlement value is always 10,000 sat by convention in the examples given here, so that only block span, strike, and and premium need vary.
-
-A sale transaction enforcing these terms is written interactively by Alice  and Bob, who need not trust each other. In broad outline, Alice and Bob create a multisig address interactively. Each deposits bitcoin to the address. Alice's deposit is the premium. Alice + Bob's combined deposit is the settlement .  
-
-The script contains an if clause such that the locked settlement value is spendable by Alice if 
-
-<pre>
-strike < OP_ENERGY block1 block2 
-</pre>
-
-or Bob otherwise.
-
-Settling (Resolution): The settlement transaction is simply for Alice or Bob to spend the now unlocked funds, after the second block is reached.
-
-==Alternative Approaches, Comparison to Similar Proposals==
-
-see whitepaper
+OP_ENERGY price also tracks dollar price to some degree. Because electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there may be correlation enough to be useful for hedging. Testing of this hypothesis using real world data is in progress. todo: report findings. 
 
 ==Specification==
 
@@ -123,25 +132,6 @@ Todo:
 * write binary call, on chain
 * settle binary call, on chain
 * write and settle binary call, lightning 
-
-<pre>
-looks like implementation could start with 
-
-https://github.com/bitcoin/bitcoin/blob/89a8299a14af68c1f96ca1650cbfd4fc2952e77b/src/rpc/mining.cpp
-static UniValue GetNetworkHashPS(int lookup, int height) {
-  ......
-arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
-    int64_t timeDiff = maxTime - minTime;
-
-    return workDiff.getdouble() / timeDiff;
-}
-
-add a coouple functions that do the OP_ENERGY math and I think this would do what we need.
-</pre>
-
-==Risks==
-
-See whitepaper<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki</ref>.
 
 ==Test Vectors and Reference Code==
 
