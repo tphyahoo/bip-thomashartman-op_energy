@@ -12,7 +12,7 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which is used to write and settle binary call contracts using bitcoin. The price for these contracts is a protocol measure of the energy cost of mining between two blocks, with price units given in hashes. 
+This BIP describes the new opcode OP_ENERGY, which is used to write and settle binary call contracts using bitcoin. The price for these contracts is a protocol measure of the energy cost of mining between two blocks, with price units given in hashes per satoshi. 
 
 ==Summary==
 
@@ -95,7 +95,7 @@ To do
 
 ==Motivation==
 
-As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel. Rather than price financial instruments in dollars, or bitcoin, OP_ENERGY prices are given in hashes.
+As Bitcoin lets untrusted parties send value over a communications channel, OP_ENERGY lets untrusted parties trade energy derivatives over a communications channel. Rather than price financial instruments in dollars per unit of some commodity, or bitcoin per unit of some asset, prices for OP_ENERGY contracts are given in hashes per satoshi.
 
 The basic contract is a european cash-or-nothing binary call <ref>https://en.wikipedia.org/wiki/Binary_option#Cash-or-nothing_call</ref>
 on whether some future OP_ENERGY price exceeds some strike. 
