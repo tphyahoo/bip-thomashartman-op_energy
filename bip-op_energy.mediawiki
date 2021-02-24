@@ -12,7 +12,7 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which is used to write and settle binary call contracts using bitcoin. The price for these contracts is a protocol measure of the energy cost of mining between two blocks, with price units given in hashes per satoshi. 
+This BIP describes the new opcode OP_ENERGY, which is used to write and settle binary call contracts using bitcoin. The price for these contracts is a protocol measure of the energy cost of mining between two blocks, in hashes per satoshi. 
 
 ==Summary==
 
@@ -115,14 +115,6 @@ Like any bitcoin transaction, OP_ENERGY trades can be cached onto second layer s
 There may be privacy benefits as well, such as multiparty trades done in mix pools, akin to joinmarket.
 
 Many concrete use cases are given in the whitepaper.
-
-==Intuition==
-
-OP_ENERGY is an expected future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
-
-To a miner, OP_ENERGY of some block span (eg. 100 blocks) is a moving average of the price of a satoshi, in hashes. So OP_ENERGY time series charts look somewhat similar to hashrate charts, with large leaps in OP_ENERGY prices at halving boundaries. 
-
-OP_ENERGY price also tracks dollar price to some degree. Because electricity and mining equipment -- both linked to energy -- are priced in dollars. Modulo hardware efficiency improvements, which will eventually hit diminishing returns, if OP_ENERGY increases by 100x between two block spans, it costs 100x as much energy to mine a bitcoin, hence 100x as many dollars. To be sure, OP_ENERGY price is not perfectly correlated to fiat price (far from it), but there may be correlation enough to be useful for hedging. Testing of this hypothesis using real world data is in progress. todo: report findings. 
 
 ==Specification==
 
