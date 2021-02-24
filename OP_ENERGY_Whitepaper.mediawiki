@@ -240,6 +240,8 @@ This means that one can price on-chain binaries by looking at price and volatili
 
 todo: fix this so it is using strikeD instead of regular delta. 
 
+Note: The settlement value is always 10,000 sat by convention in the examples given here, so that only block span, strike, and and premium need vary.
+
 Bob wants to make a market on OP_ENERGY from blocks 647,136 to 648,136, which is 1000-2000 blocks in the future. To do this, he needs to pick a strike, and determine a strikeD for it. 
 
 <pre>
