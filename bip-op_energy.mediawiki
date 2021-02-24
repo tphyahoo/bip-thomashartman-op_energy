@@ -72,6 +72,7 @@ If any of the following conditions are true, the script interpreter will termina
 * the stack has less than 4 elements
 * either of the 2 block arguments is not type compatible with an nlocktime block number, that is, not in the range from 1 to 500,000,000
 * block2 <= block1
+* strike-price is not a cbits encoded 256 bit number, ie 32 bits which encodes a 256 bit number. 
 
 ====Settling (Resolution)====
 
@@ -83,9 +84,7 @@ If the following conditions is true, the script interpreter will terminate with 
 
 * block2 >= blockchain tip - 100 (
 
-The same 100 block burying condition as for spending miner rewards applies to OP_ENERGY settlement. 
-
-<ref>see whitepaper for why. todo, link to relevant section</ref>
+The same 100 block burying condition as for spending miner rewards applies to OP_ENERGY settlement.<ref>see whitepaper for why. todo, link to relevant section</ref>
 
 todo: if we are using taproot, as I believe zmnscpxj claimed is necessary, what are implications of nodes enforcing this 100 block burying condition, if the script itself is obfuscated via taproot?
 
