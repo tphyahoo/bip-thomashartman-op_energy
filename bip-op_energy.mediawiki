@@ -66,6 +66,16 @@ or Bob otherwise.
 
 todo: fix this. show an actual example ScriptPubKey of a transaction. I think there was a comment from zmnscpxj on bitcoin-dev that said what to do. basically, said to copy mechanism from HTLC in lightning settlement. 
 
+breadcrumbs:
+"That said, the construction you are imagining is indeed going to work.
+The only requirement is that the hash-branch needs two signatures in
+order to ensure that it pays out to a transaction with a very specific
+contract.
+Xref.  how Lightning *really* creates its HTLCs."
+  https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018095.html
+  https://bitcoin.stackexchange.com/questions/96879/simulate-htlc-in-regtest-c-lightning
+  https://medium.com/softblocks/lightning-network-in-depth-part-2-htlc-and-payment-routing-db46aea445a8
+
 
 If any of the following conditions are true, the script interpreter will terminate with an error:
 
@@ -82,7 +92,7 @@ todo: fix this as well, give example of ScriptSig for spending.
 
 If the following conditions is true, the script interpreter will terminate with an error:
 
-* block2 >= blockchain tip - 100 (
+* block2 >= blockchain tip - 100 
 
 The same 100 block burying condition as for spending miner rewards applies to OP_ENERGY settlement.<ref>see whitepaper for why. todo, link to relevant section</ref>
 
