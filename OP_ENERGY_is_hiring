@@ -1,0 +1,36 @@
+OP_ENERGY is hiring bitcoin/lightning protocol engineers
+
+<SUBJECT>: 
+
+The OP_ENERGY project is hiring bitcoin engineers for peer review for an "energy derivatives on bitcoin" project
+
+<BODY>: 
+
+Hi <insert name here>!
+
+OP_ENERGY needs peer review, and potentially implementation work, on a bitcoin BIP:
+
+https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/bip-op_energy.mediawiki
+
+There is a nontechnical overview in the README at 
+
+https://github.com/tphyahoo/bip-thomashartman-op_energy/
+
+so perhaps read this first to get a quick idea of how this will work.
+
+An ideal candidate will already have an in depth understanding of bitcoin and bitcoin script, evidenced by commits to bitcoin repos, and/or public communications on mailing lists and forums such as stackoverflow. Experience with lightning and the HTLC construction is especially valuable. 
+
+We also may hire experienced software engineers who like the OP_ENERGY idea but are not well versed in bitcoin, to build out other aspects of the project, such as the demo exchange. Marketing, promotion, PR and lobbying will be required soon as well, so folks interested in such roles should also reach out if interested. 
+
+If you have availability to work on this, please let me know.
+
+OP_ENERGY grew out of a discussion on OP_DIFFICULTY on the bitcoin dev list. I put a lot of thought into how no-custody hashrate futures could be supported by bitcoin protocol, and OP_ENERGY is my primary focus now. I think it will be very good for bitcoin ecosystem if is adopted in the future. I'm thinking 5-10 years, not soon. But the time to start raising awareness is now.
+
+If you are interested in working on this, or know someone who might be, please contact 
+
+thomashartman1@gmail.com
+
+Please distribute widely. 
+
+Thank you. 
+
