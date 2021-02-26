@@ -1,12 +1,10 @@
-
-
-<SUBJECT>: 
+=SUBJECT=
 
 OP_ENERGY is hiring bitcoin/lightning protocol engineers for peer review of an "energy derivatives on bitcoin" BIP
 
-<BODY>: 
+=BODY=
 
-Hi <insert name here>!
+Hi INSERT_NAME HERE !
 
 OP_ENERGY needs peer review, and potentially implementation work, on a bitcoin BIP:
 
