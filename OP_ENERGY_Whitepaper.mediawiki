@@ -531,3 +531,6 @@ OP_DIFFICULTY: The initial inspiration for this bip.<ref>https://lists.linuxfoun
 
 Discreet Log Contracts: Discreet log contracts enable non-custodial trades, not only in energy derivatives but in any asset.<ref>https://dci.mit.edu/smart-contracts</ref> No protocol change is required. However, trust in an oracle is required, which makes DLC inferior to OP_ENERGY for energy derivatives. That being said, I very much favor DLC for every other type of trading that cannot be trustlessly pegged to hashing, and hope it is developed successfully and sees wide adoption soon. 
 
+== Footnotes ==
+
+<references />
