@@ -12,23 +12,36 @@
 </pre>
 
 ==Abstract==
-This BIP describes the new opcode OP_ENERGY, which is used to write and settle binary call contracts using bitcoin. The price for these contracts is a protocol measure of the energy cost of mining between two blocks, in hashes per satoshi. 
+This BIP describes the new opcode OP_ENERGY, which provides a price that can be used to write energy derivative contracts using bitcoin. This price is a protocol measure of the energy cost of mining between two blocks, in expected future hashes per satoshi. 
 
 ==Summary==
 
 ===Calculation of OP_ENERGY Price===
 
-The motivation for this formula is given in the OP_ENERGY whitepaper.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
+Roughly, price is: 
+
+<pre>
+(miner hashes / miner revenue) * (expected seconds / actual seconds) 
+</pre>
+
+Assuming stable revenue: 
+
+<pre>
+price(difficulty epoch) = hashes_per_satoshi (difficulty epoch + 1)
+</pre>
+
+So, generalizing from difficulty epoch to any block span, price is expected future hashes_per_satoshi.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
 
 The exact definition is: 
 
 <pre>
 op_energy_price block1 block2 = pack_uint256 price'
-  where 
-      price' = ( ( hashes `div` satoshis ) * expectedSeconds ) `div` actualSeconds 
+  where  
+      price' = ( hashes * expectedSeconds ) `div` (actualSeconds * satoshis)
       hashes = chainwork (block2) - chainwork (block1)
-      satoshis = chainRevenue (block2) - chainRevenue (block1)
-            where chainRevenue is sum of all miner rewards (subsidy + fees) up to this block
+      satoshis = if revenue == 0 then 1 else revenue 
+            where revenue = chainRevenue (block2) - chainRevenue (block1)
+                  chainRevenue is sum of all coinbase rewards (coinbase) up to this block
       expectedSeconds = 600 * (block2 - block1)
       actualSeconds = median_time_past (block2) - median_time_past (block1)
         where median_time_past is median time of previous 11 blocks as defined in bip 113
@@ -36,19 +49,20 @@ op_energy_price block1 block2 = pack_uint256 price'
       div = integer division
 </pre>
 
-Implementation notes: 
 
-* Unless otherwise noted, all values in the above calculation are ordinary integers.<ref>=Due to the cbits packing in the last step, this could technically overflow if price' overflows 2^256, but this seems to be impossible given that bitcoin is already using on the order of 0.1% of global energy and is thus unlikely to rise more than 1000x. A great many orders of magnitude more than 1000x would be required for the overflow issue to arise.</ref> 
+* Unless otherwise noted, all values in the above calculation are ordinary integers.
+
+* Due to the cbits packing in the last step, price could technically overflow if price' overflows 2^256, but this seems to be impossible given that bitcoin is already using on the order of 0.1% of global energy and is thus unlikely to rise more than 1000x. A great many orders of magnitude more than 1000x would be required for the overflow issue to arise. 
+
+todo: double check this. Note also that if satoshis and actualSeconds are both 1, price could be hashes * expectedSeconds, so verify this is no overflow problem with this as well. 
 
 * ActualSeconds is guaranteed to be positive, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>https://en.bitcoin.it/wiki/Block_timestamp</ref>.
 
-* The subsidy part of the miner reward is the protocol approved subsidy, which can be looked up from the block number. Actual subsidy differs from this by a few satoshis, presumably due to miner error <ref>https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>.
-
 ===Script Interpreter Behavior===
 
-OP_ENERGY redefines the existing NOP_TBD (to be determined) opcode to write and settle binary calls.
-
 ====Writing (Buy/Sell)==== 
+
+todo: maybe this should only return the price after all. 
 
 OP_ENERGY block1 block2 strike-price funds-address 
 
@@ -97,10 +111,6 @@ If the following conditions is true, the script interpreter will terminate with 
 The same 100 block burying condition as for spending miner rewards applies to OP_ENERGY settlement.<ref>see whitepaper for why. todo, link to relevant section</ref>
 
 todo: if we are using taproot, as I believe zmnscpxj claimed is necessary, what are implications of nodes enforcing this 100 block burying condition, if the script itself is obfuscated via taproot?
-
-===Penalization of Uneconomic Transactions===
-
-To do
 
 ==Motivation==
 
