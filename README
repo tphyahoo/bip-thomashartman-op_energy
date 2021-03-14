@@ -8,7 +8,7 @@ WHAT
 
 Bitcoin provides free as in speech (not beer) value transfer transactions: a protocol for mutually distrusting parties to transfer value over a communications channel.
 
-Bitcoin with OP_ENERGY provides free as in speech trading transactions: a protocol for mutually distrusting parties to trade derivatives on the future price of energy, measured in hashes, over a communications channel. 
+Bitcoin with OP_ENERGY provides free as in speech trading transactions: a protocol for mutually distrusting parties to trade energy derivatives, priced in hashes per bitcoin, over a communications channel. 
 
 ********************
 ********************
@@ -18,7 +18,7 @@ WHY
 
 OP_ENERGY empowers bitcoin and energy traders to make markets without the custodial and surveillance risks inherent to traditional currency, commodity, and altcoin exchanges.  
 
-For instance, OP_ENERGY would enable an overweight bitcoin holder to reduce his bitcoin position by trading it for a long position in future energy (hashes). The counterparty to this trade would be an overweight energy trader who believes the value of bitcoin will rise against energy. 
+For instance, OP_ENERGY would enable an overweight bitcoin holder to reduce his bitcoin risk by opening a short position in hashes per bitcoin. The counterparty to this trade would be an overweight energy owner who believes the value of bitcoin will rise against energy, ie long hashes per bitcoin. 
 
 Trades are just bitcoin (usually lightning) transactions, with all the privacy and security this entails. 
 
@@ -37,7 +37,7 @@ Ecosystem benefits:
 * absorbs trade volume from competing currencies and cryptocurrencies into bitcoin
 * increases miner revenue without increasing block size
 * drives lightning adoption
-* increases hashrate
+* increases hashrate, making bitcoin more valuable while raising cost of 51% attack
 * increases anonymity set of coinjoins
 * makes bitcoin more valuable, private, and secure
 * small code footprint, with a single transaction opcode providing most of the functionality
@@ -57,7 +57,6 @@ HOW
 
 SCARCITY
 
-Energy is physical. 
 Bitcoin is virtual.
 Mining of bitcoin transactions is the bridge between the real scarcity of energy and the virtual scarcity of bitcoin.
 
@@ -103,11 +102,11 @@ These are two views of the same triangle.
 
 Transactions are bought from miners, with bitcoin transaction fees. (A)
 Miners buy blocks of transactions with energy, via hashing. (B)
-Energy is purchased with bitcoin for every industrial purpose under the sun (C)
+Energy is purchased with bitcoin for industrial use (which includes bitcoin mining) (C)
 
 COST OF HASHES
 
-A physical unit of energy is the kwh (kilowatt hour). This is about the amount of electrical energy a human can produce in ten hours, on an exercycle say. A virtual unit of energy measurement is the hash. A human can calculate a sha256 hash, also in about ten hours, using pen and graph paper say. Computers are much faster, of course. A pocket phone can do thousands of hashes per second. What they have in common is, both the human and his pocket phone consume energy. Whatever technique is used, if it is fixed, it always takes strictly twice as much energy to calculate two hashes than one hash. This connection from hashes to energy is how the physical scarcity of energy connects to the virtual scarcity of bitcoin. 
+A physical unit of energy is the kwh (kilowatt hour). This is about the amount of electrical energy a human can produce in ten hours, on an exercycle say. A virtual unit of energy measurement is the hash. A human can calculate a sha256 hash, also in about ten hours, using pen and graph paper say. Computers are much faster. A pocket phone can do thousands of hashes per second. What they have in common is, both the human and his pocket phone consume energy. Whatever technique is used, if it is fixed, it always takes strictly twice as much energy to calculate two hashes than one hash. This connection from hashes to energy is how the physical scarcity of energy connects to the virtual scarcity of bitcoin. 
 
 DIFFICULTY: THE BLOCKCHAIN THERMOSTAT
 
@@ -123,19 +122,21 @@ A regular thermostat holds a house's temperature constant, by burning more or le
 
 For example: If bitcoin is 10% too fast (averaging 540 seconds per block instead of 600), the block energy required for a hash increases by 10%. If bitcoin is 10% too slow (averaging 660 seconds instead of 600) the block energy decreases by 10%. 
 
-Hashes are just 16 digit (0 1 2 3 4 5 6 7 8 9 a b d e f) numbers. 
+Hashes are 64 digit hexadicimal (0 1 2 3 4 5 6 7 8 9 a b d e f) numbers. 
 
 Low energy block hash:  00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 (from 2009)
 High energy block hash: 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 (from 2020)
 
 Due to its smaller numeric value (notice the leading zeros), producing the second hash required a billion to a trillion times more kwh (energy).
 
-We must estimate the physical (kwh) energy spend, because we cannot know the exact amount of electricity required to produce block hashes, nor the embodied energy in kwh to produce hardware. But, we can with precision say how many hash attempts were expected statistically in each case, to produce the above hashes, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. By convention, miners are paid in "sats" -- ie, satoshis, which are a hundred millionth of a bitcoin.
+We must estimate the physical (kwh) energy spend, because we cannot know the exact amount of electricity kwh required to produce block hashes, nor the embodied energy kwh to produce hardware. But, we can with precision say how many hash attempts were expected statistically in each case, to produce the above hashes, and this information is accessible to the bitcoin protocol. The bitcoin protocol also knows the seconds of time that were required for block production, as this is needed for the difficulty adjustment. Miner revenue is also known. By convention, miners are paid in "sats" -- ie, satoshis, which are a hundred millionth of a bitcoin.
 
-These three factors -- number of hashes, number of seconds, and miner reward -- can be used to calculate a protocol energy price for a range between any two blocks. OP_ENERGY proposes such a definition, which would result in the following protocol energy prices for the above hashes:
+These three factors -- number of hashes, number of seconds, and miner reward -- can be used to calculate a protocol energy price for a span between any two blocks. OP_ENERGY proposes such a definition, which would result in the following 1-block trailing energy prices for the above hashes:
 
 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048 1-block OP_ENERGY price: 6 hashes / satoshi
 0000000000000000000aafac3a0d99cccbd4f62e3d08636bb9c242db366c7f73 1-block OP_ENERGY price: 733 billion hashes / satoshi
+
+todo: doublecheck above against current spec
 
 OP_ENERGY -- TRADING THE THERMOSTAT 
 
@@ -166,7 +167,7 @@ WHAT'S NEXT
 
 Peer Review
 Testnet implementation
-Toy custodial exchange on testnet (should this be open source?)
+Toy custodial exchange on testnet 
 Toy custodial exchange on mainnet (small values, full KYC)
 Real custodial exchange on mainnet (commercial product, hopefully proof of demand)
 Proposal to implement on top of Blockstream Elements
