@@ -136,7 +136,7 @@ Expanded Result from compact BITS
 
 -------------------------------------------------------------
 
-  Show coversions of a constant value with increasing left-shift
+Show four conversions of a 32bit value with increasing bitwise left-shifts
 
 <pre>
   0xFACE00FF << (32+64+64+64)
@@ -182,6 +182,8 @@ Expanded Result from compact BITS
 
 
 -----------------------------------------------------------------------------
+
+Show an example of an input conversion for malformed cBITS
 
 **Example 4**   convert out-of-range cBITS to uint256
 
