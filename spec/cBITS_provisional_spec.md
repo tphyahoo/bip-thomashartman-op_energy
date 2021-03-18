@@ -16,12 +16,23 @@
 
 Technical Notes on Compact BITS Format 
 
-**Objective**: show BITS (4 byte) compact representation, conversion to a uint256 input and back
+This document describes the compact BITS format of uint32; where uint32 is a standard 32 bit long integer 
+, and **cBITS** is an encoded representation of a larger value integer, described here.  
 
-**Given**: Very large integer numbers may be represented in a custom eight-byte, 256 bit structure uint256. A second format is also defined using a standard four-byte 32bit unsigned integer. This compact BITS format packs up to three bytes of value from uint256, and uses the remaining most-significant byte to store a count of the total number of bytes in the expanded number. The compact BITS format delivers a lot less precision than uint256 but is portable in a standardized way. This page explains conversion from uint256 to the compact BITS format, in order to clarify the rules for implementing conversion for common computer languages and minimize the chance of serious differences between implementation.
+Very large integer numbers may be represented in a custom 256 bit structure uint256,  
+a single variable containing eight 32bit words.   The cBITS format packs up
+to three bytes of value from a uint256, and uses the remaining most-significant byte to store a
+count of the total number of bytes in the expanded number.  The compact BITS format delivers a
+lot less precision than uint256 but is portable in a standardized way.  This document explains
+conversion from uint256 to the compact BITS format and back, in order to clarify the rules for
+implementing conversion for common computer languages and minimize the chance of serious
+differences between implementation.
 
-Conversion Rules: Take three bytes from uint256, starting with the most-significant non-zero bytes (left-most). The top bit of the three bytes is reserved for a sign bit (seldom used in practice). Conversion code must take care to keep the sign bit clear in a compact result, which often means retaining less value from the source uint256 as shown below. A single byte in compact BITS is used to keep the length of the expanded results.
-
+**Conversion Rules**: Take three bytes from uint256, starting with the most-significant non-zero
+bytes (left-most). The top bit of the three bytes is reserved for a sign bit (seldom used in
+practice). Conversion code must take care to keep the sign bit clear in a compact result, which
+often means retaining less value from the source uint256 as shown below.  A single byte in
+compact BITS is used to keep the length of the expanded results
 
 
 **Example 1** 
