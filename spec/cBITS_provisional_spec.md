@@ -135,6 +135,14 @@ Expanded Result from compact BITS
 
 -------------------------------------------------------------
 
+--  Show coversions of a constant value with increasing left-shift
+--  0xFACE00FF << (32+64+64+64)
+--  0xface00ff00000000
+--  0xface00ff000000000000000000000000
+--  0xface00ff0000000000000000000000000000000000000000
+--  0xface00ff00000000000000000000000000000000000000000000000000000000
+
+
 
 **Example 3a**   convert uint64 to dst uint32 to src uint256
   Given:    0xFACE00FF00000000
@@ -159,6 +167,8 @@ Expanded Result from compact BITS
   Given:    0xFACE00FF00000000000000000000000000000000000000000000000000000000
 
   0xFACE000000000000000000000000000000000000000000000000000000000000
+
+
 
 
 **Example 4**   convert out-of-range dst uint32 to src uint256
