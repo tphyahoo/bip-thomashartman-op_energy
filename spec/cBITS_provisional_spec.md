@@ -14,9 +14,9 @@
 
 ## Abstract ##
 
-Notes on Compact BITS Format 
+Technical Notes on Compact BITS Format 
 
-**Objective**: show BITS (4 byte) compact representation of a uint256 input
+**Objective**: show BITS (4 byte) compact representation, conversion to a uint256 input and back
 
 **Given**: Very large integer numbers may be represented in a custom eight-byte, 256 bit structure uint256. A second format is also defined using a standard four-byte 32bit unsigned integer. This compact BITS format packs up to three bytes of value from uint256, and uses the remaining most-significant byte to store a count of the total number of bytes in the expanded number. The compact BITS format delivers a lot less precision than uint256 but is portable in a standardized way. This page explains conversion from uint256 to the compact BITS format, in order to clarify the rules for implementing conversion for common computer languages and minimize the chance of serious differences between implementation.
 
@@ -29,6 +29,7 @@ Conversion Rules: Take three bytes from uint256, starting with the most-signific
 convert src to dst (28 bytes of data following four bytes of zero)
 
 given:  0x000000008cc30f97a647313fe0cad97a647313fe0cad97a647313fe0cad97a64
+
 --------------------------------------------------------------------------
 
 Step) disregard leading zeroes; count the number of data bytes in uint256 input, store as inCount
@@ -73,6 +74,7 @@ Step) combine inCount and resInt (logical OR) to make the final Compact BITS (CB
 
 
 Expanded Result from compact BITS
+
 0x8cc30000000000000000000000000000000000000000000000000000
 
 
@@ -81,6 +83,7 @@ Expanded Result from compact BITS
 convert src to dst (29 bytes of data following three bytes of zero)
 
 given:  0x0000000128a0e4b1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1
+
 --------------------------------------------------------------------------
 
 Step) disregard leading zeroes; count the number of data bytes in uint256 input, store as inCount
