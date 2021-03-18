@@ -39,7 +39,7 @@ compact BITS is used to keep the length of the expanded results
 
 convert 256bit hex to cBITS  (28 bytes of data following four bytes of zero)
 
-given:  0x000000008cc30f97a647313fe0cad97a647313fe0cad97a647313fe0cad97a64
+Given:  0x000000008cc30f97a647313fe0cad97a647313fe0cad97a647313fe0cad97a64
 
 --------------------------------------------------------------------------
 
@@ -84,16 +84,17 @@ Step) combine inCount and resInt (logical OR) to make the final Compact BITS (CB
 |        | Bits  | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 |
 
 
-Expanded Result from compact BITS
+Expanded Result from compact BITS to uint256
 
-0x8cc30000000000000000000000000000000000000000000000000000
+  0x8cc30000000000000000000000000000000000000000000000000000
+
 
 
 **Example 2**  
 
 convert 256bit hex to cBITS (29 bytes of data following three bytes of zero)
 
-given:  0x0000000128a0e4b1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1
+Given:  0x0000000128a0e4b1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1
 
 --------------------------------------------------------------------------
 
@@ -101,7 +102,7 @@ Step) disregard leading zeroes; count the number of data bytes in uint256 input,
 
 Step) extract the most-significant three bytes of uint256, store as resInt
 
- inCount = 29 (0x1D)
+<pre> inCount = 29 (0x1D)</pre>
 
 | **Int** | Octets |     1 (0x01)    |     40 (0x28)   |    160 (0xA0)   |
 |--------|--------|-----------------|-----------------|-----------------|
@@ -147,6 +148,7 @@ Expanded Result from compact BITS
 
 
 **Example 3a**   convert 64 bits hex to uint256, then to cBITS
+
   Given:    0xFACE00FF00000000
 
   0x000000000000000000000000000000000000000000000000FACE000000000000
@@ -163,6 +165,7 @@ Expanded Result from compact BITS
 
 
 **Example 3c**   convert  24 bytes to uint256, back to cBITS
+
   Given:    0xFACE00FF0000000000000000000000000000000000000000
 
   0x0000000000000000FACE00000000000000000000000000000000000000000000
@@ -181,6 +184,7 @@ Expanded Result from compact BITS
 -----------------------------------------------------------------------------
 
 **Example 4**   convert out-of-range cBITS to uint256
+
   Given:    0x2A84FFFF
 
   0x0000000000000000000000000000000000000000000000000000000000000000
