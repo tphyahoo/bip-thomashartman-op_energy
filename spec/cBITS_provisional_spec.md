@@ -14,7 +14,7 @@
 
 ## Abstract ##
 
-Technical Notes on Compact BITS Format 
+### Technical Notes on Compact BITS Format ###
 
 This document describes the compact BITS format of uint32; where uint32 is a standard 32 bit long integer 
 , and **cBITS** is an encoded representation of a larger value integer, described here.  
@@ -39,7 +39,7 @@ compact BITS is used to keep the length of the expanded results
 
 convert 256bit hex to cBITS  (28 bytes of data following four bytes of zero)
 
-Given:  0x000000008cc30f97a647313fe0cad97a647313fe0cad97a647313fe0cad97a64
+Given: <pre>0x000000008cc30f97a647313fe0cad97a647313fe0cad97a647313fe0cad97a64</pre>
 
 --------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ Step) extract the most-significant three bytes of uint256, store as resInt
 
 | **Int** | Octets |   140 (0x8C)   |   195 (0xC3)  |   15 (0x0F)    |
 |--------|--------|-----------------|-----------------|-----------------|
-|        | Bits   | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 | 0 0 0 0 1 1 1 1 |
+|     | **Bits**  | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 | 0 0 0 0 1 1 1 1 |
 
 
 Step) test the high bit of the left-most, non-zero byte of input uint256 ;
@@ -63,7 +63,7 @@ Step) test the high bit of the left-most, non-zero byte of input uint256 ;
 
 | **Int** | Octets |   0 (0x00)    |  140 (0x8C)   |  195 (0xC3)   |
 |--------|--------|-----------------|-----------------|-----------------|
-|        | Bits   | 0 0 0 0 0 0 0 0 | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 |
+|      | **Bits**  | 0 0 0 0 0 0 0 0 | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 |
 
 
 Step) multiply inCount by 2**24, resulting in a 32bit integer (left shift)
@@ -73,7 +73,7 @@ inCount shifted left by three (3) bytes
 
 | **Int** | Octets |    29 (0x1D)    |     0 (0x00)    |     0 (0x00)    |     0 (0x00)    |
 |---------|--------|-----------------|-----------------|-----------------|-----------------|
-|         | Bits   | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 |
+|      | **Bits**   | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 |
 
 
 Step) combine inCount and resInt (logical OR) to make the final Compact BITS (CBITS)
@@ -81,12 +81,12 @@ Step) combine inCount and resInt (logical OR) to make the final Compact BITS (CB
 
 |**cBITS**| Octets |    29 (0x1D)    |     0 (0x00)    |    140 (0x8C)   |    195 (0xC3)   |
 |--------|--------|-----------------|-----------------|-----------------|-----------------|
-|        | Bits  | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 |
+|    | **Bits**  | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 1 0 0 0 1 1 0 0 | 1 1 0 0 0 0 1 1 |
 
 
 Expanded Result from compact BITS to uint256
 
-  0x8cc30000000000000000000000000000000000000000000000000000
+  <pre>0x8cc30000000000000000000000000000000000000000000000000000</pre>
 
 
 
@@ -94,7 +94,7 @@ Expanded Result from compact BITS to uint256
 
 convert 256bit hex to cBITS (29 bytes of data following three bytes of zero)
 
-Given:  0x0000000128a0e4b1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1
+Given:  <pre>0x0000000128a0e4b1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1fb1</pre>
 
 --------------------------------------------------------------------------
 
@@ -106,7 +106,7 @@ Step) extract the most-significant three bytes of uint256, store as resInt
 
 | **Int** | Octets |     1 (0x01)    |     40 (0x28)   |    160 (0xA0)   |
 |--------|--------|-----------------|-----------------|-----------------|
-|        | Bits | 0 0 0 0 0 0 0 1 | 0 0 1 0 1 0 0 0 | 1 0 1 0 0 0 0 0 |
+|       | **Bits** | 0 0 0 0 0 0 0 1 | 0 0 1 0 1 0 0 0 | 1 0 1 0 0 0 0 0 |
 
 
 Step) test the high bit of the left-most, non-zero byte of input uint256 ; bit not set
@@ -118,20 +118,20 @@ inCount shifted left by three (3) bytes
 
 | **Int** | Octets |    29 (0x1D)    |     0 (0x00)    |     0 (0x00)    |     0 (0x00)    |
 |---------|--------|-----------------|-----------------|-----------------|-----------------|
-|         | Bits | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 |
+|     | **Bits** | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 |
 
 
-Step) combine inCount and resInt (logical OR) to make the final Compact BITS (CBITS)
+Step) combine inCount and resInt (logical OR) to make the final Compact BITS (cBITS)
 
 
-| **Int**t | Octets |    29 (0x1D)    |     1 (0x01)    |     40 (0x28)   |    160 (0xA0)   |
+| **Int** | Octets |    29 (0x1D)    |     1 (0x01)    |     40 (0x28)   |    160 (0xA0)   |
 |---------|--------|-----------------|-----------------|-----------------|-----------------|
-|         | Bits | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 1 | 0 0 1 0 1 0 0 0 | 1 0 1 0 0 0 0 0 |
+|     | **Bits** | 0 0 0 1 1 1 0 1 | 0 0 0 0 0 0 0 1 | 0 0 1 0 1 0 0 0 | 1 0 1 0 0 0 0 0 |
 
 
 Expanded Result from compact BITS
 
-0x0128A00000000000000000000000000000000000000000000000000000
+<pre>0x0128A00000000000000000000000000000000000000000000000000000</pre>
 
 
 -------------------------------------------------------------
@@ -156,7 +156,7 @@ Show four conversions of a 32bit value with increasing bitwise left-shifts
      cBITS   0x0900FACE
 
 
-**Example 3b**   convert  16 bytes to uint256, back to cBITS
+**Example 3b**   convert  16 bytes to uint256, then to cBITS
 
     Given:    0xFACE00FF000000000000000000000000
 
@@ -165,7 +165,7 @@ Show four conversions of a 32bit value with increasing bitwise left-shifts
       cBITS   0x1100FACE
 
 
-**Example 3c**   convert  24 bytes to uint256, back to cBITS
+**Example 3c**   convert  24 bytes to uint256, then to cBITS
 
     Given:    0xFACE00FF0000000000000000000000000000000000000000
 
@@ -174,7 +174,7 @@ Show four conversions of a 32bit value with increasing bitwise left-shifts
       cBITS   0x1900FACE
 
 
-**Example 3d**   convert  32 bytes to uint32, back to cBITS
+**Example 3d**   convert  32 bytes to uint256, then to cBITS
 
     Given:    0xFACE00FF00000000000000000000000000000000000000000000000000000000
 
