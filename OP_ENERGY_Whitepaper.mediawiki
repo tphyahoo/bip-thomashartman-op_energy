@@ -11,15 +11,19 @@
 
 todo
 
-==Rationale for OP_ENERGY Formula==
+==Rationale for OP_ENERGY Hashes Per Sat Formula==
 
 ===Target, Hashes, Difficulty and Chainwork===
+
+===Chainwork===
 
 Chainwork(block) is the cumulative hashes statistically expected to reach a certain height in the blockchain. This is a key consensus value, used to determine which blockchain is most valuable when there are conflicts at the tip. 
 
 <pre>
 chainwork(blockN) = blockwork(block0) + blockwork(block1) + ... + blockwork(blockN)
 </pre>
+
+===Blockwork===
 
 Blockwork(block) is the statistically expected number of hashes required to solve a block.<ref>Defined in the bitcoin core reference client, in GetBlockProof</ref>. 
 
@@ -61,20 +65,34 @@ The bitcoin-cli tool subcommands sometimes give summary statistics for work in d
 
 === Hashes Between Two Blocks === 
 
-As the definition of chainwork above should make clear, the total number of hashes statistically expected to have produced blocks from block1 to block2 is 
+As the definition of chainwork above should make clear, the total number of hashes statistically expected to have produced blocks from block1 to block2, ie the cost to the mining network, is 
+
+todo: consider cost_between insteqd of hashes_between and revenue_between instead of hahes_between and satoshis_between
 
 <pre>
-hashes block1 block2 = chainwork(block2) - chainwork(block1)
+hashes_between block1 block2 = chainwork(block2) - chainwork(block1)
 </pre>
 
 To make this calculation easy, a running total of chainwork for each block can be stored. 
+
+=== ChainRevenue === 
+
+Defined similarly to chainWork, ChainRevenue(block) is a protocol measure of revenue in sasoshis earned by miners at this block height. 
+
+<pre>
+chainRevenue(blockN) = blockwork(block0) + blockwork(block1) + ... + blockwork(blockN)
+</pre>
+
+=== BlockRevenue === 
+
+This is the coinbase of the block. 
 
 === Miner Revenue Between Two Blocks === 
 
 The total number of satoshis earned by miners from block1 to block2 is 
 
 <pre>
-satoshis block1 block2 = chainRevenue(block2) - chainRevenue(block1)
+satoshis_between block1 block2 = chainRevenue(block2) - chainRevenue(block1)
             where chainRevenue is sum of all miner rewards (subsidy + fees) up to this block
 </pre>
 
@@ -85,14 +103,14 @@ As with chainwork, it would be reasonable to store a running total of chainReven
 If we view mining as buying satoshis with hashes, then the price of a satoshi between two blocks could be defined as 
 
 <pre>
-hashes_per_satoshi block1 block2 = (hashes block1 block2) / (satoshis block1 block2)
-  where hashes   block1 block2 = chainwork(block2) - chainwork(block1)
-        satoshis block1 block2 = chainRevenue(block2) - chainRevenue(block1)
+hashes_per_satoshi_between block1 block2 = (hashes_betwen block1 block2) / (satoshis_between block1 block2)
 </pre>
 
 with chainwork and chainRevenue as defined above.
 
 ===Blocktime Dampening Between Two Blocks===
+
+todo: add seconds_between, explain median time past
 
 A thermostat provides negative feedback -- i.e. dampening -- to a climate control system with the objective of keeping a room at a desired temperature, say 72 degrees.  A cruise control system provides dampening feedback to a vehicle to keep it moving at a desired velocity, say 60 miles per hour. Likewise, the bitcoin protocol provides dampening to fix miner productivity at 600 seconds per block.  The mechanism to accomplish this is to adjust the blockwork every epoch (2016 blocks). <ref>https://en.bitcoin.it/wiki/Difficulty#What_network_hash_rate_results_in_a_given_difficulty.3F</ref>
 
@@ -122,28 +140,35 @@ blocktime_dampening_factor block1 block2 = expectedSeconds / actualSeconds
 
 The blocktime_dampening_factor is thus a concrete meausure of whether the bitcoin protocol wants a future rise or fall in blockwork required when looking at some region of blocks.
 
-=== OP_ENERGY: The Dampened Price of Satoshis in Hashes Between Two Blocks === 
+=== OP_ENERGY === 
 
-This leads to a definition of the op_energy price, morally, as 
+todo: consider calling this section (and potentially function name) future_energy_price or future_energy_cost, or just energy_price_between or energy_price or protocol_energy_price_between or... some nicer name. will require ctrl-f price, ctrl-f energy, ctrl-f op_energy, to achieve consistency of terminology and language.
 
-<pre>
-op_energy_price block1 block2 = (hashes_per_satoshi block1 block2) * (blocktime_dampening_factor block1 block2)
-</pre>
-
-If reward halvings and transaction fees are excluded, the following holds for consecutive epochs: 
+This leads to a definition of the op_energy price as 
 
 <pre>
-hashes_per_satoshi (epoch + 1) = hashes_per_satoshi (epoch) * blocktime_dampening_factor (epoch)
+op_energy_price block1 block2 = (hashes_per_satoshi_between block1 block2) * (blocktime_dampening_factor block1 block2)
 </pre>
 
-This is equivalent to:
+For consecutive epochs, if revenue is stable, the following holds: 
 
 <pre>
-op_energy_price (epoch) = hashes_per_satoshi (epoch + 1) 
+hashes_per_satoshi_between (epoch + 1) = hashes_per_satoshi_between (epoch) * blocktime_dampening_factor (epoch)
 </pre>
 
-Viewing arbitrary block span OP_ENERGY as a generalization of the above formula, we have then an interpretation of OP_ENERGY as an expected future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol.
+So:
 
+<pre>
+assuming stable revenue: 
+
+op_energy_price (epoch) = hashes_per_satoshi_between (epoch + 1) 
+</pre>
+
+Viewing arbitrary block span OP_ENERGY as a generalization of the above formula, we have then an interpretation of OP_ENERGY as an expected future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol, with stable revenue assumed.
+
+todo: express this precisely, using integer division with everything accounted for, as in the bip. 
+
+Henceforth, energy_price_between will be abbreviated to just energy_price.
 
 ===Use Cases===
 
@@ -166,9 +191,7 @@ Megawatt futures rental rental scenario. Power purchase agreements between miner
 
 Similar to how large miners have power purchasing agreements from utilities, utilities will some day want hash purchasing agreements from miners, for when they think they will have excess power that will otherwise go to waste. OP_ENERGY can be used to hedge the risk of miscalculating hash purchases.
 
-====Intuition for OP_ENERGY price====
-
-OP_ENERGY is an expected future hashes_per_satoshi price, which utilizes all information available to the bitcoin protocol.<ref>https://github.com/tphyahoo/bip-thomashartman-op_energy/blob/master/OP_ENERGY_Whitepaper.mediawiki#OP_ENERGY_The_Dampened_Price_of_Satoshis_in_Hashes_Between_Two_Blocks</ref>
+====Intuition for OP_ENERGY Price Charts====
 
 To a miner, OP_ENERGY of some block span (eg. 100 blocks) is a moving average of the price of a satoshi, in hashes. So OP_ENERGY time series charts look somewhat similar to hashrate charts, with large leaps in OP_ENERGY prices at halving boundaries. 
 
@@ -244,13 +267,13 @@ todo, write code for above and sanity check that it matches estimatated strikeD
 
 This means that one can price on-chain binaries by looking at price and volatility of correlated assets on traditional custodied exchanges.
 
-===Real World Binary Pricing Example===
+===Real World Binary Call Example===
 
 todo: fix this so it is using strikeD instead of regular delta. 
 
 Note: The settlement value is always 10,000 sat by convention in the examples given here, so that only block span, strike, and and premium need vary.
 
-Bob wants to make a market on OP_ENERGY from blocks 647,136 to 648,136, which is 1000-2000 blocks in the future. To do this, he needs to pick a strike, and determine a strikeD for it. 
+Bob wants to make a market on OP_ENERGY from blocks 647,136 to 648,136, which is 1000-2000 blocks in the future for Bob when he is making this market. To do this, he needs to pick a strike, and determine a strikeD for it. 
 
 <pre>
 Current date: August 29, 2020 
@@ -294,7 +317,7 @@ Bob would like to earn 1% as a market maker. So he would buy at 0.5% less (7263 
 
 I believe this to be a reasonable pricing model, for demonstration purposes. If the bip is adopted, I expect full time and hyper-competitive market markers would use more sophisticated models. 
 
-If Bob can match buyers and sellers for say, a 1 month lock-up period, this is equivalent to earning 1% a month market risk free, and exit-scam risk free, on his bitcoin. So there is a huge incentive to market-make. 
+If Bob can match buyers and sellers for say, a 1 month lock-up period, this is equivalent to earning 1% a month market risk free, and exit-scam risk free, on his bitcoin. So there is an incentive to market-make. 
 
 If custodial exchanges offered vanilla OP_ENERGY calls, strikeD on these could be used for pricing the binaries directly, rather than translating from strikeD on vanilla fiat calls. There is profit incentive to do so. Custodial exchanges are natural market makers for OP_ENERGY binaries, because they have first look at the data (in particular strikeD) on their own platforms. Given this edge, it is reasonable to hope that OP_ENERGY derivatives will emerge on custodial exchanges to complement trades happening on chain. 
 
@@ -308,7 +331,7 @@ Two binary calls or puts can be composed and the result is another contract. In 
 
 With compound contracts, we can create synthetic versions of derivatives such as vanilla puts and calls, futures, and the like.
 
-====Synthetic Call Example====
+====Synthetic Vanilla Call Example====
 
 Let us create a synthetic vanilla call from ten binary calls, the first of which is from our previous example.
 
@@ -329,6 +352,7 @@ From a bitcoin script point of view, there are a few basic techniques for compos
 ** easiest to negotiate and coordinate
 ** works well with 2-party lightning
 ** cheaper in block space than multiple utxos. If adopted, taproot would make this cheaper still: cost logarithmic in number of ticks rather than linear.<ref>zmnscpxj: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2020-August/018090.html</ref>
+** can't settle until 100 blocks after the highest block used in an OP_ENERGY calculation
 * Multiple utxos, single if/then clause for each utxo
 ** many makers and takers (similar feel to coinjoin)
 ** could work with multi party lightning
@@ -342,8 +366,6 @@ All of these techniques create contracts via a single bitcoin transaction. This 
 Alternatively, Alice may compromise and split the contract she desires into multiple transactions. She loses the single transaction price guarantee, but by shopping around for advantageous prices over a longer period of time she gains flexibility and may ultimately be more profitable. In so doing, Alice shifts from taker into maker role.
 
 ==High Frequency Trading (OP_ENERGY with Lightning)==
-
-Todo, move this out of bip, to whitepaper or something. (bip should have reference to wherever this moves)
 
 === Buying and Selling Binaries with Lightning (direct channel) === 
 
@@ -403,7 +425,46 @@ Mitigation aside, a point in favor of adopting OP_ENERGY, despite potential atta
 
 That being stated, let's look at attacks, and mitigations.
 
-====Inclusion of Uneconomic Transactions====
+====Long Manipulation by Miners====
+
+Miners could long OP_ENERGY, and win their contracts by maximizing the numerator and/or minimizing the denominator in 
+
+<pre>
+price = ( hashes * expectedSeconds ) / (actualSeconds * satoshis)
+</pre>
+
+We begin with the easier attack: minimizing the denominator. 
+
+Without sacrificing any revenue, the miner could report a timestamp one second higher than the last, resulting in an actualSeconds of 1. If the miner is also willing to sacrifice coinbase revenue, satoshis can also be recorded as low as 1. So if the miner does both, the reported denominator can be made as low as 1. 
+
+todo, what about under-reporting actualSeconds for a string of blocks? 
+
+Now a harder attack: maximizing the numerator. 
+
+Near difficulty epoch changes, there is the potential to manipulate the "hashes" part of future blocks up, by using more energy to hash... hmmm.... todo: wouldn't it be easier to just keep under-reporting actualSeconds for a string of blocks? Is there a mitigation here, for time to be greater than something that depends on nodes, and not just miners? 
+
+
+price can be manipulated up by buying more hashpower than would otherwise be economically reasonable. 
+
+This could raise the OP_ENERGY price by a large enough amount to confound trader expectations.
+
+A miner with 51% of hashpower could perform such attacks with impunity. With less hashpower, it still might make economic sense. (Todo: think more about this.) 
+
+The "buy hash" attack potentially has the benefit of being hard to detect. But, it is very expensive. (Todo: flesh this out more.) 
+
+My tentative conclusion is it makes more sense to focus on the minimize denominator attack, than spending more energy on hashing than economically reasonable, just to raise future difficulty. 
+
+====Short Manipulation by Miners====
+
+Miners could long OP_ENERGY, and win their contracts by maximizing the same denominator mentioned in the "short manipulation" attack. In this version, actualSeconds would be set to the maximum nodes will accept. And satoshis can be increased, by including self mined transactions with high fees. 
+
+
+
+
+
+
+
+
 
 todo, fix this section, incorporating feedback from David Harding
 
@@ -417,11 +478,13 @@ That being said, a lesser version of this problem exists without OP_ENERGY. Mine
 
 There are game theoretic reasons why miners don't in fact manipulate transaction fees -- or are limited in how much manipulation can in practice be done. These reasons and limits apply in an OP_ENERGY world as well.
 
-The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk is that nodes may delay confirmation of suspicious blocks which appear to contain uneconomic transactions (unusually high fee, and not seen in mempool), further increasing the orphan risk. No such confirmation delay mechanism is described in the bitcoin white paper. But, nodes control confirmation, not miners. And most economically important nodes want lower fees. In an OP_ENERGY world, economically important nodes would want a fair and smoothly functioning OP_ENERGY market, as they are working as market makers and earning lightning transaction fees. So miners cannot self-mine uneconomic transactions with impunity. This is true today, and would continue to be true if OP_ENERGY went live. 
+The primary check on miners' ability to include uneconomic transactions is that once a transaction is in a block, there is the risk of block orphaning and another miner poaching the fee. The more unusually high the fees, the greater the incentive and therefore the higher the risk of poaching. A secondary risk for miners is that nodes may delay relay of suspicious blocks which appear to contain uneconomic transactions (unusually high fee, and not seen in mempool), further increasing the orphan risk. No such relay delay mechanism is described in the bitcoin white paper. But, nodes control relay, not miners. In today's world, most economically important nodes want lower fees. In an OP_ENERGY world, economically important nodes would want a fair and smoothly functioning OP_ENERGY market, as they are working as market makers and earning lightning transaction fees. So miners cannot self-mine uneconomic transactions with impunity. This is true today, and would continue to be true if OP_ENERGY went live. 
 
 Let's explore this in more depth. 
 
 Both for current transaction fee manipulation, and in an OP_ENERGY world, the calculus for profitability of cheating by inclusion of uneconomic fees worth txV satoshis, is something like:
+
+todo: why txV? better var name? 
 
 <pre>
 profit = expectedProfit - expectedLoss
@@ -434,17 +497,39 @@ profit = expectedProfit - expectedLoss
           (Not much can  be said about this hard to measure quantity, other than noting it.)
 </pre>
 
+todo: review if above blockRevenue conflicts with other sense this is used
+
 Clearly, OP_ENERGY cheating has potential for greater txfeeManipulationRevenue, than is currently the case with just trying to surreptitiously nudge bitcoin users to pay higher fees. But, OP_ENERGY manipulation is also likely to involve higher txV fees, and be more obviously suspicious. So there is more incentive for fee poaching as well, meaning more risk for cheaters. There is also a higher risk of validating nodes delaying confirmation of suspicious blocks, further raising the poaching risk. Many validating nodes would be economically important OP_ENERGY market makers, after all, who are likely to want to retaliate if they see evidence of OP_ENERGY markets being abused. 
 
 In sum, the incentives already pitting hodling nodes against miners are sufficient to deter the attack.
 
-====Exclusion of Economic Transactions====
+====Sacrifice of coinbase revenue====
 
 Todo, needs work: 
 
-Miners can also short OP_ENERGY and exclude transactions to manipulate the price up. The extreme of this would be to mine empty blocks. Cartels of miners and pools could be formed to make the attack more effective. 
+Miners can also long OP_ENERGY and exclude transactions to manipulate the price up. The extreme of this would be to mine empty blocks and/or refuse subsidy, resulting in a revenue of 1 satoshi per block. . Cartels of miners and pools could be formed to make the attack more effective. 
 
 Another attack would be to lower txfee rate by excluding transactions, or in the extreme just mining empty blocks. This attack is not as bad, because it is more expensive to miners than the raising fee attack, and it cannot lower txfee rate arbitrarily within a single block, whereas the fee raising attack can raise fees arbitrarily with a single transaction. So it is believed that already existing penalties are sufficient to stop OP_ENERGY manipulation by lowering transaction fees. 
+
+
+
+A miner could sacrifiece coinbase revenue to manipulate OP_ENERGY price up, confounding trader expectations.<ref> As an interesting side note, at time of writing, actual revenue is already a few satoshis below maximum revenue, presumably due to miner error https://medium.com/amberdata/why-the-bitcoin-supply-will-never-reach-21-million-7263e322de1</ref>
+
+
+
+
+If the subsidy lost is less than OP_ENERGY contracts revenue gained, the attack makes sense economically. 
+
+todo: think through attack scenarios here more
+  consider especially, after subsidy epoch ends, miner mining an empty block. would nodes accept this?
+  how about a non-empty but sparse block? would nodes accept this? 
+    perhaps. but an equilibrium would emerge with op-energy contracts over a sufficiently long period immune to such games. is my thesis. but is it true? 
+    review stuff about non-economic transactions. 
+
+Could this attack be detected, and mitigated similarly to the 
+
+xclusion of Economic Transactions====
+
 
 ==== Difficulty Manipulation ====
 
@@ -458,15 +543,36 @@ Look for OP_ENERGY scenarios where miners are more incentivized to hoard unpubli
 
 A starting point could be a low probability, high profit OP_ENERGY trade between a large miner and a speculator, where the miner bets on an unlikely OP_ENERGY measurement and then manipulates hash and/or transaction fees to win the bet. While manipulation is undesirable, I don't see why this would lead to chain splits or other misbehavior to non OP_ENERGY transactions however. 
 
+====Penalization of Uneconomic Transactions====
+
+To do
+
 === Hash Algorithm Change ===
 
 Todo, describe how this could be handled. I think all you need is a scaling factor, but think it through better. 
+
+=== Transparency of miner fees ===
+
+For bitcoin to work, this must hold
+
+<pre>
+coin inputs = coin outputs + fee
+</pre>
+
+for each transaction. The actual inputs and outputs need not be transparent, though they currently are. 
+
+
+For OP_ENERGY to work, in addition to the above, the fee must also be transparent, so that miner revenue can be publicly known. 
+
+Todo: Do schemes such as confidential transactions, mimblewimble, homomorphic encryption, or others, put this in jeapordy? Or other schemes? (see zmnscpxj bitcoin-dev comment, in "taproot nack" thread, around march 17 2021)
 
 ==Cost to Nodes==
 
 ===Memory===
 
-OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep arith_uint256 converted values for chainwork, mediantime, and chainFees. This is 12 bytes total per block, so the first million blocks will require 12mb additional storage. Not too bad, even for an underpowered node running on a raspi. These values may already be being stored in nodes. (Mediantime certainly is, as it is in block header.)
+OP_ENERGY can be calculated rapidly and cheaply if validating nodes keep arith_uint256 converted values for chainwork, mediantime, and chainFees. This is 12 bytes total per block, so the first million blocks will require 12mb additional storage. Not too bad, even for an underpowered node running on a raspi. These values may already be being stored in nodes. (Mediantime certainly is, as it is in block header. todo: double check it. I think timestamp, not mtp, is in block header)
+
+todo: this is wrong, chainRevenue is 64 bits (double check this because running total), and chainwork is 256 bits, and seconds is 32 bits but should be 64 to avoid overflow error in a few decades. 256 + 64 + 64 => 384 bits. 48 bytes per block. 
 
 ===Mempool, and 100 block depth burying rule for OP_ENERGY spends===
 
@@ -479,6 +585,10 @@ With OP_ENERGY, the rule above could be violated if an OP_ENERGY settlement tran
 The same 100 block burying criteria therefore applies to spending OP_ENERGY outputs. 
 
 ==Alternative Approaches==
+
+=== What Merovingian proposes === 
+
+Merovingian is a work-for-hire bitcoin protocol consulting team that would prefer not to be publicly identified. (todo)
 
 ===More Primitives===
 
