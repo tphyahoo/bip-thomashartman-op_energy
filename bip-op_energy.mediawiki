@@ -18,6 +18,8 @@ This BIP describes the new opcode OP_ENERGY, which provides a price that can be 
 
 ===Calculation of OP_ENERGY Price===
 
+todo: maybe this should be future_energy_price
+
 Roughly, price is: 
 
 <pre>
@@ -35,18 +37,17 @@ So, generalizing from difficulty epoch to any block span, price is expected futu
 The exact definition is: 
 
 <pre>
-op_energy_price block1 block2 = pack_uint256 price'
-  where  
-      price' = ( hashes * expectedSeconds ) `div` (actualSeconds * satoshis)
-      hashes = chainwork (block2) - chainwork (block1)
-      satoshis = if revenue == 0 then 1 else revenue 
+op_energy_price block1 block2 = ( hashes * expectedSeconds ) `div` (actualSeconds * satoshis)
+  where        
+      hashes = pack ( chainwork (block2) - chainwork (block1) )
+      satoshis = pack ( if revenue == 0 then 1 else revenue )
             where revenue = chainRevenue (block2) - chainRevenue (block1)
                   chainRevenue is sum of all coinbase rewards (coinbase) up to this block
-      expectedSeconds = 600 * (block2 - block1)
-      actualSeconds = median_time_past (block2) - median_time_past (block1)
+      expectedSeconds = pack ( 600 * (block2 - block1) )
+      actualSeconds = pack ( median_time_past (block2) - median_time_past (block1) )
         where median_time_past is median time of previous 11 blocks as defined in bip 113
-      pack_uint256 = compress a uint256 integer into 32 bits, using same compression as cbits in block header.
-      div = integer division
+      pack = compress a uint256 integer into 32 bits, using same compression as cbits in block header.
+      div = cbits division
 </pre>
 
 
