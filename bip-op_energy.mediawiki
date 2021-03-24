@@ -37,25 +37,21 @@ So, generalizing from difficulty epoch to any block span, price is expected futu
 The exact definition is: 
 
 <pre>
-op_energy_price block1 block2 = ( hashes * expectedSeconds ) `div` (actualSeconds * satoshis)
+op_energy_price block1 block2 = ( hashes * expectedSeconds ) / (actualSeconds * satoshis)
   where        
-      hashes = pack ( chainwork (block2) - chainwork (block1) )
-      satoshis = pack ( if revenue == 0 then 1 else revenue )
+      hashes = chainwork (block2) - chainwork (block1) 
+      satoshis = if revenue == 0 then 1 else revenue 
             where revenue = chainRevenue (block2) - chainRevenue (block1)
                   chainRevenue is sum of all coinbase rewards (coinbase) up to this block
       expectedSeconds = pack ( 600 * (block2 - block1) )
       actualSeconds = pack ( median_time_past (block2) - median_time_past (block1) )
         where median_time_past is median time of previous 11 blocks as defined in bip 113
-      pack = compress a uint256 integer into 32 bits, using same compression as cbits in block header.
-      div = cbits division
+      inputs -- chainwork, chainRevenue, expectedSeconds, actualSeconds -- are cbits compressed.
+      arithmetic operations -- subtract, multiply, divide -- are on cbits
 </pre>
 
 
-* Unless otherwise noted, all values in the above calculation are ordinary integers.
-
-* Due to the cbits packing in the last step, price could technically overflow if price' overflows 2^256, but this seems to be impossible given that bitcoin is already using on the order of 0.1% of global energy and is thus unlikely to rise more than 1000x. A great many orders of magnitude more than 1000x would be required for the overflow issue to arise. 
-
-todo: double check this. Note also that if satoshis and actualSeconds are both 1, price could be hashes * expectedSeconds, so verify this is no overflow problem with this as well. 
+* Due to cbits packing, there could theoreticaly be overflow issues, ie if chainWork overflows 2^256. But, practically, this seems to be impossible. Because bitcoin is already using on the order of 0.1% of global energy. A great many orders of magnitude more than 1000x would be required for overflow to be a problem. 
 
 * ActualSeconds is guaranteed to be positive, as the 11 block median time past increases with every block. This is because, per protocol rules, the block time stamp must be greater than the block median time past <ref>https://en.bitcoin.it/wiki/Block_timestamp</ref>.
 
