@@ -3,6 +3,9 @@ module Op_Energy_Parsing where
 import Text.Parsec
 import Text.Parsec.String (Parser)
 import Safe (readMay)
+import Control.Applicative (ZipList(..))
+import Data.List (tails)
+
 
 newtype Satoshis = Satoshis { unwrap_satoshis :: Integer }
   deriving (Read,Show)
@@ -24,6 +27,12 @@ data OP_ENERGY_TOTALS = OP_ENERGY_TOTALS { oeh_blocknumber :: Integer,
                                                      }
   deriving (Read, Show)
 
+-- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
+windows :: Int -> [a] -> [[a]]
+windows m = transpose' . take m . tails
+  where
+    transpose' :: [[a]] -> [[a]]
+    transpose' = getZipList . sequenceA . map ZipList
 
 make_next_helper_record :: ((Integer, Int256, PackedBits, Float, Int256),(Integer, Int256, Satoshis, Seconds, Seconds)) 
                              -> OP_ENERGY_TOTALS 

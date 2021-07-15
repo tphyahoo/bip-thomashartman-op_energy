@@ -1,7 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-import Data.List (tails, intersperse)
-import Control.Applicative (ZipList(..))
+import Data.List (intersperse)
 import Op_Energy_Parsing
 
 
@@ -43,12 +42,7 @@ op_energy_csv s =
     in  concat . intersperse "\n" $ csvheader : csvlines
     
 
--- https://stackoverflow.com/questions/27726739/implementing-an-efficient-sliding-window-algorithm-in-haskell
-windows :: Int -> [a] -> [[a]]
-windows m = transpose' . take m . tails
-  where 
-    transpose' :: [[a]] -> [[a]]
-    transpose' = getZipList . sequenceA . map ZipList
+
 
 sample _ [] = []
 sample i xs@(x:_) = x : ( sample i $ drop i xs)
