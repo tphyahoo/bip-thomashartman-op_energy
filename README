@@ -1,4 +1,4 @@
-OP_ENERGY: A peer to peer energy derivatives market settled in bitcoin. 
+P_ENERGY: A peer to peer energy derivatives market settled in bitcoin. 
 
 ********************
 ********************
@@ -29,6 +29,7 @@ Trading benefits:
 * alternative to custodial commodity exchanges for energy traders
 * alternative to custodial forex and altcoin exchanges for bitcoin traders
 * no custodial risk
+* no surveillance risk, order books and trades are as private as coinjoin offers and mixes
 * no oracle risk
 * all market makers are equal -- no order book front running
 
