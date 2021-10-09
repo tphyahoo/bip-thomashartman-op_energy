@@ -1,0 +1,394 @@
+**********
+
+100 do_make_datachain
+
+http://dev.bergain.biz:3001/opdev/op_energy_db/src/branch/master/pg_repo/import_base_tables.py
+do_make_datachain()
+
+Separate table creation from table population
+
+current step is getting the chain_subsidy and chain_totalfees sums right. we will do as follows.
+
+This is a two stepper
+  1) do it with the text files
+  2) once that's working, have the option of using the text files up to a checkpoint, and otherwise be calling bitcoind.
+
+For now, use text files.
+  Have one function, do_make_datachain.
+  Read in one row from each of two text files. (In future, this will be two calls to bitcoind.
+  Do 3 inserts
+     The two raw tables.
+     Update accumulated values that will be required for datachain (the sums)
+     And datachain.
+
+Many (all?) of the parsing functions can be moved from python in postgres, to the import_base_tables.py library.
+  How many "create function" statements do we have left in http://dev.bergain.biz:3001/opdev/op_energy_db/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+    when we are done with this, btw?
+
+   following applies to doing it with bitcoind instead of reading in text files. 
+
+
+start with
+  http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/datafetch/getblockstats.sh
+  and
+  http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/datafetch/getblockbits.sh
+  
+rewrite these two bash scripts in one python program, using an accumulator where it's needed.
+
+Effectively - 
+
+ a) get highest block in datachain table.
+ b) get chain_subsidy and chain_totalfees in data_chain table, for this highest block.
+ c)  looking in blockchain, look for that block+1, with 100 confirmations. (for both scripts) (stats and bits)
+ d) INSERT data
+      insert row into raw tables (for sanity / logging)
+      insert next row into data_chain table. 
+        DETAILS? ->no joins needed any more. VERIFY no bigint overflow ->use the accumulator
+
+Import from Blockchain:  a bash driver script, document assumptions to run successfully;
+Step 0 is,for now we use provided text files instead of blockchain cli commands.
+Step 2 is, After this is wrangled with text file, we will switch it to using blockchain for updates.
+
+can do this in ever increasing batch sizes to save time, sanity checking as follows.
+
+dump (export to .sql file) original datachain
+dump new datachain.
+
+diff. are they the same? it worked.
+
+do with first 10 rows, first 1000 rows, first 50,000 rows, etc. till whole file is done.
+
+**********
+
+100 enforce_unique_on_blockheight_in_datachain
+
+**********
+DONE/UNDER CONSTRUCTION
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+
+CREATE TABLE public.in_stats_raw (
+    height_str text,
+    hash_str text,
+    subsidy_str text,
+    totalfee_str text,
+    time_str text,
+    totaltime_str text
+);
+
+time_str shouild be bitcoind_time
+totaltime_str should be median_time	
+
+ie, match field names from http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/datafetch/getblockstats.sh
+  where possible
+
+**********
+DONE/UNDER CONSTRUCTION
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+
+CREATE TABLE public.in_stats_raw (
+    height_str text,
+    hash_str text,
+    subsidy_str text,
+    totalfee_str text,
+    time_str text,
+    totaltime_str text
+);
+
+  subsidy_str should be block_subsidy_str
+  totalfee_str should be block_totalfee_str
+
+**********
+  after missing do_make_datachain table is solved,
+  delete http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/datachain_ETL_Overview.md and associated .ipynb file (decruft)
+  TODO after moving repo PG_REPO to new installer setup
+
+*********
+Moving PG_REPO
+pg_repo should be moved under op_klange_server
+
+**********
+Charting-
+log and linear modes
+
+linear mode, y axis says hashes per satoshi
+log mode, y axis says log(hashes per satoshi)
+
+I'm thinking you could display both charts on the charting link.
+12:48 PM
+
+implement this by adding a log(price) field in the csv. then should be easy.
+
+***********
+
+this json
+
+{'idBeg': '1', 'idEnd': '700000', 'makeChartname': 'Chart', 'inc': '1000'}
+
+should include all parameters that are handled by code. currently it's missing span, which defaults to 2016
+
+**********
+
+bug in chart that includes a bunch of vertical and diagonal lines, strange artifacts.
+to reproduce:
+  block 1 to 700,000 (all time)
+  inc: 10000
+
+maybe this is because of matplotlib log chart, and it will go away after doing the log and linear modes task
+
+http://dev.bergain.biz:7888/bin/aconcagua.py?idBeg=1&inc=10000&idEnd=700000&makeChartname=Chart
+http://dev.bergain.biz:7888/images/chart3_1-2016-1000-700000.png
+
+**********
+
+pretty colored vertical bars, at boundaries for halving regimes and difficulty regimes
+
+*********
+
+candlestick charts (email has more description)
+
+**********
+
+usd price charts
+
+**********
+
+use ssh keys instead of passwords
+
+***********
+
+op_klange_cgiserver -- delete this, obsolete
+
+***********
+
+don't specify user (opdev) in
+
+  http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/import_from_blockchain.sh
+
+ment that points to bitcoind and or btcd code that does same thing.
+
+************
+
+  in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+public.hexstr_to_cbits
+  add comment that points to the cbits compact_target spec
+
+****************
+200  OP_KLANGE_cgiserver-README-update
+
+add to README at 
+
+http://dev.bergain.biz:3001/opdev/op_klange_server
+
+web api.
+url schema for direct getting csvs.
+url schema for getting charts.
+
+(we had this before, might need backporting)
+
+opdev$ ./cgiserver 7888
+[info] Listening on port 7888.
+[info] Serving out of 'pages'.
+[info] Server version string is klange/0.5+opk.
+[extn] CGI support is enabled.
+[extn] Default indexes are enabled.
+
+
+**********
+
+http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+  cbits_to_hexstr
+
+code review
+  don't have variables with "var" in the name.
+  what does reg mean? spell it out.
+  what does exp mean?
+  seems strange to have var exp_const that is not a constant.
+  exp_const is never used
+  bCnt is never used
+  
+**********
+
+can we make it /var/local/shared in case there are other things besides bugz we want to share.
+
+*********
+
+http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/charts_apr21_misc
+  can we remove this?
+  review files. is there anything that is not already in aconcagua? if so, note here, what do we do?
+  if not, we can delete this.
+  (repo cleanup)
+**********
+
+100 reduce_use_of_globals
+
+global g_chainreward, g_chainfee, g_chainsubsidy
+don't use globals
+
+*********
+
+100 write_3_db_rows_atomic
+
+write_block_bits_row, write_block_stats_row, do_make_data_chain_row
+  should be atomic. either all 3 tables get written, or none get written
+
+Honesty: not sure this is logically necessary... but will code easier to reason about either way.
+option b, could stop using 3 tables and only use data_chain
+
+**********
+
+100 g_height_imported_plus_one_why_two_times
+
+http://dev.bergain.biz:3001/opdev/op_energy_db/src/branch/master/pg_repo/do_make_base_tables.py
+  do_next_block
+  seems suspicious
+  take a look.
+  
+***********
+
+100 do_make_datachain_row_cleanup
+
+signature
+
+def do_make_data_chain_row( in_bits, in_stats, g_chainreward, g_chainfee, g_chainsubsidy):
+
+then I think you can write insert without join
+
+(sort of connected to 100 reduce_use_of_globals task
+  (is it actually just the same task??)
+
+**********
+
+100 move_functions_from_btc_hist_schemaonly
+
+eg
+  public.hexstr_to_bigint
+  this is currently being called in http://dev.bergain.biz:3001/opdev/op_energy_db/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+  same code is also defined in http://dev.bergain.biz:3001/opdev/op_energy_db/src/branch/master/pg_repo/do_make_base_tables.py
+  it should be removed from btc_hist_schemaonly.sql.  (just prefer the python.)
+  do this to all the functions in btc_hist_schemaonly.sql
+
+**********
+
+100 debug_use_first_100_rows
+
+for debug mode, test file should be first 100 rows not last 100 rows
+
+**********
+
+100 should_work_without_text_files_for_600000_rows
+
+**********
+
+100 include_genesis_block
+
+op_energy_db skips genesis block (block 0)
+
+https://live.blockcypher.com/btc/block/00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048/
+
+the chainwork is still correct, because this value is provided by bitcoind. it would probably be incorrect if it was summed in python, which it really should be.
+
+I think chainrevenue is probably incorrect. this value is not provided by bitcoind.
+
+A blocker for doing this in nice automated way is that getblockstats fails for block 0
+https://github.com/bitcoin/bitcoin/issues/19885
+
+A potential fix is to just manually add block 0 to the text files.
+Another option, regenerate the files using btcd instead of bitcoind, hoping btcd doesn't have the issue with block 0.
+
+Another option (high effort), fix the issue with bitcoind. Should probably file separate issue in github for the block 0 issue.
+  Currently the open github issue above conflates a json parsing issue with block 0, when I think they're 2 different things.
+
+
+**********
+
+100 simplify_data_chain_data_gathering
+
+continue to write text files in current format. that seems good enough for a log. don't need history and stats tables then.
+these log files should be append only, if there's a way to control this at the os level.
+treat these files as an intermediate state, prior to writing db. ie, these files should update before db updates.
+
+
+dataflow
+  blockchain -> text files => data_chain table
+
+on startup
+  get latest row in db
+  update db from text files, so it is caught up with text files
+  get next block of data, which is not in text files
+      write text files, using existing bitcoin-cli | jq commands. can just append to end of file
+      update db from text files
+
+  if it's slow on updates, maybe read from end of text files instead of beginning of text files.
+
+paranoia
+  what if texts file accidentally corrupted?
+  ie, someone trips over power cord in the middle of writing text file
+    potential fix
+      maintain multiple instances of server writing texts files. assume not all will be corrupted
+      only write when machines agree. ie, at least 2 agree up to some block
+      if there is disagreement on block, alarm bells go off, email goes to sysadmin.
+
+  what if text filew maliciously corrupted?
+  ie, attacker writes false data.
+
+  what if db accidentaly corrupted?
+    ie, parsing error on unexpected input
+    or trip over power cord in middle of write
+    for power cord scenario, can also have multiple copies of db, alarms on inconsistency.
+    for attack, maybe same thing.
+
+  I think we also don't have to worry about attack unless running exchange, holding mainnet coins.
+  ie, we can scenario plan but don't need to implement anything.
+
+
+**********
+
+100 add_chainwork_just_like_add_chainrevenue
+
+*********
+
+100 test_harness
+
+We could do  a make test type sanity check. I think a reasonable test is that chainwork for block 1, 2016, and 600,000 matches expected value from bitcoind. We should be manually adding work here as an integral, to make the test meaningful. 
+
+IE, treat bitcoind as source of truth. 
+
+if bitcoind ever makes chainrevenue available, we could do the same test with that. Meanwhile, ok to just cross fingers and do manual qa with revenue. Or we pick  a value we believe is "known good" for revenue for same blocks and go with that.
+
+echo 'select chainwork_hex from data_chain where blockheight = 2;' | psql op_energy_db
+ chainwork_hex
+ ---------------
+  0x300030003
+  (1 row)
+
+I believe above is correct
+
+this is a better test harness is the add_chainwork_just_like_add_chainrevenue task is done first.
+
+opdev@devtwo43:/home/thartman/op_energy_db/pg_repo$ echo 'select chain_reward from data_chain where blockheight = 2;' | psql op_energy_db
+ chain_reward
+ --------------
+   10000000000
+
+this is incorrect. should be 15 000 000 000 (15 billion satoshis)
+
+
+**********
+
+100 nix_hardcoded_first_row_table_inserts_datachain
+
+-    # this looks wrong, shouldn't need to insert a row at init time, for any tables.
+-    if ( True ):  #len(g_bits_rows) == 1 ):
+
+**********
+
+100 insert_block should be passed accumulating parameters. 
+
+    # should also pass chainwork. and blockwork should be calculated from target using python function
+        INSERT_block_to_pgdb( lowest_block_not_in_pgdb, local_chainfee, local_chainsubsidy )
+
+************
+
+100 when_in_test_mode_shouldnt_go_into_while_loop
+
+

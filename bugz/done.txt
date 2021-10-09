@@ -1,0 +1,108 @@
+
+
+************
+100  histprice-seperate-sql-file 
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+
+take everything related to dollar prices, eg, search for histprice, and put this in its own file.
+
+So there will be a postgres setup schema ,sql for hashes, and one for dollar price data, and these are separate from each other.
+
+
+And I think hash data, and dollar data, should be in separate databases.
+
+********
+100   init-template-sql-in-python
+psql -w $PGDATABASE  -q  < ${PG_REPO}/btc_hist_schemaonly.sql
+  this should be in python, not bash. maybe in setup.
+
+(it's ok to do ghetto thing and just run psql in python, slurping in same sql file)
+
+**********
+100    remove-dependancies-on-in_btc_raw
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/import_base_tables.py
+  do_make_datachain
+  median_time should come from in_stats_raw not in_btc_raw
+
+*************
+100   pkey-on-data_chain
+
+
+*************
+100   chain_reward-field-names
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/import_base_tables.py
+
+currently have chain_reward
+
+want chain_reward, chain_subsidy, and chain_totalfee
+
+hopefully definitions are already clear from the name and the data in in_stats_raw
+
+
+*************
+100   datafile-hash-check
+
+make sure hash of tar.gz for pg_repo database creation is checked into git and enforced in
+
+http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/import_from_blockchain.h
+
+and it should be sha256 hash  <- UPGRADE TBD
+
+********
+100  file-parser-named-vars
+in parser for importing csv files, better var names instead of
+
+ln1 = rdF.readline().strip()
+
+say what ln1 is. like, block height, or whatever it's supposed to be. named columns.
+
+
+*******
+100   pkey-on-data_chain
+script creation of primary key on public.data_chain"
+  "dc_pkey" btree (blkheight)
+  
+  
+***********
+100  cbits-src-comment
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo/btc_hist_schemaonly.sql
+
+public.cbits_to_hexstr
+  add comment that links to BitcoinD source code
+  
+
+
+
+**************
+200   README-datafile-details
+
+in http://dev.bergain.biz:3001/opdev/sw_op_energy/src/branch/master/pg_repo
+
+-- in readme, have something like name_of_csv_files_dir_YYYYMMDD.tar.gz and the hash of this large tar file.
+-- have build that creates data_chain.sql
+
+
+
+
+**********
+
+100 nix_table_comments
+
+**********
+
+100 nix_hardcoded_bitstats
+
++  # this seems wrong too. why do bitstats values need tobe hardcoded?
++  # if bitstats_fd is None:
++  #   # No startup data file?
++  #   #  init with preformed first row
++  #   ln0_height      = 1
++  #   ln1_blockhash   = '0x839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048'
++  #   ln2_subsidy     = 5000000000L
++  #   ln3_totalfee    = 0L
++  #   ln4_median_time = 1231469665
++  #   ln5_block_time  = 1231469665
++  #   local_row = (ln0_height,ln1_blockhash,ln2_subsidy,ln3_totalfee,ln4_time,ln5_mediantime)
++  #   if _verbose: print('DEBUG bitstats_fd is None')
++  #   g_stats_rows.append(local_row)
+

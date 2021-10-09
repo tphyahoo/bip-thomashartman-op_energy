@@ -1,0 +1,5 @@
+Mulling things, might want to add "wash trade risk" section to white paper. 
+
+Cons: can manipulate defi markets with wash trades. Since counterparties can hide their identity, they can trade with themselves. I'm sure this happens already with existing defi.
+
+Pros: wash traders still pay lightning fees, and if this can be hooked into coinjoin or similar mechanisms somehow, it increases liquidity for coinjoins.
