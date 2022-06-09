@@ -41,7 +41,6 @@ Ecosystem benefits:
 * increases hashrate, making bitcoin more valuable while raising cost of 51% attack
 * increases anonymity set of coinjoins
 * makes bitcoin more valuable, private, and secure
-* small code footprint, with a single transaction opcode providing most of the functionality
 
 Environmental benefits:
 
